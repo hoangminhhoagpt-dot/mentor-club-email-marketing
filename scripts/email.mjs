@@ -60,12 +60,54 @@ export function injectTracking(html, { base, token, unsubUrl, showFooter = true 
   return out;
 }
 
-/** Bọc nội dung thô (nếu chưa là HTML đầy đủ) thành khung HTML tối thiểu. */
+const escapeHtml = (s) => String(s).replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;");
+/** Markdown inline nhẹ: **đậm**, _nghiêng_, [chữ](link). Áp dụng SAU khi đã escape. */
+function inlineMd(s) {
+  s = s.replace(/\[([^\]]+)\]\((https?:\/\/[^\s)]+)\)/g, (_, t, u) => `<a href="${u.replace(/"/g, "%22")}">${t}</a>`);
+  s = s.replace(/\*\*([^*]+)\*\*/g, "<b>$1</b>");
+  s = s.replace(/(^|[\s(])_([^_\n]+)_/g, "$1<i>$2</i>");
+  return s;
+}
+/**
+ * Chuyển VĂN BẢN THUẦN → HTML (để người soạn không phải gõ thẻ trong bảng 12.2/12.4):
+ * - Dòng trống ngăn cách = đoạn <p>; xuống dòng đơn = <br>.
+ * - Dòng bắt đầu "- " / "* " = danh sách; "1. " = danh sách số.
+ * - **đậm**, _nghiêng_, [chữ](https://link). Link http(s) vẫn được gắn tracking.
+ * - Nếu nội dung ĐÃ chứa thẻ khối HTML (p/div/h/ul/br/a…) thì giữ nguyên (tương thích ngược).
+ */
+export function textToHtml(body) {
+  const raw = String(body || "").replace(/\r\n/g, "\n").trim();
+  if (!raw) return "";
+  if (/<(p|div|h[1-6]|ul|ol|br|table|img|a)\b/i.test(raw)) return raw;
+  const li = (l, re) => `<li>${inlineMd(escapeHtml(l.replace(re, "")))}</li>`;
+  const out = [];
+  for (const block of raw.split(/\n{2,}/)) {
+    const lines = block.split("\n");
+    let i = 0;
+    while (i < lines.length) {
+      if (/^\s*[-*]\s+/.test(lines[i])) {                          // danh sách chấm
+        const items = [];
+        while (i < lines.length && /^\s*[-*]\s+/.test(lines[i])) items.push(li(lines[i++], /^\s*[-*]\s+/));
+        out.push("<ul>" + items.join("") + "</ul>");
+      } else if (/^\s*\d+[.)]\s+/.test(lines[i])) {                // danh sách số
+        const items = [];
+        while (i < lines.length && /^\s*\d+[.)]\s+/.test(lines[i])) items.push(li(lines[i++], /^\s*\d+[.)]\s+/));
+        out.push("<ol>" + items.join("") + "</ol>");
+      } else {                                                     // đoạn văn
+        const para = [];
+        while (i < lines.length && !/^\s*([-*]|\d+[.)])\s+/.test(lines[i])) para.push(inlineMd(escapeHtml(lines[i++])));
+        out.push("<p>" + para.join("<br>") + "</p>");
+      }
+    }
+  }
+  return out.join("\n");
+}
+
+/** Bọc nội dung thành khung HTML gửi được (tự chuyển văn bản thuần → HTML). */
 export function ensureHtmlDoc(body) {
   const s = String(body || "");
   if (/<html[\s>]/i.test(s)) return s;
-  const inner = /<\/?[a-z][\s\S]*>/i.test(s) ? s : s.replace(/\n/g, "<br>");
-  return `<!doctype html><html><body style="font-family:Arial,Helvetica,sans-serif;font-size:15px;line-height:1.6;color:#222">${inner}</body></html>`;
+  return `<!doctype html><html><body style="font-family:Arial,Helvetica,sans-serif;font-size:15px;line-height:1.6;color:#222">${textToHtml(s)}</body></html>`;
 }
 
 /**
