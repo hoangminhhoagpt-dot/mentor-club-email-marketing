@@ -15,7 +15,7 @@ compatibility_date = "2024-11-01"
 [vars]
 LARK_DOMAIN   = "https://open.larksuite.com"
 LARK_APP_ID   = "cli_aa8cccd0b262deed"
-LARK_APP_TOKEN = ""          # app_token của Base (chạy check-setup.mjs để lấy, rồi điền vào đây)
+LARK_APP_TOKEN = "GWQgbY7t9awFlosl3k3l6OQTgzd"   # app_token của Base (đã resolve từ wiki)
 TABLE_OPEN    = "tblvxxe82dGYQXQv"   # 12.5 Báo cáo đọc Email
 TABLE_CLICK   = "tblw20eIsnURSIxC"   # 12.9 Danh sách email click link
 TABLE_UNSUB   = "tbldkFroNQJXjZRV"   # 12.6 Huỷ nhận email
