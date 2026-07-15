@@ -10,21 +10,19 @@ Giá trị dùng lại (đã biết):
 
 ---
 
-## A. Deploy Cloudflare Worker (tracking mở/click/huỷ — bảng 12.5/12.9/12.6)
-Trên máy có Node, mở terminal **trong thư mục `worker/`**:
-```bash
-npm install -g wrangler
-wrangler login                      # mở trình duyệt, đăng nhập Cloudflare (free)
-wrangler secret put LARK_APP_SECRET # dán App Secret của app Lark khi được hỏi
-wrangler deploy
+## A. Deploy Cloudflare Worker (tracking mở/click/huỷ — bảng 12.5/12.9/12.6) — ✅ ĐÃ XONG
+Đã deploy sẵn (2026-07-15). URL Worker đang chạy:
 ```
-Kết quả in ra URL: `https://mentor-club-tracker.<subdomain>.workers.dev` → **lưu lại**.
+https://mentor-club-tracker.hoangminhhoa.workers.dev
+```
+Secret `LARK_APP_SECRET` đã nạp vào Worker; đã test thật /o→12.5, /c→12.9, /u→12.6.
 
-> Không có URL này thì email vẫn gửi được, nhưng KHÔNG đo được mở/click và link "Huỷ nhận" không ghi 12.6.
+> Nếu về sau cần deploy lại (đổi code Worker): trong `worker/` chạy `wrangler deploy`
+> (đăng nhập bằng `wrangler login` hoặc biến `CLOUDFLARE_API_TOKEN`).
 
-## B. Khai báo URL tracking
-- Sửa `scripts/config.local.json` → `"tracker": { "baseUrl": "https://…workers.dev" }` (cho chạy local).
-- Đặt GitHub **Variable** `TRACKER_BASE_URL` = URL đó (cho chạy trên Actions) — xem phần C.
+## B. Khai báo URL tracking — ✅ ĐÃ XONG (local)
+- `scripts/config.local.json` → `tracker.baseUrl` đã điền `https://mentor-club-tracker.hoangminhhoa.workers.dev`.
+- **Còn lại:** đặt GitHub **Variable** `TRACKER_BASE_URL` = URL trên (để chạy trên Actions) — xem phần C.
 
 ## C. GitHub Secrets & Variables (BẮT BUỘC để Lark gọi HTTP chạy được)
 Repo → **Settings → Secrets and variables → Actions**:
