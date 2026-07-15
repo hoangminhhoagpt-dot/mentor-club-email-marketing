@@ -15,6 +15,50 @@ Mọi cột DateTime ghi bằng **epoch milliseconds**.
 
 ---
 
+## Ý nghĩa & vai trò từng bảng (đọc trước)
+
+9 bảng chia làm **3 nhóm** theo vai trò trong luồng gửi email.
+
+### 🟢 Nhóm GỬI — 2 cặp "người nhận + nội dung"
+Mỗi chiến dịch = 1 bảng người nhận + 1 bảng nội dung.
+
+| Bảng | Vai trò | Bạn hay hệ ghi? |
+|---|---|---|
+| **12.1 Danh sách Email Nuôi Dưỡng** | Người nhận của phễu 365 ngày. Mỗi dòng 1 người, có "Ngày bắt đầu" (mốc tính họ đang ở ngày thứ mấy) và "Bước gần nhất" (email cuối đã gửi tới họ). | Bạn thêm người; hệ tự cập nhật bước. |
+| **12.2 Chiến dịch Email 365 ngày** | "Kịch bản" nội dung: mỗi dòng = 1 Ngày (1,2,3…) có Tiêu đề + Nội dung. Ghép với 12.1 → mỗi người nhận đúng email theo ngày họ đang ở, **tuần tự**, 1 email/ngày. | Bạn soạn nội dung. |
+| **12.3 Danh sách Email bảng tin** | Người đăng ký nhận **bản tin** (gửi hàng loạt cùng lúc, khác nuôi dưỡng gửi theo tiến độ từng người). | Bạn/subscriber thêm. |
+| **12.4 Email bảng tin** | Mỗi dòng = 1 **số bản tin**. Bấm gửi 1 số → hệ gửi tới toàn bộ 12.3, rồi tự ghi "Đã gửi" + số người. | Bạn soạn; hệ ghi kết quả. |
+
+### 🔵 Nhóm ĐO LƯỜNG — hệ tự điền, bạn chỉ đọc
+Cloudflare Worker ghi mỗi khi người nhận tương tác.
+
+| Bảng | Vai trò |
+|---|---|
+| **12.5 Báo cáo đọc Email** | Ai **mở** email (pixel), chiến dịch/bước nào, mở mấy lần → đo tỷ lệ mở. |
+| **12.9 Danh sách email click link** | Ai **bấm link** trong email, link đích nào, mấy lần → đo tỷ lệ click (tín hiệu quan tâm mạnh nhất). |
+
+### 🔴 Nhóm BẢO VỆ — chặn gửi sai, giữ uy tín hộp thư
+Hệ **đọc cả 3 bảng trước mỗi lần gửi** để loại người khỏi danh sách (suppression).
+
+| Bảng | Vai trò |
+|---|---|
+| **12.6 Huỷ nhận email** | Ai bấm "Huỷ nhận" → ghi vào đây → **không bao giờ gửi lại** (luật bắt buộc). |
+| **12.7 Lọc mail ảo** | Kiểm cú pháp + tên miền có nhận mail (MX) + mail dùng 1 lần → email "Không hợp lệ" bị chặn gửi. |
+| **12.8 Danh sách mail lỗi** | Email bị **dội (bounce)** — bắt qua IMAP. Hard bounce bị chặn vĩnh viễn để hộp thư không bị đánh dấu spam. |
+
+### Dòng chảy tóm tắt
+```
+Gửi:   12.1+12.2 (nuôi dưỡng)      12.3+12.4 (bản tin)
+          │                           │
+          └────── loại trừ ───────────┘   ← 12.6 (huỷ) + 12.7 (mail ảo) + 12.8 (bounce)
+          │
+          ▼ gửi qua Lark Mail
+     mở/bấm  → 12.5 (mở) · 12.9 (click)
+     dội lỗi → 12.8 (bounce)
+```
+
+---
+
 ## 12.1 Danh sách Email Nuôi Dưỡng — `tbltZ1K0MEVMA0hD`
 | Cột | Kiểu | Ý nghĩa |
 |---|---|---|
