@@ -1,6 +1,6 @@
 /**
  * sync-bounces.mjs — bảng 12.8 "Danh sách mail lỗi".
- * Đọc hộp thư Gmail qua IMAP, tìm thư báo lỗi gửi (bounce / DSN từ mailer-daemon) trong
+ * Đọc hộp thư Lark Mail qua IMAP, tìm thư báo lỗi gửi (bounce / DSN từ mailer-daemon) trong
  * N ngày gần nhất, bóc email người nhận bị lỗi + mã trạng thái, rồi UPSERT vào 12.8.
  * (Bounce là cách DUY NHẤT lấy lỗi gửi khi dùng SMTP thuần — không có webhook như ESP.)
  *

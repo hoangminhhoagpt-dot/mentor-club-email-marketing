@@ -21,20 +21,20 @@
   },
 
   "smtp": {
-    "host": "smtp.gmail.com",
+    "host": "smtp.larksuite.com",
     "port": 465,
     "secure": true,
-    "user": "you@gmail.com",
-    "pass": "app-password-16-ky-tu",
+    "user": "hoaguru2@hoangminhhoa.net",
+    "pass": "<IMAP/SMTP password cua Lark Mail>",
     "fromName": "Mentor Club",
-    "fromEmail": "you@gmail.com"
+    "fromEmail": "hoaguru2@hoangminhhoa.net"
   },
 
   "imap": {
-    "host": "imap.gmail.com",
+    "host": "imap.larksuite.com",
     "port": 993,
-    "user": "you@gmail.com",
-    "pass": "app-password-16-ky-tu"
+    "user": "hoaguru2@hoangminhhoa.net",
+    "pass": "<IMAP/SMTP password cua Lark Mail>"
   },
 
   "tracker": {

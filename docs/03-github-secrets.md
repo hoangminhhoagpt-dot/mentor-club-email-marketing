@@ -15,14 +15,14 @@ git push -u origin main
 | Tên | Giá trị |
 |---|---|
 | `LARK_APP_SECRET` | App secret của app Lark |
-| `SMTP_PASS` | App Password Gmail (16 ký tự) |
-| `IMAP_PASS` | (tuỳ chọn) App Password cho IMAP — bỏ trống thì dùng `SMTP_PASS` |
+| `SMTP_PASS` | IMAP/SMTP password của Lark Mail |
+| `IMAP_PASS` | (tuỳ chọn) — bỏ trống thì dùng `SMTP_PASS` (cùng mật khẩu) |
 
 ## Bước 3 — Variables (không bí mật) — cùng trang → tab **Variables**
 | Tên | Giá trị | Ghi chú |
 |---|---|---|
-| `SMTP_USER` | `ban@gmail.com` | địa chỉ gửi |
-| `SMTP_FROM_EMAIL` | `ban@gmail.com` | thường trùng SMTP_USER |
+| `SMTP_USER` | `hoaguru2@hoangminhhoa.net` | địa chỉ gửi (đã có default sẵn) |
+| `SMTP_FROM_EMAIL` | `hoaguru2@hoangminhhoa.net` | trùng SMTP_USER (đã có default sẵn) |
 | `SMTP_FROM_NAME` | `Mentor Club` | tên hiển thị |
 | `TRACKER_BASE_URL` | `https://mentor-club-tracker.<sub>.workers.dev` | URL Worker (bước 04) |
 | `LARK_APP_TOKEN` | app_token của Base | lấy từ `check-setup.mjs` |

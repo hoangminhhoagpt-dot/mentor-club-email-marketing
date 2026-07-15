@@ -42,7 +42,7 @@ const ok = (b) => (b ? "✔" : "✘");
     try {
       const t = nodemailer.createTransport({ host: CFG.smtp.host, port: CFG.smtp.port, secure: CFG.smtp.secure, auth: { user: CFG.smtp.user, pass: CFG.smtp.pass } });
       await t.verify(); console.log(`${ok(true)} SMTP đăng nhập (${CFG.smtp.user})`);
-    } catch (e) { console.log(`${ok(false)} SMTP: ${e.message}\n   → Gmail phải dùng App Password 16 ký tự (docs/01-cau-hinh-gmail-smtp.md).`); }
+    } catch (e) { console.log(`${ok(false)} SMTP: ${e.message}\n   → Lark Mail phải dùng IMAP/SMTP password (docs/01-cau-hinh-lark-mail.md).`); }
   } else { console.log(`${ok(false)} SMTP: chưa có user/pass`); }
 
   // 5) tracker

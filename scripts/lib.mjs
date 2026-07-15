@@ -41,7 +41,7 @@ export function loadConfig(configPath = DEFAULT_CONFIG) {
 
   CFG.smtp = CFG.smtp || {};
   const S = CFG.smtp;
-  S.host      = E.SMTP_HOST       || S.host || "smtp.gmail.com";
+  S.host      = E.SMTP_HOST       || S.host || "smtp.larksuite.com";
   S.port      = Number(E.SMTP_PORT || S.port || 465);
   S.secure    = (E.SMTP_SECURE != null ? E.SMTP_SECURE === "true" : (S.secure != null ? S.secure : true));
   S.user      = E.SMTP_USER       || S.user;
@@ -51,7 +51,7 @@ export function loadConfig(configPath = DEFAULT_CONFIG) {
 
   CFG.imap = CFG.imap || {};
   const I = CFG.imap;
-  I.host = E.IMAP_HOST || I.host || "imap.gmail.com";
+  I.host = E.IMAP_HOST || I.host || "imap.larksuite.com";
   I.port = Number(E.IMAP_PORT || I.port || 993);
   I.user = E.IMAP_USER || I.user || S.user;
   I.pass = E.IMAP_PASS || I.pass || S.pass;

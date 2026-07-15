@@ -1,14 +1,12 @@
 # Gửi chiến dịch NUÔI DƯỠNG 365 ngày (12.1 + 12.2).
+# KHÔNG dùng cron trên GitHub — chỉ chạy khi được gọi từ Lark Base (HTTP) hoặc bấm tay.
 # Chạy:
-#   1. TỰ ĐỘNG mỗi ngày — cron 01:00 UTC = 08:00 VN.
-#   2. Bấm tay          — tab Actions → send-nurture → Run workflow.
-#   3. Qua HTTP         — POST https://api.github.com/repos/<user>/<repo>/dispatches
-#      body: {"event_type":"send-nurture"}
+#   1. Từ Lark  — automation gọi HTTP: POST https://api.github.com/repos/<user>/<repo>/dispatches
+#                 body: {"event_type":"send-nurture"}   (đặt lịch chạy hằng ngày bằng Lark Automation)
+#   2. Bấm tay  — tab Actions → send-nurture → Run workflow.
 name: send-nurture
 
 on:
-  schedule:
-    - cron: "0 1 * * *"           # 08:00 giờ VN (GitHub cron theo UTC, có thể trễ vài phút)
   repository_dispatch:
     types: [send-nurture]
   workflow_dispatch:
@@ -41,8 +39,9 @@ jobs:
           TABLE_UNSUB:    ${{ vars.TABLE_UNSUB || 'tbldkFroNQJXjZRV' }}
           TABLE_ERROR:    ${{ vars.TABLE_ERROR || 'tblNgcFWWyWI7erZ' }}
           TABLE_FAKE:     ${{ vars.TABLE_FAKE  || 'tblZHQX8FrGp1kPf' }}
-          SMTP_USER:       ${{ vars.SMTP_USER }}
-          SMTP_FROM_EMAIL: ${{ vars.SMTP_FROM_EMAIL || vars.SMTP_USER }}
+          SMTP_HOST:       ${{ vars.SMTP_HOST || 'smtp.larksuite.com' }}
+          SMTP_USER:       ${{ vars.SMTP_USER || 'hoaguru2@hoangminhhoa.net' }}
+          SMTP_FROM_EMAIL: ${{ vars.SMTP_FROM_EMAIL || vars.SMTP_USER || 'hoaguru2@hoangminhhoa.net' }}
           SMTP_FROM_NAME:  ${{ vars.SMTP_FROM_NAME || 'Mentor Club' }}
           TRACKER_BASE_URL: ${{ vars.TRACKER_BASE_URL }}
           SEND_PER_RUN_LIMIT: ${{ vars.SEND_PER_RUN_LIMIT || '400' }}

@@ -3,7 +3,7 @@
   "version": "1.0.0",
   "private": true,
   "type": "module",
-  "description": "Hệ thống Email Marketing trên Lark Base (9 bảng) — gửi qua Gmail SMTP, tracking mở/click qua Cloudflare Worker, bounce qua IMAP. Chạy trên GitHub Actions, kích hoạt bằng HTTP repository_dispatch.",
+  "description": "Hệ thống Email Marketing trên Lark Base (9 bảng) — gửi qua Lark Mail SMTP, tracking mở/click qua Cloudflare Worker, bounce qua IMAP. Chạy trên GitHub Actions, kích hoạt CHỈ bằng HTTP repository_dispatch từ Lark (không cron).",
   "scripts": {
     "setup-tables": "node scripts/setup-tables.mjs",
     "check": "node scripts/check-setup.mjs",

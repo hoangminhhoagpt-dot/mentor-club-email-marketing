@@ -1,5 +1,5 @@
 /**
- * email.mjs — gửi email qua SMTP (Gmail) + chèn tracking (pixel mở, redirect click, link huỷ nhận).
+ * email.mjs — gửi email qua SMTP (Lark Mail) + chèn tracking (pixel mở, redirect click, link huỷ nhận).
  *
  * Tracking KHÔNG cần server riêng: mọi lượt mở/click/huỷ đi qua Cloudflare Worker
  * (CFG.tracker.baseUrl) rồi Worker ghi thẳng vào Lark bảng 12.5 / 12.9 / 12.6.

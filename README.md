@@ -1,10 +1,12 @@
 # Mentor Club — Hệ thống Email Marketing trên Lark Base
 
 Vận hành **9 bảng Email Marketing** (12.1 → 12.9) bằng script Node chạy trên **GitHub Actions**,
-kích hoạt qua **HTTP** (`repository_dispatch`) hoặc cron. Gửi email qua **Gmail SMTP**; tracking
-mở/click/huỷ nhận qua một **Cloudflare Worker** nhỏ; bắt mail lỗi (bounce) qua **IMAP**.
+kích hoạt **CHỈ qua HTTP** (`repository_dispatch`) từ Lark Base — **không dùng cron trên GitHub**.
+Gửi email qua **Lark Mail SMTP** (`smtp.larksuite.com`); tracking mở/click/huỷ nhận qua một
+**Cloudflare Worker** nhỏ; bắt mail lỗi (bounce) qua **IMAP** (`imap.larksuite.com`).
 
-> Không cần bật máy, không cần server riêng. Bấm nút trong Lark hoặc để cron tự chạy.
+> Không cần bật máy, không cần server riêng. Lark Base gọi HTTP là chạy; muốn chạy định kỳ thì
+> đặt lịch bằng **Lark Automation** (không phải cron GitHub).
 
 ## 9 bảng & script phụ trách
 
@@ -17,20 +19,20 @@ mở/click/huỷ nhận qua một **Cloudflare Worker** nhỏ; bắt mail lỗi 
 | 12.5 Báo cáo đọc Email | Lượt **mở** (pixel) | Cloudflare Worker `/o` |
 | 12.6 Huỷ nhận email | Người **huỷ nhận** | Worker `/u` + suppression |
 | 12.7 Lọc mail ảo | Kiểm cú pháp + MX + disposable | `filter-fake.mjs` |
-| 12.8 Danh sách mail lỗi | **Bounce** từ Gmail | `sync-bounces.mjs` (IMAP) |
+| 12.8 Danh sách mail lỗi | **Bounce** từ hộp thư | `sync-bounces.mjs` (IMAP) |
 | 12.9 Danh sách email click link | Lượt **click** link | Worker `/c` |
 
 ## Kiến trúc 1 phút
 
 ```
                  ┌─ cron / HTTP dispatch ─┐
-   Lark (nút) ─▶ GitHub Actions ─▶ Node scripts ─▶ Gmail SMTP ─▶ Người nhận
+   Lark (nút) ─▶ GitHub Actions ─▶ Node scripts ─▶ Lark Mail SMTP ─▶ Người nhận
                                      │  ▲                            │ mở/click
                         đọc/ghi 9 bảng│  │ suppression (12.6/12.7/12.8) │
                                      ▼  │                            ▼
                                  Lark Base ◀──── Cloudflare Worker (/o /c /u) ◀── pixel & link
                                      ▲
-                          bounce ────┘  sync-bounces.mjs ◀── IMAP Gmail
+                          bounce ────┘  sync-bounces.mjs ◀── IMAP Lark Mail
 ```
 
 ## Cài đặt (làm 1 lần)
@@ -38,7 +40,7 @@ mở/click/huỷ nhận qua một **Cloudflare Worker** nhỏ; bắt mail lỗi 
 Theo thứ tự, mỗi bước có file hướng dẫn trong `docs/`:
 
 1. **`docs/02-cap-quyen-lark.md`** — Cấp quyền app Lark trên Base + scope `wiki:node:read`, `bitable:app`.
-2. **`docs/01-cau-hinh-gmail-smtp.md`** — Bật 2FA + tạo **App Password** cho Gmail (SMTP + IMAP).
+2. **`docs/01-cau-hinh-lark-mail.md`** — Lấy **IMAP/SMTP password** của Lark Mail (SMTP + IMAP).
 3. Chạy `npm install` rồi `cp scripts/config.example.json scripts/config.local.json`, điền vào.
 4. `node scripts/check-setup.mjs` → phải xanh hết (Lark, app_token, 9 bảng, SMTP).
 5. `node scripts/setup-tables.mjs` → tạo các cột còn thiếu trong 9 bảng.
@@ -73,9 +75,9 @@ Trả **HTTP 204** = đã nhận. Xem kết quả ở tab **Actions**. Các `eve
 
 ## Lưu ý quan trọng
 
-- **Gmail có giới hạn gửi** (~500/ngày cá nhân, ~2.000/ngày Workspace) và dễ vào spam nếu gửi
-  marketing số lượng lớn. Script đã throttle + tôn trọng huỷ nhận/bounce, nhưng để gửi lớn nên
-  cân nhắc tên miền riêng + SPF/DKIM, hoặc chuyển sang ESP (Brevo/SendGrid) sau này.
-- **Bí mật** (app secret, mật khẩu ứng dụng Gmail) chỉ nằm trong `config.local.json` (đã .gitignore)
-  và **GitHub Secrets** — không bao giờ commit.
+- **Lark Mail có giới hạn gửi/ngày** theo gói + chính sách chống spam. Script đã throttle + tôn
+  trọng huỷ nhận/bounce/mail ảo. Để vào inbox tốt, bảo đảm tên miền có **SPF/DKIM/DMARC** đúng.
+  Muốn quy mô rất lớn: chuyển sang ESP (Brevo/SendGrid) sau này — chỉ đổi `email.mjs`.
+- **Bí mật** (app secret, mật khẩu IMAP/SMTP Lark Mail) chỉ nằm trong `config.local.json`
+  (đã .gitignore) và **GitHub Secrets** — không bao giờ commit.
 - Mọi tên cột có thể đổi trong `config.local.json → fields` nếu bảng thật của bạn khác mặc định.

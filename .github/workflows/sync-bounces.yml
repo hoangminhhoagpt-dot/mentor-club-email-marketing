@@ -1,13 +1,11 @@
-# ĐỒNG BỘ MAIL LỖI (12.8): đọc Gmail qua IMAP, bắt thư bounce (mailer-daemon) → ghi bảng lỗi.
+# ĐỒNG BỘ MAIL LỖI (12.8): đọc hộp thư Lark Mail qua IMAP, bắt thư bounce → ghi bảng lỗi.
+# KHÔNG dùng cron trên GitHub — chỉ chạy khi được gọi từ Lark Base (HTTP) hoặc bấm tay.
 # Chạy:
-#   1. TỰ ĐỘNG — cron mỗi 6 giờ.
+#   1. Từ Lark  — POST .../dispatches  body: {"event_type":"sync-bounces","client_payload":{"days":7}}
 #   2. Bấm tay  — Actions → sync-bounces → Run workflow.
-#   3. Qua HTTP — POST .../dispatches  body: {"event_type":"sync-bounces","client_payload":{"days":7}}
 name: sync-bounces
 
 on:
-  schedule:
-    - cron: "30 */6 * * *"        # mỗi 6 giờ
   repository_dispatch:
     types: [sync-bounces]
   workflow_dispatch:
@@ -33,6 +31,7 @@ jobs:
           LARK_WIKI_TOKEN: ${{ vars.LARK_WIKI_TOKEN || 'Sm0TwzxpUia6pWkRGCClLfnwgrf' }}
           LARK_APP_TOKEN: ${{ vars.LARK_APP_TOKEN }}
           TABLE_ERROR: ${{ github.event.client_payload.table_error || vars.TABLE_ERROR || 'tblNgcFWWyWI7erZ' }}
-          IMAP_USER: ${{ vars.IMAP_USER || vars.SMTP_USER }}
+          IMAP_HOST: ${{ vars.IMAP_HOST || 'imap.larksuite.com' }}
+          IMAP_USER: ${{ vars.IMAP_USER || vars.SMTP_USER || 'hoaguru2@hoangminhhoa.net' }}
           DAYS: ${{ github.event.client_payload.days || inputs.days || '3' }}
         run: node scripts/sync-bounces.mjs
