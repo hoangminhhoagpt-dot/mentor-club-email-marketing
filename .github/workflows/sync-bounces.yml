@@ -1,0 +1,38 @@
+# ĐỒNG BỘ MAIL LỖI (12.8): đọc Gmail qua IMAP, bắt thư bounce (mailer-daemon) → ghi bảng lỗi.
+# Chạy:
+#   1. TỰ ĐỘNG — cron mỗi 6 giờ.
+#   2. Bấm tay  — Actions → sync-bounces → Run workflow.
+#   3. Qua HTTP — POST .../dispatches  body: {"event_type":"sync-bounces","client_payload":{"days":7}}
+name: sync-bounces
+
+on:
+  schedule:
+    - cron: "30 */6 * * *"        # mỗi 6 giờ
+  repository_dispatch:
+    types: [sync-bounces]
+  workflow_dispatch:
+    inputs:
+      days:
+        description: "Số ngày quét lại (mặc định 3)"
+        required: false
+
+jobs:
+  run:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 20
+      - run: npm ci --omit=dev || npm install --omit=dev
+      - name: Đồng bộ bounce
+        env:
+          LARK_APP_SECRET: ${{ secrets.LARK_APP_SECRET }}
+          IMAP_PASS:       ${{ secrets.IMAP_PASS || secrets.SMTP_PASS }}
+          LARK_APP_ID:    ${{ vars.LARK_APP_ID    || 'cli_aa8cccd0b262deed' }}
+          LARK_WIKI_TOKEN: ${{ vars.LARK_WIKI_TOKEN || 'Sm0TwzxpUia6pWkRGCClLfnwgrf' }}
+          LARK_APP_TOKEN: ${{ vars.LARK_APP_TOKEN }}
+          TABLE_ERROR: ${{ github.event.client_payload.table_error || vars.TABLE_ERROR || 'tblNgcFWWyWI7erZ' }}
+          IMAP_USER: ${{ vars.IMAP_USER || vars.SMTP_USER }}
+          DAYS: ${{ github.event.client_payload.days || inputs.days || '3' }}
+        run: node scripts/sync-bounces.mjs

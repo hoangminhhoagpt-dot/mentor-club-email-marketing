@@ -1,0 +1,51 @@
+# Gửi chiến dịch NUÔI DƯỠNG 365 ngày (12.1 + 12.2).
+# Chạy:
+#   1. TỰ ĐỘNG mỗi ngày — cron 01:00 UTC = 08:00 VN.
+#   2. Bấm tay          — tab Actions → send-nurture → Run workflow.
+#   3. Qua HTTP         — POST https://api.github.com/repos/<user>/<repo>/dispatches
+#      body: {"event_type":"send-nurture"}
+name: send-nurture
+
+on:
+  schedule:
+    - cron: "0 1 * * *"           # 08:00 giờ VN (GitHub cron theo UTC, có thể trễ vài phút)
+  repository_dispatch:
+    types: [send-nurture]
+  workflow_dispatch:
+    inputs:
+      dry_run:
+        description: "true = chỉ mô phỏng, không gửi thật"
+        required: false
+        default: "false"
+
+jobs:
+  run:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 20
+      - run: npm ci --omit=dev || npm install --omit=dev
+      - name: Gửi email nuôi dưỡng
+        env:
+          # ---- BÍ MẬT → GitHub Secrets ----
+          LARK_APP_SECRET: ${{ secrets.LARK_APP_SECRET }}
+          SMTP_PASS:       ${{ secrets.SMTP_PASS }}
+          # ---- KHÔNG bí mật → Variables (client_payload ghi đè, có default sẵn) ----
+          LARK_APP_ID:    ${{ vars.LARK_APP_ID    || 'cli_aa8cccd0b262deed' }}
+          LARK_WIKI_TOKEN: ${{ vars.LARK_WIKI_TOKEN || 'Sm0TwzxpUia6pWkRGCClLfnwgrf' }}
+          LARK_APP_TOKEN: ${{ vars.LARK_APP_TOKEN }}
+          TABLE_NURTURE:  ${{ github.event.client_payload.table_nurture  || vars.TABLE_NURTURE  || 'tbltZ1K0MEVMA0hD' }}
+          TABLE_CAMPAIGN: ${{ github.event.client_payload.table_campaign || vars.TABLE_CAMPAIGN || 'tblSpd0cH3yVczMl' }}
+          TABLE_UNSUB:    ${{ vars.TABLE_UNSUB || 'tbldkFroNQJXjZRV' }}
+          TABLE_ERROR:    ${{ vars.TABLE_ERROR || 'tblNgcFWWyWI7erZ' }}
+          TABLE_FAKE:     ${{ vars.TABLE_FAKE  || 'tblZHQX8FrGp1kPf' }}
+          SMTP_USER:       ${{ vars.SMTP_USER }}
+          SMTP_FROM_EMAIL: ${{ vars.SMTP_FROM_EMAIL || vars.SMTP_USER }}
+          SMTP_FROM_NAME:  ${{ vars.SMTP_FROM_NAME || 'Mentor Club' }}
+          TRACKER_BASE_URL: ${{ vars.TRACKER_BASE_URL }}
+          SEND_PER_RUN_LIMIT: ${{ vars.SEND_PER_RUN_LIMIT || '400' }}
+          SEND_DELAY_MS:      ${{ vars.SEND_DELAY_MS || '1200' }}
+          DRY_RUN: ${{ github.event.client_payload.dry_run || inputs.dry_run || 'false' }}
+        run: node scripts/send-nurture.mjs

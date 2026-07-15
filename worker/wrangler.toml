@@ -1,0 +1,23 @@
+# Cloudflare Worker — endpoint tracking mở/click/huỷ nhận.
+# Deploy: xem docs/04-deploy-cloudflare-worker.md
+#   npm i -g wrangler
+#   wrangler login
+#   wrangler secret put LARK_APP_SECRET      # nhập app secret (KHÔNG để trong file này)
+#   wrangler deploy
+#
+# Sau khi deploy, lấy URL dạng https://mentor-club-tracker.<subdomain>.workers.dev
+# rồi điền vào config.local.json (tracker.baseUrl) và GitHub Variable TRACKER_BASE_URL.
+
+name = "mentor-club-tracker"
+main = "tracker.js"
+compatibility_date = "2024-11-01"
+
+[vars]
+LARK_DOMAIN   = "https://open.larksuite.com"
+LARK_APP_ID   = "cli_aa8cccd0b262deed"
+LARK_APP_TOKEN = ""          # app_token của Base (chạy check-setup.mjs để lấy, rồi điền vào đây)
+TABLE_OPEN    = "tblvxxe82dGYQXQv"   # 12.5 Báo cáo đọc Email
+TABLE_CLICK   = "tblw20eIsnURSIxC"   # 12.9 Danh sách email click link
+TABLE_UNSUB   = "tbldkFroNQJXjZRV"   # 12.6 Huỷ nhận email
+
+# LARK_APP_SECRET → đặt bằng: wrangler secret put LARK_APP_SECRET  (KHÔNG viết vào file)

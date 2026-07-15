@@ -1,0 +1,20 @@
+{
+  "name": "mentor-club-email-marketing",
+  "version": "1.0.0",
+  "private": true,
+  "type": "module",
+  "description": "Hệ thống Email Marketing trên Lark Base (9 bảng) — gửi qua Gmail SMTP, tracking mở/click qua Cloudflare Worker, bounce qua IMAP. Chạy trên GitHub Actions, kích hoạt bằng HTTP repository_dispatch.",
+  "scripts": {
+    "setup-tables": "node scripts/setup-tables.mjs",
+    "check": "node scripts/check-setup.mjs",
+    "filter-fake": "node scripts/filter-fake.mjs",
+    "send-nurture": "node scripts/send-nurture.mjs",
+    "send-newsletter": "node scripts/send-newsletter.mjs",
+    "sync-bounces": "node scripts/sync-bounces.mjs"
+  },
+  "dependencies": {
+    "nodemailer": "^6.9.16",
+    "imapflow": "^1.0.171",
+    "mailparser": "^3.7.2"
+  }
+}

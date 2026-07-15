@@ -1,0 +1,47 @@
+# Gửi EMAIL BẢNG TIN (12.3 + 12.4).
+# Chạy:
+#   1. Bấm tay  — tab Actions → send-newsletter → Run workflow (điền record_id nếu muốn gửi 1 dòng).
+#   2. Qua HTTP — POST https://api.github.com/repos/<user>/<repo>/dispatches
+#      body: {"event_type":"send-newsletter","client_payload":{"record_id":"recXXXX"}}
+#      (dùng cho NÚT BẤM trong Lark: tick 1 dòng 12.4 → gọi HTTP kèm record_id — xem docs/05)
+#   Không truyền record_id → gửi mọi dòng 12.4 trạng thái "Chờ gửi" (đến lịch).
+name: send-newsletter
+
+on:
+  repository_dispatch:
+    types: [send-newsletter]
+  workflow_dispatch:
+    inputs:
+      record_id:
+        description: "record_id của 1 dòng 12.4 (bỏ trống = gửi mọi dòng 'Chờ gửi')"
+        required: false
+
+jobs:
+  run:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 20
+      - run: npm ci --omit=dev || npm install --omit=dev
+      - name: Gửi email bảng tin
+        env:
+          LARK_APP_SECRET: ${{ secrets.LARK_APP_SECRET }}
+          SMTP_PASS:       ${{ secrets.SMTP_PASS }}
+          LARK_APP_ID:    ${{ vars.LARK_APP_ID    || 'cli_aa8cccd0b262deed' }}
+          LARK_WIKI_TOKEN: ${{ vars.LARK_WIKI_TOKEN || 'Sm0TwzxpUia6pWkRGCClLfnwgrf' }}
+          LARK_APP_TOKEN: ${{ vars.LARK_APP_TOKEN }}
+          TABLE_NL_MAIL: ${{ github.event.client_payload.table_nl_mail || vars.TABLE_NL_MAIL || 'tblykPorYc7WR7Ss' }}
+          TABLE_NL_LIST: ${{ github.event.client_payload.table_nl_list || vars.TABLE_NL_LIST || 'tbls6oZoxfUxZvkO' }}
+          TABLE_UNSUB:   ${{ vars.TABLE_UNSUB || 'tbldkFroNQJXjZRV' }}
+          TABLE_ERROR:   ${{ vars.TABLE_ERROR || 'tblNgcFWWyWI7erZ' }}
+          TABLE_FAKE:    ${{ vars.TABLE_FAKE  || 'tblZHQX8FrGp1kPf' }}
+          SMTP_USER:       ${{ vars.SMTP_USER }}
+          SMTP_FROM_EMAIL: ${{ vars.SMTP_FROM_EMAIL || vars.SMTP_USER }}
+          SMTP_FROM_NAME:  ${{ vars.SMTP_FROM_NAME || 'Mentor Club' }}
+          TRACKER_BASE_URL: ${{ vars.TRACKER_BASE_URL }}
+          SEND_PER_RUN_LIMIT: ${{ vars.SEND_PER_RUN_LIMIT || '400' }}
+          SEND_DELAY_MS:      ${{ vars.SEND_DELAY_MS || '1200' }}
+          RECORD_ID: ${{ github.event.client_payload.record_id || inputs.record_id }}
+        run: node scripts/send-newsletter.mjs

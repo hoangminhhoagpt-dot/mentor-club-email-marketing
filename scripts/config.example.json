@@ -1,0 +1,53 @@
+{
+  "_help": "Copy file này thành config.local.json rồi điền. KHÔNG commit config.local.json (đã .gitignore). Trên GitHub Actions thì để trống, dùng Secrets/Variables + client_payload thay thế.",
+
+  "larkDomain": "https://open.larksuite.com",
+  "larkAppId": "cli_aa8cccd0b262deed",
+  "larkAppSecret": "",
+
+  "wikiToken": "Sm0TwzxpUia6pWkRGCClLfnwgrf",
+  "appToken": "",
+
+  "tables": {
+    "nurtureList":    "tbltZ1K0MEVMA0hD",
+    "campaign365":    "tblSpd0cH3yVczMl",
+    "newsletterList": "tbls6oZoxfUxZvkO",
+    "newsletterMail": "tblykPorYc7WR7Ss",
+    "openReport":     "tblvxxe82dGYQXQv",
+    "unsubscribe":    "tbldkFroNQJXjZRV",
+    "fakeFilter":     "tblZHQX8FrGp1kPf",
+    "errorList":      "tblNgcFWWyWI7erZ",
+    "clickList":      "tblw20eIsnURSIxC"
+  },
+
+  "smtp": {
+    "host": "smtp.gmail.com",
+    "port": 465,
+    "secure": true,
+    "user": "you@gmail.com",
+    "pass": "app-password-16-ky-tu",
+    "fromName": "Mentor Club",
+    "fromEmail": "you@gmail.com"
+  },
+
+  "imap": {
+    "host": "imap.gmail.com",
+    "port": 993,
+    "user": "you@gmail.com",
+    "pass": "app-password-16-ky-tu"
+  },
+
+  "tracker": {
+    "baseUrl": "https://mentor-club-tracker.<subdomain>.workers.dev"
+  },
+
+  "send": {
+    "perRunLimit": 200,
+    "delayMs": 1500,
+    "dryRun": false
+  },
+
+  "fields": {
+    "_help": "Ghi đè tên cột nếu bảng thật của bạn khác mặc định. Bỏ trống = dùng tên mặc định dưới đây (đúng với setup-tables.mjs)."
+  }
+}

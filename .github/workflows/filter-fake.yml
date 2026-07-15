@@ -1,0 +1,43 @@
+# LỌC MAIL ẢO (12.7): kiểm cú pháp + domain dùng 1 lần + bản ghi MX.
+# Chạy:
+#   1. Bấm tay  — Actions → filter-fake → Run workflow.
+#   2. Qua HTTP — POST .../dispatches  body: {"event_type":"filter-fake","client_payload":{"emails":"a@x.com,b@y.com","all":false}}
+name: filter-fake
+
+on:
+  repository_dispatch:
+    types: [filter-fake]
+  workflow_dispatch:
+    inputs:
+      emails:
+        description: "Danh sách email cần thêm & kiểm (phân tách bởi dấu phẩy)"
+        required: false
+      all:
+        description: "true = kiểm lại toàn bộ dòng (kể cả đã có kết quả)"
+        required: false
+        default: "false"
+
+jobs:
+  run:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 20
+      - run: npm ci --omit=dev || npm install --omit=dev
+      - name: Lọc mail ảo
+        env:
+          LARK_APP_SECRET: ${{ secrets.LARK_APP_SECRET }}
+          LARK_APP_ID:    ${{ vars.LARK_APP_ID    || 'cli_aa8cccd0b262deed' }}
+          LARK_WIKI_TOKEN: ${{ vars.LARK_WIKI_TOKEN || 'Sm0TwzxpUia6pWkRGCClLfnwgrf' }}
+          LARK_APP_TOKEN: ${{ vars.LARK_APP_TOKEN }}
+          TABLE_FAKE: ${{ github.event.client_payload.table_fake || vars.TABLE_FAKE || 'tblZHQX8FrGp1kPf' }}
+          EMAILS: ${{ github.event.client_payload.emails || inputs.emails }}
+        run: |
+          ALL="${{ github.event.client_payload.all || inputs.all }}"
+          if [ "$ALL" = "true" ]; then
+            node scripts/filter-fake.mjs --all
+          else
+            node scripts/filter-fake.mjs
+          fi
