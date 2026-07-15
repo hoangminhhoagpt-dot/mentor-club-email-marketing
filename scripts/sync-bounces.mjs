@@ -18,17 +18,22 @@ const DAYS = Number(process.env.DAYS || 3);
 const DAY_MS = 86400000;
 
 function parseBounce(src) {
-  const rcpt = src.match(/Final-Recipient:\s*rfc822;\s*<?([^\s>;]+@[^\s>;]+)>?/i)
-            || src.match(/Original-Recipient:\s*rfc822;\s*<?([^\s>;]+@[^\s>;]+)>?/i);
-  if (!rcpt) return null;
-  const email = normEmail(rcpt[1]);
-  const status = (src.match(/Status:\s*([245]\.\d+\.\d+)/i) || [])[1] || "";
-  const diag = (src.match(/Diagnostic-Code:\s*([^\r\n]+)/i) || [])[1] || "";
-  let type = "Khác";
-  if (/^5\./.test(status) || /\b55[0-9]\b/.test(diag)) type = "Hard bounce";
-  else if (/^4\./.test(status) || /\b45[0-9]\b/.test(diag)) type = "Soft bounce";
+  const s = src.replace(/=\r?\n/g, "");                    // gỡ soft-break quoted-printable
+  // 1) DSN chuẩn (Gmail/Outlook/… phòng khi đổi nhà cung cấp)
+  let m = s.match(/Final-Recipient:\s*rfc822;\s*<?([^\s<>;"]+@[^\s<>;"]+)>?/i)
+       || s.match(/Original-Recipient:\s*rfc822;\s*<?([^\s<>;"]+@[^\s<>;"]+)>?/i);
+  // 2) Định dạng Lark Mail: dòng "Email delivery failed <email>"
+  if (!m) m = s.match(/Email delivery failed[:\s]+<?([A-Za-z0-9._%+\-]+@[A-Za-z0-9.\-]+\.[A-Za-z]{2,})>?/i);
+  if (!m) return null;
+  const email = normEmail(m[1]);
+  const status = (s.match(/Status:\s*([245]\.\d+\.\d+)/i) || [])[1] || "";
+  const diag = (s.match(/Diagnostic-Code:\s*([^\r\n]+)/i) || [])[1]
+            || (s.match(/Email delivery failed[^\r\n<]*/i) || [])[0] || "";
+  // Lark chỉ dội thư lại sau khi đã bỏ cuộc → mặc định coi là Hard, chỉ hạ xuống Soft nếu thấy mã 4.x.x
+  let type = "Hard bounce";
+  if (/^4\./.test(status) || /\b45\d\b/.test(diag)) type = "Soft bounce";
   const detail = [status && `Status ${status}`, diag].filter(Boolean).join(" — ").slice(0, 500);
-  return { email, type, detail: detail || "Bounce (không rõ mã)" };
+  return { email, type, detail: detail || "Bounce (Lark)" };
 }
 
 (async () => {
