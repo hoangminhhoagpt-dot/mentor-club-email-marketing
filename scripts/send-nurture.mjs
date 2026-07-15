@@ -47,6 +47,7 @@ const asMs = (v) => {
     if (d > maxDay) maxDay = d;
   }
   if (!byDay.size) { console.log("Bảng 12.2 chưa có nội dung ngày nào (đang bật). Dừng."); return; }
+  const sortedDays = [...byDay.keys()].sort((a, b) => a - b);      // cho phép lịch THƯA (1,3,5,8…)
 
   // ---- suppression ----
   const blocked = await buildSuppression(CFG);
@@ -78,11 +79,15 @@ const asMs = (v) => {
     if (dayIndex < 1) { skipped++; continue; }                           // chưa tới ngày bắt đầu
 
     const lastStep = num(getText(r.fields, nStep)) || 0;
-    const targetStep = lastStep + 1;
-    if (targetStep > dayIndex) { skipped++; continue; }                  // đã gửi kịp lịch, chờ ngày mai
-    if (targetStep > maxDay) {                                            // vượt qua nội dung cuối → hoàn thành
-      await updateRecord(CFG, CFG.tables.nurtureList, r.record_id, { [nStatus]: "Hoàn thành" });
-      done++; continue;
+    // Ngày kế tiếp CÓ nội dung, chưa gửi (>lastStep) và đã tới hạn (<=dayIndex).
+    // Nhờ vậy chuỗi có thể THƯA (1,3,5,8…) mà vẫn gửi tuần tự, mỗi lần chạy đẩy 1 bước.
+    const targetStep = sortedDays.find((d) => d > lastStep && d <= dayIndex);
+    if (targetStep == null) {                                            // đã đuổi kịp lịch, hoặc hết chuỗi
+      if (lastStep >= maxDay && lastStep > 0) {
+        await updateRecord(CFG, CFG.tables.nurtureList, r.record_id, { [nStatus]: "Hoàn thành" });
+        done++;
+      } else skipped++;
+      continue;
     }
     const content = byDay.get(targetStep);
     if (!content || !content.subject) { skipped++; continue; }           // ngày này chưa soạn nội dung → chờ

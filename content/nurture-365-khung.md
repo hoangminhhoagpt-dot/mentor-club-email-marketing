@@ -1,0 +1,279 @@
+# Khung nội dung — Chuỗi Email Nuôi Dưỡng 365 ngày (Mentor Club)
+
+Nội dung để đổ vào **bảng 12.2 Chiến dịch Email 365 ngày** (cột `Ngày` · `Tiêu đề` · `Nội dung` · `Kích hoạt`).
+Mỗi người trong 12.1 nhận **tuần tự** theo số ngày kể từ "Ngày bắt đầu". Cá nhân hóa bằng `{{name}}`
+(tự thành "bạn" nếu trống) và `{{email}}` — dùng được cả trong **Tiêu đề** lẫn **Nội dung**.
+
+> **Lịch có thể THƯA:** không cần đủ 365 ngày liên tục. Điền ngày nào có ngày đó (1, 3, 5, 8…),
+> hệ vẫn gửi đúng thứ tự, mỗi lần chạy đẩy 1 bước. Khuyến nghị dùng nhịp giảm dần bên dưới
+> (~90 email/năm) để nuôi dưỡng cả năm mà người đọc không mệt.
+
+---
+
+## 1. Nguyên tắc (đọc trước khi viết)
+
+- **1 email = 1 ý.** Đừng nhồi. Mỗi email chỉ chốt lại **một** bài học/một hành động.
+- **Kể chuyện trước, dạy sau.** Người ta quên lời khuyên nhưng nhớ câu chuyện. (Chaperon — Soap Opera Sequence)
+- **Dịch chuyển niềm tin, không thuyết giảng.** Gỡ từng niềm tin sai đang cản khách hành động (Brunson).
+- **Cho đi thật, bán ít thôi.** Tỷ lệ ~80% giá trị / 20% lời mời. Bán quá dày → huỷ nhận.
+- **Luôn có 1 CTA duy nhất** mỗi email: đọc tiếp / trả lời / bấm link / tham gia.
+- **Viết như nói với 1 người.** "Bạn", "{{name}}", ngôi thứ nhất, câu ngắn.
+- **Hook 2 dòng đầu quyết định mở hay không.** (theo skill `hmh-mkt-hook-video`)
+
+## 2. Bảy trụ nội dung (xoay vòng cả năm)
+
+| # | Trụ | Mục tiêu | Skill nền |
+|---|---|---|---|
+| 1 | 🧠 Tư duy & Kỷ luật | Xây niềm tin, động lực gốc | pain↔pleasure |
+| 2 | 🎯 Mục tiêu & Mô hình KD | Nghĩ như CEO, biết điểm hòa vốn | `hmh-sale-ke-hoach-loi-nhuan` |
+| 3 | 📢 Marketing & Content | Ra content hút khách | `hmh-mkt-content-*`, `hook-video` |
+| 4 | 💰 Bán hàng & Chốt đơn | Bán được, xử lý từ chối | `hmh-sale-xu-ly-tu-choi`, `dinh-gia-offer` |
+| 5 | ⚙️ Hệ thống & AI (AIOS) | Tự động hóa, nhân bản | các skill `AIOS-*` |
+| 6 | 👤 Thương hiệu cá nhân | Được tin, được nhớ | brand |
+| 7 | ❤️ Câu chuyện & Bằng chứng | Xây niềm tin → mời tham gia | case study |
+
+## 3. Khung 1 email (template dán nhanh)
+
+```
+Tiêu đề: <tò mò + lợi ích, ≤ 9 từ; có thể chèn {{name}}>
+
+Chào {{name}},
+
+<HOOK 1–2 câu: một câu gây tò mò / một tuyên bố ngược đời / một câu hỏi đúng nỗi đau>
+
+<THÂN: 1 câu chuyện ngắn HOẶC 1 ý giá trị. Cụ thể, có chi tiết, có con số.>
+
+<BÀI HỌC: rút gọn thành 1 câu người đọc mang đi được.>
+
+<CTA: đúng 1 hành động — "Trả lời email này…", "Bấm xem…", "Tham gia…">
+
+Thân mến,
+Hoàng Minh Hóa
+P.S. <nhắc lại CTA hoặc thả mồi cho email sau>
+```
+
+**Công thức tiêu đề** (chọn 1): Con số + kết quả · Sai lầm + hậu quả · Câu hỏi đúng nỗi đau ·
+Tò mò mở vòng lặp · "Cách + kết quả mơ ước + không cần điều khách ngại".
+
+## 4. Nhịp gửi 365 ngày (các "Ngày" nên có email)
+
+| Giai đoạn | Ngày (offset) | Nhịp | Số email |
+|---|---|---|---|
+| Chào mừng (Soap Opera) | 1–7 | mỗi ngày | 7 |
+| Làm quen | 9,11,13,15,18,21,24,27,30 | cách ngày | 9 |
+| Quý 1 chiều sâu | 33→90 (2 lần/tuần) | 2/tuần | ~17 |
+| Quý 2 | 91–180 (2 lần/tuần) | 2/tuần | ~26 |
+| Quý 3–4 | 181–365 (1 lần/tuần) | 1/tuần | ~26 |
+
+≈ **85–90 email/năm**. Muốn dày hơn thì thêm ngày; ít hơn thì bỏ bớt — hệ tự thích ứng.
+
+---
+
+## 5. 10 email viết sẵn (Ngày 1–10) — dán thẳng vào 12.2
+
+> Giọng Hoàng Minh Hóa. Thay chữ ký/thông tin nếu cần. HTML đơn giản đã ổn để gửi.
+
+### Ngày 1 — Chào mừng + lời hứa
+**Tiêu đề:** `{{name}} ơi, bắt đầu từ đây`
+```html
+<p>Chào {{name}},</p>
+<p>Cảm ơn bạn đã bước vào đây. Mình là Hoàng Minh Hóa — và mình hứa một điều: mỗi email
+mình gửi bạn sẽ luôn có <b>một thứ dùng được ngay</b>, không lý thuyết suông.</p>
+<p>Trong vài ngày tới mình sẽ kể bạn nghe mình đã đi từ con số 0 tới một hệ thống kinh doanh
+tự chạy như thế nào — và quan trọng hơn: <b>bạn cũng làm được</b>, kể cả khi đang bận, ít vốn,
+hay chưa biết bắt đầu từ đâu.</p>
+<p>Hôm nay chỉ cần bạn làm 1 việc: <b>trả lời email này</b>, cho mình biết bạn đang mắc ở đâu
+nhất (khách, tiền, thời gian, hay hệ thống?). Mình đọc hết.</p>
+<p>Hẹn bạn ngày mai.</p>
+<p>Thân mến,<br>Hoàng Minh Hóa</p>
+<p><i>P.S. Ngày mai mình kể bạn nghe sai lầm khiến mình suýt bỏ cuộc — và bài học đắt nhất đời mình.</i></p>
+```
+
+### Ngày 2 — Câu chuyện gốc (đáy vực)
+**Tiêu đề:** `Lúc mình gần bỏ cuộc`
+```html
+<p>Chào {{name}},</p>
+<p>Có giai đoạn mình làm quần quật 14 tiếng/ngày mà tài khoản vẫn về 0 cuối tháng. Mình từng
+nghĩ: "chắc mình không hợp kinh doanh".</p>
+<p>Sai lầm lớn nhất của mình lúc đó không phải lười — mà là <b>chăm chỉ sai chỗ</b>: mình bán
+bằng sức, đổi giờ lấy tiền, không có hệ thống. Hết sức là hết tiền.</p>
+<p><b>Bài học:</b> nếu thu nhập của bạn dừng lại khi bạn dừng tay, thì bạn chưa có doanh nghiệp —
+bạn đang có một công việc mệt hơn đi làm thuê.</p>
+<p>Bạn có đang rơi vào cái bẫy "đổi giờ lấy tiền" không? Trả lời mình một chữ: <b>Có</b> hoặc <b>Không</b>.</p>
+<p>Thân mến,<br>Hoàng Minh Hóa</p>
+<p><i>P.S. Ngày mai: khoảnh khắc mình nhận ra thứ đã thay đổi tất cả.</i></p>
+```
+
+### Ngày 3 — Bước ngoặt (phát hiện "chiếc xe")
+**Tiêu đề:** `Thứ đã thay đổi tất cả`
+```html
+<p>Chào {{name}},</p>
+<p>Bước ngoặt của mình đến từ một câu hỏi đơn giản: <i>"Việc nào mình đang làm mà máy móc/quy
+trình có thể làm thay?"</i></p>
+<p>Mình bắt đầu ghi lại từng việc lặp đi lặp lại rồi biến nó thành <b>hệ thống</b>: content ra đều
+mà không cần ngồi nghĩ mỗi ngày, khách được chăm sóc tự động, bán hàng theo kịch bản. Mình gọi
+đó là <b>AIOS — hệ điều hành vận hành bằng AI</b>.</p>
+<p>Lần đầu tiên, mình nghỉ 3 ngày mà tiền vẫn về.</p>
+<p><b>Bài học:</b> đừng làm nhiều hơn — hãy <b>hệ thống hóa</b> thứ bạn đang làm.</p>
+<p>Mai mình sẽ gỡ cho bạn niềm tin sai số 1 đang giữ chân hầu hết mọi người.</p>
+<p>Thân mến,<br>Hoàng Minh Hóa</p>
+```
+
+### Ngày 4 — Dịch chuyển niềm tin ("cần vốn lớn/giỏi mới bắt đầu")
+**Tiêu đề:** `"Chờ đủ giỏi rồi làm" — bẫy đấy`
+```html
+<p>Chào {{name}},</p>
+<p>Niềm tin đắt giá nhất mình phải bỏ đi: <i>"Phải đủ vốn / đủ giỏi / đủ sẵn sàng rồi mới bắt đầu."</i></p>
+<p>Sự thật: bạn giỏi lên <b>nhờ bắt đầu</b>, không phải trước khi bắt đầu. Người đi trước không
+thông minh hơn bạn — họ chỉ ra sân sớm hơn và sửa sai nhanh hơn.</p>
+<p><b>Bài học:</b> khởi động nhỏ, ra mắt sớm, sửa dần. "Xong" tốt hơn "hoàn hảo".</p>
+<p>Hôm nay chọn 1 việc bạn đang trì hoãn vì "chưa sẵn sàng" và làm 10% của nó. Chỉ 10% thôi.</p>
+<p>Thân mến,<br>Hoàng Minh Hóa</p>
+<p><i>P.S. Mai mình tặng bạn một "quick win" làm được trong 15 phút.</i></p>
+```
+
+### Ngày 5 — Quick win (làm được ngay)
+**Tiêu đề:** `15 phút, 1 khách hàng gần hơn`
+```html
+<p>Chào {{name}},</p>
+<p>Bài tập 15 phút hôm nay — làm là thấy kết quả:</p>
+<ol>
+<li>Viết ra <b>1 nỗi đau</b> lớn nhất của khách bạn (dùng đúng từ họ hay nói).</li>
+<li>Viết 1 câu mở đầu (hook) chạm đúng nỗi đau đó.</li>
+<li>Đăng 1 post/story ngắn xoay quanh nó, kết bằng 1 câu hỏi.</li>
+</ol>
+<p><b>Vì sao hiệu quả:</b> content chạm nỗi đau thật luôn thắng content "hay mà chung chung".</p>
+<p>Làm xong, trả lời email này dán cho mình cái hook của bạn — mình góp ý cho.</p>
+<p>Thân mến,<br>Hoàng Minh Hóa</p>
+```
+
+### Ngày 6 — Bằng chứng (case study)
+**Tiêu đề:** `Chị ấy làm được, bạn cũng thế`
+```html
+<p>Chào {{name}},</p>
+<p>Một học viên của mình — bán hàng nhỏ, không có ê-kíp — áp dụng đúng 2 thứ: một <b>offer rõ ràng</b>
+và một <b>quy trình chăm khách tự động</b>. Sau 60 ngày, chị ấy tăng đơn mà làm ít giờ hơn.</p>
+<p>Chị ấy không giỏi công nghệ. Chị ấy chỉ làm theo hệ thống, từng bước.</p>
+<p><b>Bài học:</b> kết quả đến từ <b>hệ thống đúng</b>, không phải tố chất đặc biệt.</p>
+<p>Nếu bạn muốn mình chỉ bạn dựng hệ thống đó, vài ngày nữa mình sẽ mở một cánh cửa. Cứ đọc email nhé.</p>
+<p>Thân mến,<br>Hoàng Minh Hóa</p>
+```
+
+### Ngày 7 — Lời mời mềm (tài nguyên miễn phí / Mentor Club)
+**Tiêu đề:** `Quà cho {{name}}`
+```html
+<p>Chào {{name}},</p>
+<p>Một tuần qua bạn đã đi cùng mình từ "làm bằng sức" tới tư duy "làm bằng hệ thống". Giờ mình
+muốn tặng bạn bước tiếp theo.</p>
+<p>Mình để dành cho bạn một tài nguyên giúp bạn bắt tay dựng hệ thống đầu tiên: <a href="https://mentorcamp.vn">Xem tại đây</a>.</p>
+<p>Miễn phí, dùng được ngay. Không điều kiện.</p>
+<p><b>Bài học tuần này:</b> đừng cố làm nhiều hơn — hãy dựng hệ thống làm thay bạn.</p>
+<p>Thân mến,<br>Hoàng Minh Hóa</p>
+<p><i>P.S. Từ tuần sau mình sẽ đi sâu từng mảng: content, bán hàng, tự động hóa. Cứ mở email nhé {{name}}.</i></p>
+```
+
+### Ngày 8 — Trụ Content: nội dung hút khách
+**Tiêu đề:** `Vì sao content của bạn ít người xem`
+```html
+<p>Chào {{name}},</p>
+<p>90% content thất bại ở <b>2 giây đầu</b>. Không phải nội dung dở — mà mở đầu không "chống lướt".</p>
+<p>Một hook tốt cho người xem 2 thứ trong tích tắc: <b>biết nói về gì</b> và <b>thấy liên quan tới mình</b>.</p>
+<p><b>Thử ngay:</b> lấy 1 post cũ, viết lại 2 dòng đầu theo kiểu "Sai lầm khiến [đối tượng] mãi không [kết quả]".</p>
+<p>Thân mến,<br>Hoàng Minh Hóa</p>
+```
+
+### Ngày 9 — Trụ Bán hàng: xử lý "để suy nghĩ"
+**Tiêu đề:** `Khi khách nói "để em suy nghĩ"`
+```html
+<p>Chào {{name}},</p>
+<p>"Để em suy nghĩ" hiếm khi là về suy nghĩ — nó là một <b>nỗi lo chưa được gọi tên</b>.</p>
+<p>Lần tới, thử hỏi nhẹ: <i>"Dạ vâng ạ. Cho em hỏi thật, điều khiến mình còn băn khoăn nhất là
+giá, thời gian, hay chưa chắc hợp ạ?"</i> — cô lập đúng nỗi lo rồi mới gỡ.</p>
+<p><b>Bài học:</b> đừng thuyết phục chồng lên phản đối — hãy <b>tìm phản đối thật</b> rồi xử lý đúng nó.</p>
+<p>Thân mến,<br>Hoàng Minh Hóa</p>
+```
+
+### Ngày 10 — Trụ Tư duy: đòn bẩy thời gian
+**Tiêu đề:** `Bận không phải là huy hiệu`
+```html
+<p>Chào {{name}},</p>
+<p>Bận rộn dễ gây nghiện vì nó khiến ta <i>thấy</i> mình quan trọng. Nhưng bận ≠ hiệu quả.</p>
+<p>Cuối tuần này thử: liệt kê mọi việc bạn làm, khoanh <b>3 việc tạo ra tiền</b>, và <b>1 việc
+lặp đi lặp lại</b> có thể giao/tự động hóa. Tuần sau bỏ bớt việc — giữ đòn bẩy.</p>
+<p><b>Bài học:</b> tăng trưởng đến từ việc <b>bỏ đúng việc</b>, không phải thêm việc.</p>
+<p>Thân mến,<br>Hoàng Minh Hóa</p>
+```
+
+---
+
+## 6. Kế hoạch chi tiết Quý 1 (Ngày 1–90)
+
+`Kích hoạt` = Bật cho tất cả. Ngày 1–10 dùng bản viết sẵn ở mục 5.
+
+| Ngày | Tiêu đề (gợi ý) | Trụ | Mục tiêu | CTA |
+|---|---|---|---|---|
+| 1 | {{name}} ơi, bắt đầu từ đây | 7 | Chào mừng, đặt kỳ vọng | Trả lời |
+| 2 | Lúc mình gần bỏ cuộc | 7 | Kể chuyện, đồng cảm | Trả lời Có/Không |
+| 3 | Thứ đã thay đổi tất cả | 5 | Giới thiệu "hệ thống/AIOS" | Đọc tiếp |
+| 4 | "Chờ đủ giỏi rồi làm" — bẫy đấy | 1 | Gỡ niềm tin sai | Làm 10% |
+| 5 | 15 phút, 1 khách hàng gần hơn | 3 | Quick win | Gửi hook |
+| 6 | Chị ấy làm được, bạn cũng thế | 7 | Bằng chứng | Đọc tiếp |
+| 7 | Quà cho {{name}} | 7 | Lời mời mềm | Bấm link |
+| 8 | Vì sao content của bạn ít người xem | 3 | Dạy hook | Viết lại 2 dòng |
+| 9 | Khi khách nói "để em suy nghĩ" | 4 | Xử lý từ chối | Áp dụng |
+| 10 | Bận không phải là huy hiệu | 1 | Đòn bẩy thời gian | Liệt kê việc |
+| 11 | Định giá: bạn đang bán quá rẻ | 4 | Định giá theo giá trị | Xem lại bảng giá |
+| 13 | 1 khách = bao nhiêu tiền cả đời? | 2 | Tư duy LTV | Tính thử |
+| 15 | Content 30 ngày không cần nghĩ mỗi sáng | 3 | Hệ thống content | Bấm xem |
+| 18 | Bạn đang bán cho ai? (đừng trả lời "mọi người") | 3 | Chân dung khách | Viết 1 chân dung |
+| 21 | Offer khiến khách "không thể từ chối" | 4 | Grand Slam Offer | Phác 1 offer |
+| 24 | Mình tự động hóa việc đăng bài thế nào | 5 | AIOS thực chiến | Đọc tiếp |
+| 27 | 3 câu chốt đơn mình dùng nhiều nhất | 4 | Kỹ thuật chốt | Lưu lại |
+| 30 | 30 ngày rồi — bạn đã khác chưa? | 1 | Nhìn lại + mời | Trả lời |
+| 33 | Điểm hòa vốn: con số CEO nào cũng phải biết | 2 | Break-even | Tính điểm hòa vốn |
+| 37 | Vì sao mình bỏ 80% việc đang làm | 5 | Ưu tiên & đòn bẩy | Bỏ 1 việc |
+| 40 | Câu chuyện: từ 0 khách tới kín lịch | 7 | Case study | Đọc |
+| 44 | Viết tiêu đề khiến người ta phải mở | 3 | Hook/subject | Viết 5 tiêu đề |
+| 47 | Bán hàng là phục vụ, không phải nài nỉ | 1 | Tư duy bán hàng | Ngẫm |
+| 51 | Phễu 4 tầng: khách tự đi từ lạ tới thân | 2 | Value ladder | Vẽ phễu |
+| 54 | Thương hiệu cá nhân: được nhớ vì điều gì? | 6 | Positioning | Viết 1 câu định vị |
+| 58 | Mình dùng AI để trả lời khách thế nào | 5 | AI vận hành | Thử 1 tác vụ |
+| 61 | Sai lầm định giá khiến bạn nghèo đi khi bán nhiều | 4 | Định giá | Rà biên lãi |
+| 65 | 1 trang bán hàng "chốt" gồm gì? | 3 | Landing page | Xem mẫu |
+| 68 | Kỷ luật > động lực (và cách giữ nó) | 1 | Kỷ luật | Chọn 1 thói quen |
+| 72 | Bằng chứng: học viên tăng đơn sau 60 ngày | 7 | Case + mời | Bấm xem |
+| 75 | Nội dung tri thức: cho đi để được tin | 3 | Content tri thức | Viết 1 bài |
+| 79 | Xử lý "đắt quá" mà không giảm giá | 4 | Xử lý từ chối | Áp dụng |
+| 82 | Hệ thống hóa: biến bạn thành 3 người | 5 | SOP/tự động | Ghi 1 quy trình |
+| 86 | Mục tiêu quý tới của bạn là gì? | 2 | Đặt mục tiêu | Viết mục tiêu |
+| 90 | Hết quý 1 — mời bạn đi xa hơn | 7 | Lời mời (offer) | Tham gia |
+
+## 7. Quý 2–4 (Ngày 91–365) — chủ đề theo tháng
+
+Mỗi tháng chọn 1 trụ chính, xen câu chuyện + 1 lời mời cuối tháng. Gợi ý ~6 chủ đề/tháng (tự đặt "Ngày" theo nhịp 2/tuần rồi 1/tuần).
+
+- **Tháng 4 — Marketing chiều sâu:** nghiên cứu thị trường · ngôn ngữ khách · cụm nội dung · viral hook · lịch content · đo lường.
+- **Tháng 5 — Bán hàng nâng cao:** kịch bản tư vấn 4P · 7 kỹ thuật xử lý từ chối · 11 cách chốt · upsell/cross-sell · chăm sóc sau bán · lời mời.
+- **Tháng 6 — Định giá & Offer:** phương trình giá trị · 3 tầng giá · combo/bảo hành · neo giá · nâng giá không mất khách · case.
+- **Tháng 7 — Hệ thống & AIOS:** SOP · tự động đăng bài · đồng bộ dữ liệu · AI trả lời khách · email marketing (chính hệ này!) · nhân bản.
+- **Tháng 8 — Thương hiệu cá nhân:** câu chuyện thương hiệu · nội dung trụ cột · nhất quán · uy tín/bằng chứng · kênh chủ lực · lời mời.
+- **Tháng 9 — Tư duy CEO:** mô hình kinh doanh (BMC) · dòng tiền · điểm hòa vốn · tuyển & giao việc · rủi ro · tầm nhìn năm.
+- **Tháng 10 — Nhân rộng:** phễu tự động · quảng cáo cơ bản · đối tác/Dream 100 · sản phẩm số · cộng đồng · lời mời.
+- **Tháng 11 — Thực chiến & Case:** 4 câu chuyện học viên + 2 bài "hậu trường thất bại & bài học".
+- **Tháng 12 — Tổng kết & Cam kết:** nhìn lại 1 năm · bài học lớn nhất · đặt mục tiêu năm mới · tri ân · lời mời đặc biệt cuối năm.
+
+---
+
+## 8. Cá nhân hóa & mẹo
+
+- `{{name}}` → tên khách (cột **Tên** ở 12.1). Trống → tự thành **"bạn"**. Dùng được cả ở Tiêu đề.
+- `{{email}}` → địa chỉ người nhận (ít dùng, chủ yếu để nhắc "email {{email}} của bạn…").
+- Nhét `{{name}}` ở **tiêu đề** thỉnh thoảng (không phải mọi email) để tự nhiên.
+- Mỗi email chỉ **1 link/CTA** để không loãng và dễ đo click (12.9).
+- Cuối chuỗi (Ngày 365) subscriber tự chuyển **"Hoàn thành"** — có thể lọc nhóm này để mời gói cao hơn.
+
+## 9. Đưa nội dung vào bảng 12.2
+
+- **Cách 1 — tay:** mở 12.2, mỗi email 1 dòng: điền `Ngày` (offset), `Tiêu đề`, dán HTML vào `Nội dung`, `Kích hoạt` = Bật.
+- **Cách 2 — hàng loạt:** đưa mình bảng nội dung (hoặc để mình sinh script đọc file này) → mình bulk-insert bằng API vào 12.2 trong 1 phút.
+- Muốn **tắt tạm** 1 ngày mà không xóa: đặt `Kích hoạt` = Tắt.

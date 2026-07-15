@@ -78,7 +78,9 @@ export async function sendOne(transport, CFG, { to, name, subject, html, campaig
   const base = CFG.tracker.baseUrl;
   const unsubUrl = base ? `${base}/u?t=${token}` : undefined;
 
-  const rendered = renderTemplate(html, { name: name || "", email, unsubscribe_url: unsubUrl || "" });
+  const vars = { name: name || "bạn", email, unsubscribe_url: unsubUrl || "" };   // fallback tên = "bạn"
+  const rendered = renderTemplate(html, vars);
+  const subj = renderTemplate(subject, vars);                                     // cá nhân hóa cả tiêu đề
   let doc = ensureHtmlDoc(rendered);
   doc = injectTracking(doc, { base, token, unsubUrl });
 
@@ -93,7 +95,7 @@ export async function sendOne(transport, CFG, { to, name, subject, html, campaig
     return { ok: true, skipped: true, messageId: "(dry-run)" };
   }
   try {
-    const info = await transport.sendMail({ from, to: email, subject, html: doc, headers });
+    const info = await transport.sendMail({ from, to: email, subject: subj, html: doc, headers });
     return { ok: true, messageId: info.messageId };
   } catch (e) {
     return { ok: false, error: e.message || String(e) };
