@@ -5,13 +5,25 @@
  * Chạy: node scripts/check-setup.mjs
  */
 import nodemailer from "nodemailer";
-import { loadConfig, larkToken, resolveAppToken, listFields, SCHEMA } from "./lib.mjs";
+import { loadConfig, larkToken, resolveAppToken, listFields, loadItto, SCHEMA } from "./lib.mjs";
 
 const CFG = loadConfig();
 const ok = (b) => (b ? "✔" : "✘");
 
 (async () => {
   console.log("== Kiểm tra cấu hình mentor-club-email-marketing ==\n");
+
+  // 0) itto.yaml — hợp đồng ITTO (đủ 4 mục + danh sách secret)
+  try {
+    const itto = await loadItto();
+    const miss = ["input", "tech", "tool", "output"].filter((k) => !itto[k]);
+    if (miss.length) console.log(`${ok(false)} itto.yaml thiếu mục: ${miss.join(", ")}`);
+    else console.log(`${ok(true)} itto.yaml — ${itto.package} v${itto.version} · đủ 4 mục I-T-T-O`);
+    const secrets = itto.input?.secrets || [];
+    const envMiss = secrets.filter((s) => !process.env[s]);
+    console.log(`${ok(envMiss.length === 0)} Secret trong ENV: ${
+      envMiss.length ? "thiếu " + envMiss.join(", ") + "  (bình thường nếu chạy máy — dùng config.local.json)" : "đủ"}`);
+  } catch (e) { console.log(`${ok(false)} itto.yaml: ${e.message}`); }
 
   // 1) Lark token
   try { await larkToken(CFG); console.log(`${ok(true)} Lark token (app ${CFG.larkAppId})`); }

@@ -11,6 +11,15 @@ import { fileURLToPath } from "node:url";
 
 const __dirname = path.dirname(fileURLToPath(import.meta.url));
 export const DEFAULT_CONFIG = path.join(__dirname, "config.local.json");
+export const ITTO_PATH = path.join(__dirname, "..", "itto.yaml");
+
+/** Đọc hợp đồng itto.yaml (cần gói 'yaml' → npm install). */
+export async function loadItto(p = ITTO_PATH) {
+  let YAML;
+  try { YAML = (await import("yaml")).default; }
+  catch { throw new Error("chưa cài gói 'yaml' — chạy `npm install` trước"); }
+  return YAML.parse(fs.readFileSync(p, "utf8"));
+}
 
 // ---------------------------------------------------------------------------
 // CONFIG

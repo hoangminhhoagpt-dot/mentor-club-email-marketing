@@ -37,6 +37,10 @@ Gửi email qua **Lark Mail SMTP** (`smtp.larksuite.com`); tracking mở/click/h
 
 ## Cài đặt (làm 1 lần)
 
+> **Chuẩn ITTO:** gói này khai hợp đồng ở [`itto.yaml`](itto.yaml) (Input–Tech–Tool–Output).
+> Muốn cài nhanh, làm theo **[`docs/00-PHIEU-INPUT.md`](docs/00-PHIEU-INPUT.md)** — điền xong là chạy
+> (chỉ 2 Secret + 1 Variable). `npm run check` soát cả itto.yaml.
+
 Theo thứ tự, mỗi bước có file hướng dẫn trong `docs/`:
 
 1. **`docs/02-cap-quyen-lark.md`** — Cấp quyền app Lark trên Base + scope `wiki:node:read`, `bitable:app`.

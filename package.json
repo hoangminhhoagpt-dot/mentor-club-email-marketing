@@ -13,8 +13,9 @@
     "sync-bounces": "node scripts/sync-bounces.mjs"
   },
   "dependencies": {
-    "nodemailer": "^6.9.16",
     "imapflow": "^1.0.171",
-    "mailparser": "^3.7.2"
+    "mailparser": "^3.7.2",
+    "nodemailer": "^6.9.16",
+    "yaml": "^2.9.0"
   }
 }

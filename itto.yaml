@@ -1,0 +1,69 @@
+# ============================================================================
+# itto.yaml — HỢP ĐỒNG ITTO của gói mentor-club-email-marketing (9 bảng 12.1→12.9)
+# Buộc chặt: Skill (hmh-AIOS-email-marketing) ⇄ Repo này ⇄ Base Mẫu 9 bảng.
+# Máy đọc: scripts/check-setup.mjs soát 4 mục + danh sách secret dưới đây.
+# ============================================================================
+
+package: mentor-club-email-marketing
+version: 1.0.0
+skill: hmh-AIOS-email-marketing
+
+# ── I — INPUT: chuẩn bị TRƯỚC khi chạy ──
+input:
+  base_mau:
+    template_url: "https://<link-nhan-ban-Base-9-bang>"   # <đổi khi bàn giao> link Duplicate
+    app_token: "<LARK_APP_TOKEN — để ở GitHub Variable/Secret, KHÔNG commit vào đây>"
+    tables:
+      - "12.1 Danh sách Email Nuôi Dưỡng"
+      - "12.2 Chiến dịch Email 365 ngày"
+      - "12.3 Danh sách Email bảng tin"
+      - "12.4 Email bảng tin"
+      - "12.5 Báo cáo đọc Email"
+      - "12.6 Huỷ nhận email"
+      - "12.7 Lọc mail ảo"
+      - "12.8 Danh sách mail lỗi"
+      - "12.9 Danh sách email click link"
+  secrets:                       # BÍ MẬT — GitHub Secrets (hoặc config.local.json khi chạy máy)
+    - LARK_APP_SECRET            # App Secret của app Lark
+    - SMTP_PASS                  # IMAP/SMTP password của Lark Mail
+  variables:                     # KHÔNG bí mật — GitHub Variables
+    - TRACKER_BASE_URL           # URL Cloudflare Worker (tracking mở/click/huỷ)
+  phieu_input: docs/00-PHIEU-INPUT.md
+  preflight: node scripts/check-setup.mjs   # PHẢI xanh mới được chạy thật
+
+# ── T — TECH ──
+tech:
+  - Lark Base
+  - Lark Mail SMTP (smtp.larksuite.com)
+  - Lark Mail IMAP (imap.larksuite.com)
+  - Cloudflare Worker (/o mở · /c click · /u huỷ)
+  - GitHub Actions
+
+# ── T — TOOL: 4 điểm bấm (HTTP repository_dispatch) ──
+tool:
+  setup: node scripts/setup-tables.mjs
+  triggers:
+    - event_type: send-newsletter
+      script: node scripts/send-newsletter.mjs
+      desc: "Gửi bản tin 12.4 → 12.3 (theo nút 'Gửi ngay' hoặc lịch)"
+    - event_type: send-nurture
+      script: node scripts/send-nurture.mjs
+      desc: "Gửi drip 365 ngày 12.2 → 12.1 (lịch 08:00 mỗi ngày)"
+    - event_type: filter-fake
+      script: node scripts/filter-fake.mjs
+      desc: "Lọc mail ảo (cú pháp/MX/disposable) → 12.7"
+    - event_type: sync-bounces
+      script: node scripts/sync-bounces.mjs
+      desc: "Quét bounce qua IMAP → 12.8 (suppression)"
+
+# ── O — OUTPUT: kết quả rơi vào đâu, kiểm bằng gì ──
+output:
+  writes_back:
+    - "12.5 Báo cáo đọc (Worker /o)"
+    - "12.9 Click link (Worker /c)"
+    - "12.6 Huỷ nhận (Worker /u)"
+    - "12.8 Bounce (sync-bounces IMAP)"
+    - "12.4 Trạng thái/Đã gửi (send-newsletter)"
+    - "12.1 Bước gần nhất/Lần gửi (send-nurture)"
+  proof: "tab Actions xanh + số liệu ghi vào 12.5/12.6/12.8/12.9"
+  report: "(tuỳ chọn) card báo cáo nhóm Lark"
