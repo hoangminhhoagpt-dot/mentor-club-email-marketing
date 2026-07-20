@@ -5,14 +5,20 @@
 # ============================================================================
 
 package: mentor-club-email-marketing
-version: 1.0.0
+version: 1.1.0                     # 1.1.0 — Base Mẫu THẬT (mảnh ③) đã dựng; setup-tables biết đẻ bảng
 skill: hmh-AIOS-email-marketing
 
 # ── I — INPUT: chuẩn bị TRƯỚC khi chạy ──
 input:
   base_mau:
-    template_url: "https://<link-nhan-ban-Base-9-bang>"   # <đổi khi bàn giao> link Duplicate
+    # ★ Base Mẫu TỔNG HỢP — 1 lần nhân bản là có cả 5 module (12.x email · 14.x Facebook ·
+    #   15.x TikTok · 16.x YouTube · 17.x Instagram). Quyền: ai có link XEM + TẠO BẢN SAO.
+    #   Học viên: mở link → góc trên phải "..." → "Tạo bản sao / Make a copy".
+    #   9 bảng 12.x sinh 100% từ setup-tables.mjs — KHÔNG sửa cột bằng tay trên UI.
+    #   Dữ liệu đang có trong base (kênh/video/bài mẫu) coi là DỮ LIỆU MẪU để học viên xem form.
+    template_url: "https://studiosuccess.sg.larksuite.com/base/ZM8qbz78JaR16Es560sly6Bkgvg"
     app_token: "<LARK_APP_TOKEN — để ở GitHub Variable/Secret, KHÔNG commit vào đây>"
+    setup: node scripts/setup-tables.mjs --base <app_token-cua-ban-sao>   # đẻ bảng thiếu + bù cột
     tables:
       - "12.1 Danh sách Email Nuôi Dưỡng"
       - "12.2 Chiến dịch Email 365 ngày"
@@ -29,7 +35,9 @@ input:
   variables:                     # KHÔNG bí mật — GitHub Variables
     - TRACKER_BASE_URL           # URL Cloudflare Worker (tracking mở/click/huỷ)
   phieu_input: docs/00-PHIEU-INPUT.md
-  preflight: node scripts/check-setup.mjs   # PHẢI xanh mới được chạy thật
+  preflight: node check-itto.mjs && node scripts/check-setup.mjs   # cả 2 PHẢI xanh mới chạy thật
+  # check-itto.mjs: zero-dep, soát hợp đồng — chạy được ngay cả khi chưa `npm install`.
+  # check-setup.mjs: cần npm install + Lark/SMTP sống (soát quyền, 9 bảng, đăng nhập mail).
 
 # ── T — TECH ──
 tech:

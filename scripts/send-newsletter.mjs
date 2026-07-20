@@ -76,8 +76,8 @@ const asMs = (v) => {
     const subject = getText(mail.fields, mSub);
     const body = getText(mail.fields, mBody);
     if (!subject) { console.log(`  Bỏ qua dòng ${mail.record_id}: thiếu Tiêu đề.`); continue; }
-    console.log(`\n📨 Gửi bảng tin: "${subject}" → ${recipients.length} người`);
-    await updateRecord(CFG, Tm, mail.record_id, { [mStatus]: "Đang gửi" });
+    console.log(`\n📨 Gửi bảng tin: "${subject}" → ${recipients.length} người${CFG.send.dryRun ? "  [DRY-RUN — không gửi, không ghi Lark]" : ""}`);
+    if (!CFG.send.dryRun) await updateRecord(CFG, Tm, mail.record_id, { [mStatus]: "Đang gửi" });
 
     let sent = 0, failed = 0, skipped = 0;
     const limit = CFG.send.perRunLimit;
@@ -93,11 +93,15 @@ const asMs = (v) => {
       if (CFG.send.delayMs) await sleep(CFG.send.delayMs);
     }
 
-    await updateRecord(CFG, Tm, mail.record_id, {
-      [mStatus]: "Đã gửi",
-      [mCount]: sent,
-      [mSentAt]: nowMs(),
-    });
+    // Dry-run KHÔNG được lật trạng thái: đánh dấu "Đã gửi" với 0 email nghĩa là bản tin
+    // vĩnh viễn không bao giờ được phát thật (queue chỉ lấy dòng chưa gửi).
+    if (!CFG.send.dryRun) {
+      await updateRecord(CFG, Tm, mail.record_id, {
+        [mStatus]: "Đã gửi",
+        [mCount]: sent,
+        [mSentAt]: nowMs(),
+      });
+    }
     console.log(`  ✅ Xong "${subject}": gửi ${sent} · lỗi ${failed} · bỏ qua ${skipped}`);
   }
 

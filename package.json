@@ -6,7 +6,8 @@
   "description": "Hệ thống Email Marketing trên Lark Base (9 bảng) — gửi qua Lark Mail SMTP, tracking mở/click qua Cloudflare Worker, bounce qua IMAP. Chạy trên GitHub Actions, kích hoạt CHỈ bằng HTTP repository_dispatch từ Lark (không cron).",
   "scripts": {
     "setup-tables": "node scripts/setup-tables.mjs",
-    "check": "node scripts/check-setup.mjs",
+    "check-itto": "node check-itto.mjs",
+    "check": "node check-itto.mjs && node scripts/check-setup.mjs",
     "filter-fake": "node scripts/filter-fake.mjs",
     "send-nurture": "node scripts/send-nurture.mjs",
     "send-newsletter": "node scripts/send-newsletter.mjs",

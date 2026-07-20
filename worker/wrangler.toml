@@ -12,12 +12,19 @@ name = "mentor-club-tracker"
 main = "tracker.js"
 compatibility_date = "2024-11-01"
 
+# ⚠️ MỘT Worker chỉ phục vụ ĐÚNG MỘT Base (base/table id nằm cứng ở đây).
+#    Muốn 1 Worker dùng chung cho nhiều học viên thì phải nhét base/table id vào
+#    token tracking rồi đọc ra trong tracker.js — chưa làm, xem ghi chú ở cuối file.
 [vars]
 LARK_DOMAIN   = "https://open.larksuite.com"
 LARK_APP_ID   = "cli_aa8cccd0b262deed"
-LARK_APP_TOKEN = "GWQgbY7t9awFlosl3k3l6OQTgzd"   # app_token của Base (đã resolve từ wiki)
-TABLE_OPEN    = "tblvxxe82dGYQXQv"   # 12.5 Báo cáo đọc Email
-TABLE_CLICK   = "tblw20eIsnURSIxC"   # 12.9 Danh sách email click link
-TABLE_UNSUB   = "tbldkFroNQJXjZRV"   # 12.6 Huỷ nhận email
+LARK_APP_TOKEN = "ZM8qbz78JaR16Es560sly6Bkgvg"   # Base TỔNG HỢP (12.x + 14.x + 15.x + 16.x + 17.x)
+TABLE_OPEN    = "tblwaBvetoG2crzj"   # 12.5 Báo cáo đọc Email
+TABLE_CLICK   = "tblIneZtFI7B6zyV"   # 12.9 Danh sách email click link
+TABLE_UNSUB   = "tbloUKugBtKn7bQD"   # 12.6 Huỷ nhận email
+
+# Base CŨ (khách hoangminhhoa.net) — giữ lại để đổi về khi cần:
+# LARK_APP_TOKEN = "GWQgbY7t9awFlosl3k3l6OQTgzd"
+# TABLE_OPEN = "tblvxxe82dGYQXQv" · TABLE_CLICK = "tblw20eIsnURSIxC" · TABLE_UNSUB = "tbldkFroNQJXjZRV"
 
 # LARK_APP_SECRET → đặt bằng: wrangler secret put LARK_APP_SECRET  (KHÔNG viết vào file)

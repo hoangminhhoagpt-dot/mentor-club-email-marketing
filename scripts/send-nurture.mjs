@@ -99,11 +99,16 @@ const asMs = (v) => {
     });
 
     if (res.ok) {
-      const patch = { [nStep]: targetStep, [nSent]: nowMs() };
-      if (targetStep >= maxDay) patch[nStatus] = "Hoàn thành";
-      await updateRecord(CFG, CFG.tables.nurtureList, r.record_id, patch);
-      if (res.skipped) { skipped++; console.log(`  (dry-run) Ngày ${targetStep} → ${email}`); }
-      else { sent++; console.log(`  ✔ Ngày ${targetStep} → ${email}`); }
+      // DRY-RUN TUYỆT ĐỐI KHÔNG GHI: trước đây vẫn ghi "Bước gần nhất" dù không gửi email nào
+      // → chạy thử 1 lần là đốt mất bước đó của CẢ danh sách, lần chạy thật nhảy sang bước sau,
+      // email bị mất câm lặng. Chạy thử phải là chạy thử.
+      if (res.skipped) { skipped++; console.log(`  (dry-run) Ngày ${targetStep} → ${email}  [không ghi Lark]`); }
+      else {
+        const patch = { [nStep]: targetStep, [nSent]: nowMs() };
+        if (targetStep >= maxDay) patch[nStatus] = "Hoàn thành";
+        await updateRecord(CFG, CFG.tables.nurtureList, r.record_id, patch);
+        sent++; console.log(`  ✔ Ngày ${targetStep} → ${email}`);
+      }
     } else {
       failed++; console.log(`  ✘ LỖI ${email}: ${res.error}`);
     }

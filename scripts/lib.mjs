@@ -173,6 +173,43 @@ export const SCHEMA = {
   },
 };
 
+// ---------------------------------------------------------------------------
+// TABLE_META — tên BẢNG trên Lark (SCHEMA ở trên chỉ mô tả CỘT).
+// Thiếu phần này thì setup-tables.mjs chỉ biết thêm cột vào bảng có sẵn, không đẻ
+// được bảng ⇒ không dựng nổi Base Mẫu. Đây là nguồn sự thật cho mảnh ③.
+//   view    = tên view mặc định khi tạo bảng
+//   primary = trường logic phải đứng ĐẦU (cột chính). Lark KHÔNG cho cột chính là
+//             Select/URL/Checkbox/Attachment → luôn chọn một trường Text.
+// ---------------------------------------------------------------------------
+export const TABLE_META = {
+  nurtureList:    { name: "12.1 Danh sách Email Nuôi Dưỡng", view: "Đang nuôi",  primary: "email" },
+  campaign365:    { name: "12.2 Chiến dịch Email 365 ngày",  view: "Theo ngày",  primary: "subject" },
+  newsletterList: { name: "12.3 Danh sách Email bảng tin",   view: "Đang nhận",  primary: "email" },
+  newsletterMail: { name: "12.4 Email bảng tin",             view: "Bản tin",    primary: "subject" },
+  openReport:     { name: "12.5 Báo cáo đọc Email",          view: "Lượt mở",    primary: "email" },
+  unsubscribe:    { name: "12.6 Huỷ nhận email",             view: "Đã huỷ",     primary: "email" },
+  fakeFilter:     { name: "12.7 Lọc mail ảo",                view: "Kết quả",    primary: "email" },
+  errorList:      { name: "12.8 Danh sách mail lỗi",         view: "Mail lỗi",   primary: "email" },
+  clickList:      { name: "12.9 Danh sách email click link", view: "Lượt nhấp",  primary: "email" },
+};
+
+/** Dựng mảng field cho API tạo bảng: cột chính đứng đầu, kèm property theo kiểu. */
+export function buildFields(tableKey) {
+  const spec = SCHEMA[tableKey];
+  const meta = TABLE_META[tableKey];
+  if (!spec || !meta) throw new Error(`Không có bảng "${tableKey}" trong SCHEMA/TABLE_META`);
+  const order = [meta.primary, ...Object.keys(spec).filter((k) => k !== meta.primary)];
+  return order.map((k) => fieldBody(spec[k]));
+}
+
+/** Một trường → body API (type 3/4 cần options, type 5 cần date_formatter). */
+export function fieldBody(spec) {
+  const body = { field_name: spec.name, type: spec.type };
+  if (spec.type === 3 || spec.type === 4) body.property = { options: (spec.opts || []).map((name) => ({ name })) };
+  if (spec.type === 5) body.property = { date_formatter: "yyyy/MM/dd HH:mm" };
+  return body;
+}
+
 /** Tên cột thực tế cho 1 trường logic (ưu tiên override trong config.fields). */
 export function F(CFG, tableKey, logical) {
   const ov = CFG.fields?.[tableKey]?.[logical];
@@ -282,8 +319,8 @@ export async function batchCreate(CFG, tableId, records) {
 }
 
 /** Liệt kê field của 1 bảng. */
-export async function listFields(CFG, tableId) {
-  const app = await resolveAppToken(CFG);
+export async function listFields(CFG, tableId, appOverride) {
+  const app = appOverride || (await resolveAppToken(CFG));
   const data = await larkApi(CFG, "GET",
     `/open-apis/bitable/v1/apps/${app}/tables/${tableId}/fields?page_size=200`);
   return data.items || [];

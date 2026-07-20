@@ -22,6 +22,29 @@ const FIELDS = {
 
 const GIF_1x1 = Uint8Array.from(atob("R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7"), (c) => c.charCodeAt(0));
 
+// ---------------------------------------------------------------------------
+// LỌC MÁY QUÉT — ảnh trong email bị tải TỰ ĐỘNG bởi rất nhiều thứ không phải người:
+// proxy ảnh của Gmail/Yahoo, bộ quét an ninh (Proofpoint/Mimecast/Defender), thư viện HTTP.
+// Không lọc thì "Số lần mở" là số ảo, và tệ hơn: máy quét đi theo link /u sẽ HUỶ NHẬN OAN
+// một người thật. Vẫn trả pixel/redirect bình thường — chỉ KHÔNG ghi sổ.
+//
+// ⚠️ Giới hạn thành thật: Apple Mail Privacy Protection tải sẵn mọi ảnh ngay khi thư vừa tới
+// và giả trang thành trình duyệt thật → KHÔNG lọc được bằng user-agent. Vì vậy tỉ lệ mở
+// luôn chỉ là con số THAM KHẢO; muốn đo thật thì tin vào CLICK (12.9), đừng tin MỞ (12.5).
+// ---------------------------------------------------------------------------
+const MAY_QUET = /GoogleImageProxy|Google-Read-Aloud|YahooMailProxy|GoogleDocs|Microsoft Office|MSOffice|Office365|SkypeUriPreview|OutlookSafeLinks|SafeLinks|BarracudaCentral|Proofpoint|Mimecast|Symantec|TrendMicro|ESET|Sophos|Fortinet|McAfee|bot\b|crawler|spider|preview|scanner|curl|wget|python-requests|node-fetch|axios|Go-http-client|okhttp|PostmanRuntime|HeadlessChrome/i;
+
+// UA "trần" kiểu "Mozilla/5.0" cụt lủn: trình duyệt thật luôn khai thêm nền tảng trong ngoặc.
+// Chuỗi cụt = thư viện HTTP hoặc proxy giả trang qua loa. (Đúng 4 dòng rác ngày 2026-07-15.)
+const UA_TRAN = /^Mozilla\/[\d.]+\s*$/i;
+
+export function laMayQuet(ua) {   // export để test được; Worker chỉ dùng `export default`
+  const s = String(ua || "").trim();
+  if (!s) return true;                 // không khai user-agent = chắc chắn không phải người
+  if (UA_TRAN.test(s)) return true;
+  return MAY_QUET.test(s);
+}
+
 function b64urlToStr(s) {
   s = String(s || "").replace(/-/g, "+").replace(/_/g, "/");
   while (s.length % 4) s += "=";
@@ -51,7 +74,16 @@ async function larkApi(env, method, path, body) {
     method, headers: { Authorization: `Bearer ${token}`, "Content-Type": "application/json" },
     body: body ? JSON.stringify(body) : undefined,
   });
-  return r.json();
+  const j = await r.json();
+  // Trước đây trả thẳng r.json() nên Lark báo lỗi (code≠0) vẫn bị coi là thành công,
+  // rồi .catch(()=>{}) nuốt nốt → tracking chết câm hàng tháng mà không ai hay.
+  if (j.code !== 0) throw new Error(`${method} ${path} → Lark ${j.code}: ${j.msg}`);
+  return j;
+}
+
+/** Chạy nền nhưng PHẢI để lại dấu vết khi hỏng (xem bằng: wrangler tail). */
+function ghiNen(ctx, ten, p) {
+  ctx.waitUntil(p.catch((e) => console.error(`[tracker:${ten}] ${(e && e.message) || e}`)));
 }
 async function findOne(env, table, conditions) {
   const j = await larkApi(env, "POST",
@@ -109,25 +141,30 @@ export default {
     const p = url.pathname.replace(/\/+$/, "") || "/";
     const tok = decodeToken(url.searchParams.get("t"));
 
-    // /o — pixel mở (luôn trả pixel, ghi log ở background)
+    const ua = request.headers.get("user-agent");
+    const mayQuet = laMayQuet(ua);
+
+    // /o — pixel mở (LUÔN trả pixel; chỉ ghi sổ khi tin là người thật)
     if (p === "/o") {
-      if (tok?.e) ctx.waitUntil(recordOpen(env, tok, request.headers.get("user-agent")).catch(() => {}));
+      if (tok?.e && !mayQuet) ghiNen(ctx, "open", recordOpen(env, tok, ua));
       return pixel();
     }
 
-    // /c — click → redirect
+    // /c — click → redirect (LUÔN chuyển hướng, kể cả máy quét, để người bấm không bị kẹt)
     if (p === "/c") {
       let dest = "/";
       try { dest = b64urlToStr(url.searchParams.get("u")); } catch {}
       if (!/^https?:\/\//i.test(dest)) dest = "https://" + dest.replace(/^\/+/, "");
-      if (tok?.e) ctx.waitUntil(recordClick(env, tok, dest).catch(() => {}));
+      if (tok?.e && !mayQuet) ghiNen(ctx, "click", recordClick(env, tok, dest));
       return Response.redirect(dest, 302);
     }
 
-    // /u — huỷ nhận (GET = người bấm link; POST = One-Click của mail client)
+    // /u — huỷ nhận. POST = One-Click chuẩn RFC 8058 do chính nhà cung cấp mail gửi → LUÔN tin.
+    // GET = người bấm link → phải lọc, vì bộ quét link đi theo URL này sẽ huỷ nhận OAN người thật.
     if (p === "/u") {
-      const source = request.method === "POST" ? "One-click" : "Link";
-      if (tok?.e) ctx.waitUntil(recordUnsub(env, tok, source).catch(() => {}));
+      const laPost = request.method === "POST";
+      const source = laPost ? "One-click" : "Link";
+      if (tok?.e && (laPost || !mayQuet)) ghiNen(ctx, "unsub", recordUnsub(env, tok, source));
       if (request.method === "POST") return new Response("OK", { status: 200 });
       return html(`<h2>Đã huỷ nhận email ✅</h2><p>Email <b>${tok?.e || ""}</b> sẽ không nhận thư từ chúng tôi nữa.</p><p style="color:#888;font-size:13px">Nếu là nhầm lẫn, hãy liên hệ để đăng ký lại.</p>`);
     }

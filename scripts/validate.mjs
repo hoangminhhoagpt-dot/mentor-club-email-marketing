@@ -27,20 +27,37 @@ const ROLE = new Set([
 // RFC 5322 rút gọn — đủ dùng cho lọc thực tế.
 const RE = /^[a-zA-Z0-9.!#$%&'*+/=?^_`{|}~-]+@[a-zA-Z0-9](?:[a-zA-Z0-9-]{0,61}[a-zA-Z0-9])?(?:\.[a-zA-Z0-9](?:[a-zA-Z0-9-]{0,61}[a-zA-Z0-9])?)+$/;
 
+// Lỗi DNS "kết luận được": domain thật sự không tồn tại / không có bản ghi.
+// Mọi mã khác (ECONNREFUSED, ETIMEOUT, ESERVFAIL, EREFUSED…) là HẠ TẦNG HỎNG — ta KHÔNG biết gì
+// về domain đó, và tuyệt đối không được suy ra "mail ảo".
+const DNS_KET_LUAN = new Set(["ENOTFOUND", "ENODATA", "NXDOMAIN"]);
+
 const mxCache = new Map();
+/** @returns {Promise<true|false|null>}  true=có nhận mail · false=chắc chắn không · null=KHÔNG TRA ĐƯỢC */
 async function hasMxRecord(domain) {
   if (mxCache.has(domain)) return mxCache.get(domain);
-  let ok = false;
-  try {
-    const mx = await dns.resolveMx(domain);
-    ok = Array.isArray(mx) && mx.length > 0;
-  } catch {
-    // Không có MX — thử A record (một số domain nhận mail qua A). Không có luôn = fail.
-    try { const a = await dns.resolve(domain); ok = Array.isArray(a) && a.length > 0; }
-    catch { ok = false; }
+
+  const thu = async (fn) => {
+    try { const r = await fn(); return { ok: Array.isArray(r) && r.length > 0 }; }
+    catch (e) { return { err: e.code || e.message }; }
+  };
+
+  let kq = null;
+  const mx = await thu(() => dns.resolveMx(domain));
+  if (mx.ok) kq = true;
+  else {
+    // Không có MX → thử A record (một số domain nhận mail qua A).
+    const a = await thu(() => dns.resolve(domain));
+    if (a.ok) kq = true;
+    else {
+      // Chỉ dám kết luận "không có" khi CẢ HAI truy vấn đều trả lời dứt khoát.
+      const dutKhoat = (x) => x.err === undefined || DNS_KET_LUAN.has(x.err);
+      kq = dutKhoat(mx) && dutKhoat(a) ? false : null;
+    }
   }
-  mxCache.set(domain, ok);
-  return ok;
+
+  mxCache.set(domain, kq);
+  return kq;
 }
 
 /**
@@ -57,8 +74,13 @@ export async function validateEmail(raw, { checkMx = true } = {}) {
   if (DISPOSABLE.has(domain)) { out.disposable = true; out.result = "Không hợp lệ"; out.reason = "Domain dùng 1 lần (mail ảo)"; return out; }
 
   if (checkMx) {
-    out.hasMx = await hasMxRecord(domain);
-    if (!out.hasMx) { out.result = "Không hợp lệ"; out.reason = "Domain không có bản ghi MX"; return out; }
+    const mx = await hasMxRecord(domain);
+    out.hasMx = mx === true;
+    // mx === null → tra DNS hỏng. KHÔNG chấm "Không hợp lệ", vì 12.7 "Không hợp lệ" sẽ đi thẳng
+    // vào danh sách chặn gửi (suppression.mjs) và chặn người thật VĨNH VIỄN. Để "Nghi ngờ" —
+    // không chặn ai, và lần chạy sau (DNS khoẻ lại) sẽ tự kết luận đúng.
+    if (mx === null) { out.result = "Nghi ngờ"; out.reason = "Không tra được DNS — chưa kết luận, chạy lại sau"; return out; }
+    if (mx === false) { out.result = "Không hợp lệ"; out.reason = "Domain không có bản ghi MX"; return out; }
   } else {
     out.hasMx = true;
   }
