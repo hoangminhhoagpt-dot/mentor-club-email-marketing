@@ -13,7 +13,7 @@ Giá trị dùng lại (đã biết):
 ## A. Deploy Cloudflare Worker (tracking mở/click/huỷ — bảng 12.5/12.9/12.6) — ✅ ĐÃ XONG
 Đã deploy sẵn (2026-07-15). URL Worker đang chạy:
 ```
-https://mentor-club-tracker.hoangminhhoa.workers.dev
+https://mentor-club-tracker.minhhoasqtt.workers.dev
 ```
 Secret `LARK_APP_SECRET` đã nạp vào Worker; đã test thật /o→12.5, /c→12.9, /u→12.6.
 
@@ -21,7 +21,7 @@ Secret `LARK_APP_SECRET` đã nạp vào Worker; đã test thật /o→12.5, /c�
 > (đăng nhập bằng `wrangler login` hoặc biến `CLOUDFLARE_API_TOKEN`).
 
 ## B. Khai báo URL tracking — ✅ ĐÃ XONG (local)
-- `scripts/config.local.json` → `tracker.baseUrl` đã điền `https://mentor-club-tracker.hoangminhhoa.workers.dev`.
+- `scripts/config.local.json` → `tracker.baseUrl` đã điền `https://mentor-club-tracker.minhhoasqtt.workers.dev`.
 - **Còn lại:** đặt GitHub **Variable** `TRACKER_BASE_URL` = URL trên (để chạy trên Actions) — xem phần C.
 
 ## C. GitHub Secrets & Variables (BẮT BUỘC để Lark gọi HTTP chạy được)

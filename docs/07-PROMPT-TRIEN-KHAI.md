@@ -29,7 +29,7 @@ INPUT CỦA TÔI (đã chuẩn bị sẵn):
 - SMTP_PASS        = xxxxxxxxxxxxxxxx                 (IMAP/SMTP password của Lark Mail, KHÔNG phải mật khẩu đăng nhập)
 - SMTP_HOST        = smtp.larksuite.com:465   |   IMAP_HOST = imap.larksuite.com:993
 - SMTP_FROM        = Mentor Club <hoaguru2@hoangminhhoa.net>
-- TRACKER_BASE_URL = https://mentor-club-tracker.hoangminhhoa.workers.dev   (Worker đo mở/click — bỏ trống nếu chưa cần đo)
+- TRACKER_BASE_URL = https://mentor-club-tracker.minhhoasqtt.workers.dev   (Worker đo mở/click — bỏ trống nếu chưa cần đo)
 - GITHUB_PAT       = ghp_xxxxxxxx                     (scope repo)
 
 YÊU CẦU:
