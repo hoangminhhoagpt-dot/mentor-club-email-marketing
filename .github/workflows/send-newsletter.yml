@@ -16,9 +16,16 @@ on:
         description: "record_id của 1 dòng 12.4 (bỏ trống = gửi mọi dòng 'Chờ gửi')"
         required: false
 
+# Hai lượt gửi chạy đè nhau sẽ đọc cùng một con trỏ "Đã gửi" và bắn trùng nửa danh sách.
+# Xếp hàng chờ chứ không huỷ — huỷ giữa chừng là bản tin gửi dở dang.
+concurrency:
+  group: send-newsletter
+  cancel-in-progress: false
+
 jobs:
   run:
     runs-on: ubuntu-latest
+    timeout-minutes: 120
     steps:
       - uses: actions/checkout@v4
       - uses: actions/setup-node@v4

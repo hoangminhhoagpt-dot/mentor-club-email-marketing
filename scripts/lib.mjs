@@ -85,6 +85,11 @@ export function loadConfig(configPath = DEFAULT_CONFIG) {
   // KHÔNG được suy từ số ngày đã soạn trong 12.2: soạn tới đâu đóng sổ tới đó là mất người.
   CFG.nurture = CFG.nurture || {};
   CFG.nurture.totalDays = Number(E.NURTURE_TOTAL_DAYS || CFG.nurture.totalDays || 365);
+  // Chốt an toàn: một người chỉ nhận TỐI ĐA 1 thư nuôi dưỡng mỗi ngày, dù lệnh chạy bao
+  // nhiêu lần. Mặc định BẬT — chỉ tắt khi bạn thật sự hiểu mình đang làm gì.
+  CFG.nurture.motThuMoiNgay = (E.NURTURE_ONE_PER_DAY != null
+    ? E.NURTURE_ONE_PER_DAY !== "false"
+    : (CFG.nurture.motThuMoiNgay !== false));
 
   CFG.fields = CFG.fields || {};
   return CFG;

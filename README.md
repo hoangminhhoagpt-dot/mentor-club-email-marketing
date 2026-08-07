@@ -156,6 +156,10 @@ event_type: `send-nurture` · `send-newsletter` · `filter-fake` · `sync-bounce
   kiểu hỏng khó phát hiện nhất của cả bộ.
 - **Lark Mail có giới hạn gửi/ngày.** Script đã throttle + tôn trọng suppression. Quy mô rất lớn thì chuyển
   sang ESP (Brevo/SendGrid) sau — chỉ đổi `scripts/email.mjs`.
+- **Mỗi người nhận TỐI ĐA 1 thư nuôi dưỡng mỗi ngày**, dù lệnh chạy bao nhiêu lần. Không có chốt này thì
+  ai có "Ngày bắt đầu" lùi về quá khứ sẽ bị coi là trễ lịch và **lần chạy nào cũng bị đẩy thêm một bước** —
+  lịch automation 5 phút/lần là người đó ăn 12 thư/giờ. Tắt bằng `nurture.motThuMoiNgay = false` (đừng tắt).
+  Vẫn nên đặt lịch **1 lần/ngày**: chốt là lưới an toàn, không phải cái thay cho lịch đúng.
 - **Chuỗi nuôi dưỡng chỉ đóng "Hoàn thành" khi đi hết `nurture.totalDays` (mặc định 365)**, không phải khi
   hết nội dung đã soạn trong 12.2. Ai nhận hết nội dung hiện có thì vẫn nằm ở "Đang nuôi" và tự nhận tiếp
   khi bạn soạn thêm ngày mới. Chuỗi ngắn hơn thì sửa `nurture.totalDays` cho đúng.

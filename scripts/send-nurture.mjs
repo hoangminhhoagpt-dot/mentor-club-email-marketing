@@ -25,6 +25,8 @@ const asMs = (v) => {
   if (typeof v === "number") return v;
   const t = Date.parse(v); return Number.isNaN(t) ? null : t;
 };
+/** Mốc ngày theo giờ VN (GMT+7) — dùng để hỏi "hôm nay đã gửi cho người này chưa". */
+const ngayVN = (ms) => new Date(ms + 7 * 3600000).toISOString().slice(0, 10);
 
 (async () => {
   requireKeys(CFG, ["larkAppId", "larkAppSecret", "smtp.user", "smtp.pass",
@@ -69,7 +71,7 @@ const asMs = (v) => {
   const nName = F(CFG, "nurtureList", "name");
 
   const transport = makeTransport(CFG);
-  let sent = 0, failed = 0, skipped = 0, done = 0, doiNoiDung = 0;
+  let sent = 0, failed = 0, skipped = 0, done = 0, doiNoiDung = 0, daGuiHomNay = 0;
   let streak = 0, blockedByFilter = 0;                    // phanh: đếm lần từ chối LIÊN TIẾP
   const limit = CFG.send.perRunLimit;
   const stopAfter = CFG.send.stopAfterFails;
@@ -83,6 +85,17 @@ const asMs = (v) => {
     if (status && !/đang nuôi/i.test(status)) { skipped++; continue; }   // chỉ gửi người "Đang nuôi"
     if (!startMs) { skipped++; continue; }
     if (blocked.has(email)) { skipped++; continue; }
+
+    // ─── CHỐT MỘT THƯ MỖI NGÀY ───────────────────────────────────────────────
+    // Mỗi lần chạy đẩy 1 bước. Ai có "Ngày bắt đầu" lùi về quá khứ (danh sách nhập từ
+    // nơi khác) thì đang trễ lịch, nên LẦN CHẠY NÀO CŨNG có bước để đẩy. Lịch automation
+    // đặt 5 phút/lần là người đó ăn 12 thư/giờ — hết cả chuỗi trong hai tiếng.
+    // dayIndex KHÔNG cứu được chuyện này: nó chỉ chặn gửi vượt lịch, không chặn gửi dồn.
+    // Cột "Lần gửi gần nhất" là thứ duy nhất biết hôm nay đã gửi cho người này chưa.
+    if (CFG.nurture.motThuMoiNgay) {
+      const sentMs = asMs(r.fields?.[nSent]);
+      if (sentMs && ngayVN(sentMs) === ngayVN(Date.now())) { daGuiHomNay++; skipped++; continue; }
+    }
 
     const dayIndex = Math.floor((Date.now() - startMs) / DAY_MS) + 1;    // ngày bắt đầu = ngày 1
     if (dayIndex < 1) { skipped++; continue; }                           // chưa tới ngày bắt đầu
@@ -140,6 +153,11 @@ const asMs = (v) => {
 
   transport.close?.();
   console.log(`\n✅ Nuôi dưỡng: gửi ${sent} · lỗi ${failed} · bỏ qua ${skipped} · hoàn thành ${done}`);
+  if (daGuiHomNay) {
+    console.log(`\n🛡️  ${daGuiHomNay} người đã nhận thư hôm nay rồi → bỏ qua, không gửi thêm.`);
+    console.log(`   (Đây là chốt chống gửi dồn khi lịch chạy dày hoặc bấm tay nhiều lần.`);
+    console.log(`    Muốn tắt: đặt "nurture": { "motThuMoiNgay": false } trong config.)`);
+  }
   if (doiNoiDung) {
     console.log(`\n📝 ${doiNoiDung} người đã nhận HẾT nội dung hiện có (mới soạn tới Ngày ${maxDay}/${totalDays}).`);
     console.log(`   Họ vẫn ở trạng thái "Đang nuôi" và sẽ nhận tiếp ngay khi bảng 12.2 có thêm ngày.`);

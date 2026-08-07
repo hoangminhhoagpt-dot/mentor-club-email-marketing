@@ -16,9 +16,16 @@ on:
         required: false
         default: "false"
 
+# Hai lượt gửi chạy đè nhau sẽ đọc cùng một "Bước gần nhất" và gửi trùng cho cùng một người.
+# Khoá này bắt lượt sau xếp hàng chờ, KHÔNG huỷ — huỷ là mất lượt gửi của ngày hôm đó.
+concurrency:
+  group: send-nurture
+  cancel-in-progress: false
+
 jobs:
   run:
     runs-on: ubuntu-latest
+    timeout-minutes: 120
     steps:
       - uses: actions/checkout@v4
       - uses: actions/setup-node@v4
