@@ -1,4 +1,4 @@
-# Mentor Club — Hệ thống Email Marketing trên Lark Base (9 bảng 12.1 → 12.9)
+# Mentor Club — Hệ thống Email Marketing trên Lark Base (11 bảng 12.1 → 12.11)
 
 Hệ email marketing **trọn gói** chạy ngay trên Lark Base: nuôi dưỡng 365 ngày, gửi bản tin,
 đo mở/click, lọc mail ảo, quét mail lỗi (bounce) — gửi qua **Lark Mail**, chạy trên **GitHub Actions**,
@@ -15,7 +15,7 @@ Một đường ống email marketing đủ hai chiều — **gửi ra** (nuôi 
 (mở, click, huỷ nhận, mail lỗi) — với toàn bộ dữ liệu và nội dung quản trên Lark Base.
 Repo này lo **đường ống gửi và đo**; nội dung do bạn đổ vào bảng 12.2 / 12.4.
 
-## Làm được gì — 9 bảng 12.1 → 12.9
+## Làm được gì — 11 bảng 12.1 → 12.11
 
 | Nhóm | Bảng | Vai trò | Được xử lý bởi |
 |---|---|---|---|
@@ -28,6 +28,8 @@ Repo này lo **đường ống gửi và đo**; nội dung do bạn đổ vào b
 | | 12.6 Huỷ nhận email | Người **huỷ nhận** | Worker `/u` + suppression |
 | **Làm sạch** | 12.7 Lọc mail ảo | Kiểm cú pháp + MX + disposable | `filter-fake.mjs` |
 | | 12.8 Danh sách mail lỗi | **Bounce** từ hộp thư | `sync-bounces.mjs` (IMAP) |
+| **Báo cáo** | 12.10 Báo cáo chiến dịch | Gửi · mở · bấm · huỷ theo từng chiến dịch | `build-report.mjs` |
+| | 12.11 Tổng quan theo ngày | Ảnh chụp mỗi ngày để vẽ xu hướng | `build-report.mjs` |
 
 Trước mỗi lần gửi, hệ tự loại người có trong **12.6 (huỷ) + 12.7 (ảo) + 12.8 (lỗi)** — gọi là *suppression*.
 
@@ -57,7 +59,7 @@ Lark Automation (nút bấm / đặt lịch)
 
 Nguồn sự thật ở [`itto.yaml`](itto.yaml). `npm run check` soát cả hợp đồng này.
 
-- **Input**: Base 9 bảng (nhân bản Base Mẫu) · app Lark có scope `bitable:app` **và quyền SỬA** trên Base ·
+- **Input**: Base 11 bảng (nhân bản Base Mẫu) · app Lark có scope `bitable:app` **và quyền SỬA** trên Base ·
   Lark Mail IMAP/SMTP password · (tuỳ chọn) Cloudflare Worker để đo mở/click.
 - **Tech**: Lark Base · Lark Mail SMTP `smtp.larksuite.com:465` / IMAP `imap.larksuite.com:993` ·
   Cloudflare Worker · GitHub Actions.
@@ -89,14 +91,14 @@ Bí mật **không bao giờ** nằm trong repo — chỉ ở `scripts/config.lo
 
 ```bash
 node check-itto.mjs            # cổng chốt zero-dep: soát hợp đồng ITTO (chạy được khi chưa cài)
-npm install && npm run check   # soát quyền Lark · 9 bảng đủ cột · đăng nhập SMTP
+npm install && npm run check   # soát quyền Lark · 11 bảng đủ cột · đăng nhập SMTP
 ```
 
 **Muốn Claude tự làm hết:** dán khối lệnh trong [`docs/07-PROMPT-TRIEN-KHAI.md`](docs/07-PROMPT-TRIEN-KHAI.md).
 
 **Làm tay theo thứ tự** (mỗi bước có file trong `docs/`):
 
-1. **Nhân bản Base Mẫu** — mở [Base Mẫu](https://studiosuccess.sg.larksuite.com/base/ZM8qbz78JaR16Es560sly6Bkgvg)
+1. **Nhân bản Base Mẫu** — mở [Base Mẫu](https://studiosuccess.sg.larksuite.com/base/TxSrb3qKeaMqZDslH9Uln3yzgyb)
    → góc trên phải `...` → **Tạo bản sao / Make a copy**. Lấy `app_token` là đoạn sau `/base/` trong URL bản sao.
 2. **Cấp quyền app Lark** trên Base — [`docs/02-cap-quyen-lark.md`](docs/02-cap-quyen-lark.md).
    App phải là **cộng tác viên có quyền SỬA**; chỉ có quyền đọc thì ghi record sẽ lỗi `91403`.
@@ -105,7 +107,7 @@ npm install && npm run check   # soát quyền Lark · 9 bảng đủ cột · �
 5. **Dựng/bù bảng:** `node scripts/setup-tables.mjs --base <app_token-cua-ban-sao>`.
    Idempotent hai tầng — bảng **chưa có** thì tạo mới kèm đủ cột; bảng **đã có** thì chỉ thêm cột thiếu,
    không đụng dữ liệu. Cuối lệnh in sẵn khối JSON `tables` để dán vào config.
-6. **Preflight:** `npm run check` → phải **xanh hết** (Lark · app_token · 9 bảng · SMTP). *Đỏ ở đâu sửa ở đó rồi mới đi tiếp.*
+6. **Preflight:** `npm run check` → phải **xanh hết** (Lark · app_token · 11 bảng · SMTP). *Đỏ ở đâu sửa ở đó rồi mới đi tiếp.*
 7. **Tracking (nếu cần đo mở/click):** deploy `worker/tracker.js` — [`docs/04-deploy-cloudflare-worker.md`](docs/04-deploy-cloudflare-worker.md).
 8. **Đưa lên GitHub + đặt Secrets/Variables** — [`docs/03-github-secrets.md`](docs/03-github-secrets.md)
    (nhớ mục *Bí mật & biến* ở trên: base mới phải đặt thêm `LARK_APP_TOKEN` + các `TABLE_*`).
@@ -162,26 +164,30 @@ event_type: `send-nurture` · `send-newsletter` · `filter-fake` · `sync-bounce
 - [`itto.yaml`](itto.yaml) — hợp đồng ITTO (nguồn sự thật: bảng, secret, biến, 4 event, link Base Mẫu).
 - [`docs/00-PHIEU-INPUT.md`](docs/00-PHIEU-INPUT.md) — phiếu điền trước khi chạy ·
   [`docs/00-VAO-VAN-HANH.md`](docs/00-VAO-VAN-HANH.md) — checklist vào vận hành.
-- [`docs/01`](docs/01-cau-hinh-lark-mail.md)→[`06`](docs/06-schema-9-bang.md) — Lark Mail · cấp quyền · GitHub Secrets · Worker · Lark Automation · schema 9 bảng.
+- [`docs/01`](docs/01-cau-hinh-lark-mail.md)→[`06`](docs/06-schema-9-bang.md) — Lark Mail · cấp quyền · GitHub Secrets · Worker · Lark Automation · schema 11 bảng.
 - [`docs/07-PROMPT-TRIEN-KHAI.md`](docs/07-PROMPT-TRIEN-KHAI.md) — prompt để Claude tự triển khai cho khách/máy mới.
 
 <details>
-<summary><b>Bản gốc tham chiếu</b> (deploy đầu tiên — khách mới sẽ có id khác sau khi nhân bản)</summary>
+<summary><b>BASE MẪU CHUẨN</b> — mọi giá trị mặc định trong repo, Worker và workflow đều trỏ về đây</summary>
 
-Base: `https://studiosuccess.sg.larksuite.com/wiki/Sm0TwzxpUia6pWkRGCClLfnwgrf` · 9 bảng:
+Base **MENTOR CAMP CRM** (chốt 06/08/2026): `https://studiosuccess.sg.larksuite.com/base/TxSrb3qKeaMqZDslH9Uln3yzgyb` · 11 bảng:
 
 | Bảng | table_id |
 |---|---|
-| 12.1 Danh sách Email Nuôi Dưỡng | `tbltZ1K0MEVMA0hD` |
-| 12.2 Chiến dịch Email 365 ngày | `tblSpd0cH3yVczMl` |
-| 12.3 Danh sách Email bảng tin | `tbls6oZoxfUxZvkO` |
-| 12.4 Email bảng tin | `tblykPorYc7WR7Ss` |
-| 12.5 Báo cáo đọc Email | `tblvxxe82dGYQXQv` |
-| 12.6 Huỷ nhận email | `tbldkFroNQJXjZRV` |
-| 12.7 Lọc mail ảo | `tblZHQX8FrGp1kPf` |
-| 12.8 Danh sách mail lỗi | `tblNgcFWWyWI7erZ` |
-| 12.9 Danh sách email click link | `tblw20eIsnURSIxC` |
+| 12.1 Danh sách Email Nuôi Dưỡng | `tblJLDb9fgS9Z9Ih` |
+| 12.2 Chiến dịch Email 365 ngày | `tblDp5oFUkmseDSq` |
+| 12.3 Danh sách Email bảng tin | `tbleA4pNS13BS7me` |
+| 12.4 Email bảng tin | `tblTn5FWQyDWaGNy` |
+| 12.5 Báo cáo đọc Email | `tblQw8wYbFzmGx8T` |
+| 12.6 Huỷ nhận email | `tblBARpRx4JuVZ7n` |
+| 12.7 Lọc mail ảo | `tblxAux9X14qimtf` |
+| 12.8 Danh sách mail lỗi | `tblj52EgtbwXpCdy` |
+| 12.9 Danh sách email click link | `tbllXZnHa9tAlF2I` |
+| 12.10 Báo cáo chiến dịch | `tbly1pZs78hhkJh5` |
+| 12.11 Tổng quan theo ngày | `tblCphpk0AkbdS5U` |
 
-Các id này chỉ là ví dụ của deploy gốc. **Khách mới không dùng lại** — sau khi nhân bản Base Mẫu và chạy
-`setup-tables.mjs`, mỗi bảng có id riêng; lấy id thật từ khối JSON `tables` mà lệnh in ra, hoặc từ `check-setup`.
+Đây là base của Mentor Club, **cũng là giá trị mặc định** khi không đặt GitHub Variables.
+**Khách có base riêng thì BẮT BUỘC đặt Variables đè lên** — không đặt là lệnh chạy vào base này.
+Sau khi nhân bản base và chạy `setup-tables.mjs`, mỗi bảng có id riêng; lấy id thật từ khối JSON
+`tables` mà lệnh in ra, hoặc từ `check-setup`.
 </details>

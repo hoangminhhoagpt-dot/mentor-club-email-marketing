@@ -14,17 +14,17 @@ của Hoàng Minh Hoá); **B** — Claude hỏi từng bước (khi chưa có s�
 ## KHỐI DÁN A — BẢN ĐIỀN SẴN (gửi một phát, không hỏi lại)
 
 Chỉ cần điền 3 chỗ `xxxx` (2 secret + PAT) rồi gửi. Muốn deploy vào base đang chạy thật `ZM8q…`
-thì đổi 1 dòng `LARK_BASE_ID` sang `https://studiosuccess.sg.larksuite.com/base/ZM8qbz78JaR16Es560sly6Bkgvg`
-(bước 4 tự đọc lại 9 table id mới).
+thì đổi 1 dòng `LARK_BASE_ID` sang `https://studiosuccess.sg.larksuite.com/base/TxSrb3qKeaMqZDslH9Uln3yzgyb`
+(bước 4 tự đọc lại 11 table id mới).
 
 ```
-Triển khai giúp tôi hệ Email Marketing trên Lark Base (9 bảng 12.1→12.9) từ repo:
+Triển khai giúp tôi hệ Email Marketing trên Lark Base (11 bảng 12.1→12.11) từ repo:
 https://github.com/hoangminhhoagpt-dot/mentor-club-email-marketing
 
 INPUT CỦA TÔI (đã chuẩn bị sẵn):
 - LARK_APP_ID      = cli_aa8cccd0b262deed
 - LARK_APP_SECRET  = xxxxxxxxxxxxxxxx
-- LARK_BASE_ID     = https://studiosuccess.sg.larksuite.com/wiki/Sm0TwzxpUia6pWkRGCClLfnwgrf   (dán cả link cũng được)
+- LARK_BASE_ID     = https://studiosuccess.sg.larksuite.com/base/TxSrb3qKeaMqZDslH9Uln3yzgyb   (dán cả link cũng được)
 - SMTP_USER        = hoaguru2@hoangminhhoa.net        (hộp thư Lark Mail — dùng để gửi + quét bounce qua IMAP)
 - SMTP_PASS        = xxxxxxxxxxxxxxxx                 (IMAP/SMTP password của Lark Mail, KHÔNG phải mật khẩu đăng nhập)
 - SMTP_HOST        = smtp.larksuite.com:465   |   IMAP_HOST = imap.larksuite.com:993
@@ -40,7 +40,7 @@ YÊU CẦU:
    hình (không thì ghi record trả 91403, hoặc chạy vào sai chỗ mà không báo lỗi rõ). App Lark phải có
    scope bitable:app VÀ được thêm làm cộng tác viên CÓ QUYỀN SỬA của Base.
 3. Đặt GitHub Secrets: LARK_APP_SECRET, SMTP_PASS (ghi thẳng, đừng in token ra màn hình).
-4. Chạy setup-tables tạo/kiểm đủ 9 bảng 12.1→12.9 trong Base; đọc 9 table id in ra rồi đặt GitHub
+4. Chạy setup-tables tạo/kiểm đủ 11 bảng 12.1→12.11 trong Base; đọc 11 table id in ra rồi đặt GitHub
    Variables: LARK_APP_ID, LARK_APP_TOKEN (then chốt nhất — có nó là bỏ qua đường resolve qua wiki),
    TABLE_NURTURE(12.1), TABLE_CAMPAIGN(12.2), TABLE_NL_LIST(12.3), TABLE_NL_MAIL(12.4),
    TABLE_UNSUB(12.6), TABLE_FAKE(12.7), TABLE_ERROR(12.8), và TRACKER_BASE_URL.
@@ -100,7 +100,7 @@ LÀM THEO THỨ TỰ:
    Chạy `node scripts/setup-tables.mjs --base <app_token>`.
    ⚠️ BẮT BUỘC có cờ --base. Script tự TẠO bảng còn thiếu và BÙ cột cho bảng đã có;
    chạy lại nhiều lần vô hại. Cuối lệnh nó in sẵn khối JSON "tables" — dán vào config.
-   Rồi chạy `npm run check`, phải xanh hết 9 bảng + SMTP.
+   Rồi chạy `npm run check`, phải xanh hết 11 bảng + SMTP.
 
 4. Chạy thử KHÔNG gửi thật: đặt "send": {"dryRun": true} trong config, chạy
    `node scripts/send-nurture.mjs`. Xem log hợp lý rồi mới đổi false.

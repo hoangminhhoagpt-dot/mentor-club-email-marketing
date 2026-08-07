@@ -27,10 +27,10 @@ jobs:
         env:
           LARK_APP_SECRET: ${{ secrets.LARK_APP_SECRET }}
           IMAP_PASS:       ${{ secrets.IMAP_PASS || secrets.SMTP_PASS }}
+          # Mặc định trỏ về BASE MẪU CHUẨN "MENTOR CAMP CRM" (TxSrb3q…).
           LARK_APP_ID:    ${{ vars.LARK_APP_ID    || 'cli_aa8cccd0b262deed' }}
-          LARK_WIKI_TOKEN: ${{ vars.LARK_WIKI_TOKEN || 'Sm0TwzxpUia6pWkRGCClLfnwgrf' }}
-          LARK_APP_TOKEN: ${{ vars.LARK_APP_TOKEN }}
-          TABLE_ERROR: ${{ github.event.client_payload.table_error || vars.TABLE_ERROR || 'tblNgcFWWyWI7erZ' }}
+          LARK_APP_TOKEN: ${{ vars.LARK_APP_TOKEN || 'TxSrb3qKeaMqZDslH9Uln3yzgyb' }}
+          TABLE_ERROR: ${{ github.event.client_payload.table_error || vars.TABLE_ERROR || 'tblj52EgtbwXpCdy' }}
           IMAP_HOST: ${{ vars.IMAP_HOST || 'imap.larksuite.com' }}
           IMAP_USER: ${{ vars.IMAP_USER || vars.SMTP_USER || 'hoaguru2@hoangminhhoa.net' }}
           DAYS: ${{ github.event.client_payload.days || inputs.days || '3' }}

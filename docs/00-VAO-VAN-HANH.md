@@ -1,11 +1,11 @@
 # 00 — VÀO VẬN HÀNH: các phần còn thiếu (làm theo thứ tự)
 
-Đã xong (đã test thật): quyền Lark ✅ · 9 bảng đủ cột ✅ · gửi email thật ✅ · bounce ghi 12.8 ✅ ·
+Đã xong (đã test thật): quyền Lark ✅ · 11 bảng đủ cột ✅ · gửi email thật ✅ · bounce ghi 12.8 ✅ ·
 logic tracking Worker ✅. **Còn 6 phần dưới đây** để chạy hoàn toàn tự động qua HTTP từ Lark.
 
 Giá trị dùng lại (đã biết):
 - Repo: `hoangminhhoagpt-dot/mentor-club-email-marketing`
-- Base app_token: `GWQgbY7t9awFlosl3k3l6OQTgzd` (đã điền sẵn vào Worker)
+- Base app_token: `TxSrb3qKeaMqZDslH9Uln3yzgyb` (đã điền sẵn vào Worker)
 - Hộp thư gửi: `hoaguru2@hoangminhhoa.net` (đã là default trong workflow)
 
 ---
@@ -38,7 +38,7 @@ Repo → **Settings → Secrets and variables → Actions**:
 |---|---|
 | `TRACKER_BASE_URL` | URL Worker ở phần A |
 
-> Các giá trị khác (app_id, wiki token, id 9 bảng, địa chỉ gửi, host SMTP/IMAP) đã có **default sẵn**
+> Các giá trị khác (app_id, wiki token, id 11 bảng, địa chỉ gửi, host SMTP/IMAP) đã có **default sẵn**
 > trong workflow — không cần đặt. Chỉ 2 Secret + 1 Variable trên là đủ.
 
 ## D. Tạo GitHub PAT (để Lark gọi API GitHub)

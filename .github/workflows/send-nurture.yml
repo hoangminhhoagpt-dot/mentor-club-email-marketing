@@ -31,20 +31,21 @@ jobs:
           LARK_APP_SECRET: ${{ secrets.LARK_APP_SECRET }}
           SMTP_PASS:       ${{ secrets.SMTP_PASS }}
           # ---- KHÔNG bí mật → Variables (client_payload ghi đè, có default sẵn) ----
+          # Mặc định trỏ về BASE MẪU CHUẨN "MENTOR CAMP CRM" (TxSrb3q…). Khách có base riêng
+          # thì PHẢI đặt Variables đè lên — nếu không sẽ chạy vào base của Mentor Club.
           LARK_APP_ID:    ${{ vars.LARK_APP_ID    || 'cli_aa8cccd0b262deed' }}
-          LARK_WIKI_TOKEN: ${{ vars.LARK_WIKI_TOKEN || 'Sm0TwzxpUia6pWkRGCClLfnwgrf' }}
-          LARK_APP_TOKEN: ${{ vars.LARK_APP_TOKEN }}
-          TABLE_NURTURE:  ${{ github.event.client_payload.table_nurture  || vars.TABLE_NURTURE  || 'tbltZ1K0MEVMA0hD' }}
-          TABLE_CAMPAIGN: ${{ github.event.client_payload.table_campaign || vars.TABLE_CAMPAIGN || 'tblSpd0cH3yVczMl' }}
-          TABLE_UNSUB:    ${{ vars.TABLE_UNSUB || 'tbldkFroNQJXjZRV' }}
-          TABLE_ERROR:    ${{ vars.TABLE_ERROR || 'tblNgcFWWyWI7erZ' }}
-          TABLE_FAKE:     ${{ vars.TABLE_FAKE  || 'tblZHQX8FrGp1kPf' }}
+          LARK_APP_TOKEN: ${{ vars.LARK_APP_TOKEN || 'TxSrb3qKeaMqZDslH9Uln3yzgyb' }}
+          TABLE_NURTURE:  ${{ github.event.client_payload.table_nurture  || vars.TABLE_NURTURE  || 'tblJLDb9fgS9Z9Ih' }}
+          TABLE_CAMPAIGN: ${{ github.event.client_payload.table_campaign || vars.TABLE_CAMPAIGN || 'tblDp5oFUkmseDSq' }}
+          TABLE_UNSUB:    ${{ vars.TABLE_UNSUB || 'tblBARpRx4JuVZ7n' }}
+          TABLE_ERROR:    ${{ vars.TABLE_ERROR || 'tblj52EgtbwXpCdy' }}
+          TABLE_FAKE:     ${{ vars.TABLE_FAKE  || 'tblxAux9X14qimtf' }}
           SMTP_HOST:       ${{ vars.SMTP_HOST || 'smtp.larksuite.com' }}
           SMTP_USER:       ${{ vars.SMTP_USER || 'hoaguru2@hoangminhhoa.net' }}
           SMTP_FROM_EMAIL: ${{ vars.SMTP_FROM_EMAIL || vars.SMTP_USER || 'hoaguru2@hoangminhhoa.net' }}
           SMTP_FROM_NAME:  ${{ vars.SMTP_FROM_NAME || 'Mentor Club' }}
           TRACKER_BASE_URL: ${{ vars.TRACKER_BASE_URL }}
           SEND_PER_RUN_LIMIT: ${{ vars.SEND_PER_RUN_LIMIT || '400' }}
-          SEND_DELAY_MS:      ${{ vars.SEND_DELAY_MS || '1200' }}
+          SEND_DELAY_MS:      ${{ vars.SEND_DELAY_MS || '4000' }}
           DRY_RUN: ${{ github.event.client_payload.dry_run || inputs.dry_run || 'false' }}
         run: node scripts/send-nurture.mjs

@@ -1,7 +1,7 @@
 # 02 — Cấp quyền app Lark trên Base Email Marketing
 
 Base nằm trong **Wiki** của tenant StudioSuccess:
-`https://studiosuccess.sg.larksuite.com/wiki/Sm0TwzxpUia6pWkRGCClLfnwgrf`
+`https://studiosuccess.sg.larksuite.com/base/TxSrb3qKeaMqZDslH9Uln3yzgyb`
 
 App hiện dùng: **`cli_aa8cccd0b262deed`** (đang dùng cho các bộ TikTok/YouTube). Cần cấp cho nó
 2 thứ: **quyền (scope)** ở Developer Console và **quyền cộng tác trên Base**.

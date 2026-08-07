@@ -18,13 +18,13 @@ compatibility_date = "2024-11-01"
 [vars]
 LARK_DOMAIN   = "https://open.larksuite.com"
 LARK_APP_ID   = "cli_aa8cccd0b262deed"
-LARK_APP_TOKEN = "ZM8qbz78JaR16Es560sly6Bkgvg"   # Base TỔNG HỢP (12.x + 14.x + 15.x + 16.x + 17.x)
-TABLE_OPEN    = "tblwaBvetoG2crzj"   # 12.5 Báo cáo đọc Email
-TABLE_CLICK   = "tblIneZtFI7B6zyV"   # 12.9 Danh sách email click link
-TABLE_UNSUB   = "tbloUKugBtKn7bQD"   # 12.6 Huỷ nhận email
+LARK_APP_TOKEN = "TxSrb3qKeaMqZDslH9Uln3yzgyb"   # ★ MẪU CHUẨN — base "MENTOR CAMP CRM"
+TABLE_OPEN    = "tblQw8wYbFzmGx8T"   # 12.5 Báo cáo đọc Email
+TABLE_CLICK   = "tbllXZnHa9tAlF2I"   # 12.9 Danh sách email click link
+TABLE_UNSUB   = "tblBARpRx4JuVZ7n"   # 12.6 Huỷ nhận email
 
-# Base CŨ (khách hoangminhhoa.net) — giữ lại để đổi về khi cần:
-# LARK_APP_TOKEN = "GWQgbY7t9awFlosl3k3l6OQTgzd"
-# TABLE_OPEN = "tblvxxe82dGYQXQv" · TABLE_CLICK = "tblw20eIsnURSIxC" · TABLE_UNSUB = "tbldkFroNQJXjZRV"
+# Các base ĐỜI TRƯỚC (không dùng nữa, giữ lại để tra khi cần đối chiếu lịch sử):
+#   base Mẫu tổng hợp  ZM8qbz78JaR16Es560sly6Bkgvg → open tblwaBvetoG2crzj · click tblIneZtFI7B6zyV · unsub tbloUKugBtKn7bQD
+#   base khách đời đầu GWQgbY7t9awFlosl3k3l6OQTgzd → open tblvxxe82dGYQXQv · click tblw20eIsnURSIxC · unsub tbldkFroNQJXjZRV
 
 # LARK_APP_SECRET → đặt bằng: wrangler secret put LARK_APP_SECRET  (KHÔNG viết vào file)

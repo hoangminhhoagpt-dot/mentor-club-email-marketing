@@ -5,19 +5,21 @@
   "larkAppId": "cli_aa8cccd0b262deed",
   "larkAppSecret": "",
 
-  "wikiToken": "Sm0TwzxpUia6pWkRGCClLfnwgrf",
-  "appToken": "",
+  "_mau_chuan": "Các id dưới đây là của base MẪU CHUẨN 'MENTOR CAMP CRM'. Nhân bản base xong thì bản sao có id KHÁC — chạy setup-tables.mjs --base <app_token-ban-sao> rồi dán khối tables nó in ra vào đây.",
+  "appToken": "TxSrb3qKeaMqZDslH9Uln3yzgyb",
 
   "tables": {
-    "nurtureList":    "tbltZ1K0MEVMA0hD",
-    "campaign365":    "tblSpd0cH3yVczMl",
-    "newsletterList": "tbls6oZoxfUxZvkO",
-    "newsletterMail": "tblykPorYc7WR7Ss",
-    "openReport":     "tblvxxe82dGYQXQv",
-    "unsubscribe":    "tbldkFroNQJXjZRV",
-    "fakeFilter":     "tblZHQX8FrGp1kPf",
-    "errorList":      "tblNgcFWWyWI7erZ",
-    "clickList":      "tblw20eIsnURSIxC"
+    "nurtureList":    "tblJLDb9fgS9Z9Ih",
+    "campaign365":    "tblDp5oFUkmseDSq",
+    "newsletterList": "tbleA4pNS13BS7me",
+    "newsletterMail": "tblTn5FWQyDWaGNy",
+    "openReport":     "tblQw8wYbFzmGx8T",
+    "unsubscribe":    "tblBARpRx4JuVZ7n",
+    "fakeFilter":     "tblxAux9X14qimtf",
+    "errorList":      "tblj52EgtbwXpCdy",
+    "clickList":      "tbllXZnHa9tAlF2I",
+    "reportCampaign": "tbly1pZs78hhkJh5",
+    "reportDaily":    "tblCphpk0AkbdS5U"
   },
 
   "smtp": {
@@ -43,7 +45,9 @@
 
   "send": {
     "perRunLimit": 200,
-    "delayMs": 1500,
+    "delayMs": 4000,
+    "delayJitterMs": 2000,
+    "stopAfterFails": 5,
     "dryRun": false
   },
 

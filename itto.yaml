@@ -1,6 +1,6 @@
 # ============================================================================
-# itto.yaml — HỢP ĐỒNG ITTO của gói mentor-club-email-marketing (9 bảng 12.1→12.9)
-# Buộc chặt: Skill (hmh-AIOS-email-marketing) ⇄ Repo này ⇄ Base Mẫu 9 bảng.
+# itto.yaml — HỢP ĐỒNG ITTO của gói mentor-club-email-marketing (11 bảng 12.1→12.11)
+# Buộc chặt: Skill (hmh-AIOS-email-marketing) ⇄ Repo này ⇄ Base Mẫu 11 bảng.
 # Máy đọc: scripts/check-setup.mjs soát 4 mục + danh sách secret dưới đây.
 # ============================================================================
 
@@ -11,13 +11,14 @@ skill: hmh-AIOS-email-marketing
 # ── I — INPUT: chuẩn bị TRƯỚC khi chạy ──
 input:
   base_mau:
-    # ★ Base Mẫu TỔNG HỢP — 1 lần nhân bản là có cả 5 module (12.x email · 14.x Facebook ·
-    #   15.x TikTok · 16.x YouTube · 17.x Instagram). Quyền: ai có link XEM + TẠO BẢN SAO.
-    #   Học viên: mở link → góc trên phải "..." → "Tạo bản sao / Make a copy".
-    #   9 bảng 12.x sinh 100% từ setup-tables.mjs — KHÔNG sửa cột bằng tay trên UI.
-    #   Dữ liệu đang có trong base (kênh/video/bài mẫu) coi là DỮ LIỆU MẪU để học viên xem form.
-    template_url: "https://studiosuccess.sg.larksuite.com/base/ZM8qbz78JaR16Es560sly6Bkgvg"
-    app_token: "<LARK_APP_TOKEN — để ở GitHub Variable/Secret, KHÔNG commit vào đây>"
+    # ★ MẪU CHUẨN (chốt 06/08/2026): base "MENTOR CAMP CRM" — mọi cấu hình mặc định của repo,
+    #   Worker và workflow đều trỏ về đây. Base cũ ZM8qbz78… và GWQgbY7t… KHÔNG dùng nữa.
+    #   Quyền cần đặt: ai có link XEM + TẠO BẢN SAO. Học viên: mở link → "..." → "Tạo bản sao".
+    #   11 bảng 12.x sinh 100% từ setup-tables.mjs — KHÔNG sửa cột bằng tay trên UI.
+    #   Base còn chứa các bảng nghiệp vụ khác của Mentor Club (2.x SEO, 14.x Facebook, CSKH…);
+    #   setup-tables chỉ đụng vào bảng tên "12.x", không động tới phần còn lại.
+    template_url: "https://studiosuccess.sg.larksuite.com/base/TxSrb3qKeaMqZDslH9Uln3yzgyb"
+    app_token: "TxSrb3qKeaMqZDslH9Uln3yzgyb"   # base MẪU CHUẨN "MENTOR CAMP CRM" — app_token KHÔNG phải bí mật, vào được vẫn phải có app secret
     setup: node scripts/setup-tables.mjs --base <app_token-cua-ban-sao>   # đẻ bảng thiếu + bù cột
     tables:
       - "12.1 Danh sách Email Nuôi Dưỡng"
@@ -29,6 +30,8 @@ input:
       - "12.7 Lọc mail ảo"
       - "12.8 Danh sách mail lỗi"
       - "12.9 Danh sách email click link"
+      - "12.10 Báo cáo chiến dịch"          # máy ghi — dựng bởi build-report.mjs
+      - "12.11 Tổng quan theo ngày"         # máy ghi — mỗi ngày 1 dòng, để vẽ xu hướng
   secrets:                       # BÍ MẬT — GitHub Secrets (hoặc config.local.json khi chạy máy)
     - LARK_APP_SECRET            # App Secret của app Lark
     - SMTP_PASS                  # IMAP/SMTP password của Lark Mail
@@ -37,7 +40,7 @@ input:
   phieu_input: docs/00-PHIEU-INPUT.md
   preflight: node check-itto.mjs && node scripts/check-setup.mjs   # cả 2 PHẢI xanh mới chạy thật
   # check-itto.mjs: zero-dep, soát hợp đồng — chạy được ngay cả khi chưa `npm install`.
-  # check-setup.mjs: cần npm install + Lark/SMTP sống (soát quyền, 9 bảng, đăng nhập mail).
+  # check-setup.mjs: cần npm install + Lark/SMTP sống (soát quyền, 11 bảng, đăng nhập mail).
 
 # ── T — TECH ──
 tech:
@@ -63,6 +66,9 @@ tool:
     - event_type: sync-bounces
       script: node scripts/sync-bounces.mjs
       desc: "Quét bounce qua IMAP → 12.8 (suppression)"
+    - event_type: build-report
+      script: node scripts/build-report.mjs
+      desc: "Gộp 12.1→12.9 thành báo cáo 12.10 + ảnh chụp ngày 12.11 (chỉ đọc, an toàn)"
 
 # ── O — OUTPUT: kết quả rơi vào đâu, kiểm bằng gì ──
 output:
@@ -71,6 +77,7 @@ output:
     - "12.9 Click link (Worker /c)"
     - "12.6 Huỷ nhận (Worker /u)"
     - "12.8 Bounce (sync-bounces IMAP)"
+    - "12.10 Báo cáo chiến dịch + 12.11 Tổng quan ngày (build-report)"
     - "12.4 Trạng thái/Đã gửi (send-newsletter)"
     - "12.1 Bước gần nhất/Lần gửi (send-nurture)"
   proof: "tab Actions xanh + số liệu ghi vào 12.5/12.6/12.8/12.9"

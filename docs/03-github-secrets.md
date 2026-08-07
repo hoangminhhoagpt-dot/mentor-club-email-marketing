@@ -5,7 +5,7 @@
 cd _deploy-mentor-club-email-marketing
 git init -b main
 git add scripts .github worker docs README.md package.json .gitignore
-git commit -m "Hệ thống Email Marketing Lark Base (9 bảng) — SMTP + Worker tracking"
+git commit -m "Hệ thống Email Marketing Lark Base (11 bảng) — SMTP + Worker tracking"
 git remote add origin https://github.com/hoangminhhoagpt-dot/mentor-club-email-marketing.git
 git push -u origin main
 ```
