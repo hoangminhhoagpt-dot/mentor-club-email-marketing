@@ -31,8 +31,15 @@ const GIF_1x1 = Uint8Array.from(atob("R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAA
 // ⚠️ Giới hạn thành thật: Apple Mail Privacy Protection tải sẵn mọi ảnh ngay khi thư vừa tới
 // và giả trang thành trình duyệt thật → KHÔNG lọc được bằng user-agent. Vì vậy tỉ lệ mở
 // luôn chỉ là con số THAM KHẢO; muốn đo thật thì tin vào CLICK (12.9), đừng tin MỞ (12.5).
+//
+// 🐞 SỬA 07/08/2026 — LỌC QUÁ TAY: `GoogleImageProxy` từng nằm trong danh sách dưới đây,
+// nên MỌI lượt mở của người dùng Gmail đều bị bỏ. Bản tin đầu tiên gửi thật, người nhận mở
+// thư, mà 12.5 vẫn TRỐNG TRƠN. Khác Apple MPP (tải sẵn khi thư vừa tới), Gmail chỉ gọi proxy
+// KHI người dùng thực sự mở ⇒ đó là tín hiệu mở THẬT, phải đếm. Đã bỏ khỏi danh sách.
+// Đánh đổi còn lại: Gmail cache ảnh nên lần mở thứ hai thường không gọi lại — con số thiên
+// về đếm THIẾU. Đếm thiếu vẫn hơn trống rỗng.
 // ---------------------------------------------------------------------------
-const MAY_QUET = /GoogleImageProxy|Google-Read-Aloud|YahooMailProxy|GoogleDocs|Microsoft Office|MSOffice|Office365|SkypeUriPreview|OutlookSafeLinks|SafeLinks|BarracudaCentral|Proofpoint|Mimecast|Symantec|TrendMicro|ESET|Sophos|Fortinet|McAfee|bot\b|crawler|spider|preview|scanner|curl|wget|python-requests|node-fetch|axios|Go-http-client|okhttp|PostmanRuntime|HeadlessChrome/i;
+const MAY_QUET = /Google-Read-Aloud|YahooMailProxy|GoogleDocs|Microsoft Office|MSOffice|Office365|SkypeUriPreview|OutlookSafeLinks|SafeLinks|BarracudaCentral|Proofpoint|Mimecast|Symantec|TrendMicro|ESET|Sophos|Fortinet|McAfee|bot\b|crawler|spider|preview|scanner|curl|wget|python-requests|node-fetch|axios|Go-http-client|okhttp|PostmanRuntime|HeadlessChrome/i;
 
 // UA "trần" kiểu "Mozilla/5.0" cụt lủn: trình duyệt thật luôn khai thêm nền tảng trong ngoặc.
 // Chuỗi cụt = thư viện HTTP hoặc proxy giả trang qua loa. (Đúng 4 dòng rác ngày 2026-07-15.)
