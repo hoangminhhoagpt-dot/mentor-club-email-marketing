@@ -32,6 +32,11 @@ function parseBounce(src) {
   // Lark chỉ dội thư lại sau khi đã bỏ cuộc → mặc định coi là Hard, chỉ hạ xuống Soft nếu thấy mã 4.x.x
   let type = "Hard bounce";
   if (/^4\./.test(status) || /\b45\d\b/.test(diag)) type = "Soft bounce";
+  // BỘ LỌC LARK TỪ CHỐI (mã 912 / "suspected to be spam") KHÔNG PHẢI ĐỊA CHỈ HỎNG.
+  // Lỗi nằm ở phía mình, người nhận hoàn toàn bình thường. Trước đây mã 912 không khớp 4.x.x
+  // nên rơi vào nhánh "Hard bounce" → khách TỐT bị chặn vĩnh viễn qua suppression.
+  // Phải xét SAU cùng để đè lên hai nhánh trên.
+  if (/\b912\b|antispam|suspected to be spam/i.test(s)) type = "Bị chặn đầu gửi";
   const detail = [status && `Status ${status}`, diag].filter(Boolean).join(" — ").slice(0, 500);
   return { email, type, detail: detail || "Bounce (Lark)" };
 }

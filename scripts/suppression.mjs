@@ -32,6 +32,9 @@ export async function buildSuppression(CFG) {
     const fType = F(CFG, "errorList", "errorType");
     for (const r of recs) {
       const type = getText(r.fields, fType);
+      // "Bị chặn đầu gửi" (Lark mã 912) KHÔNG chặn: địa chỉ vẫn tốt, lỗi ở phía mình.
+      // Phải loại trừ TRƯỚC, vì nhánh dưới bắt cả chuỗi "từ chối".
+      if (/bị chặn đầu gửi|912|antispam/i.test(type)) continue;
       if (/hard|từ chối|reject/i.test(type) || !type) add(getText(r.fields, fEmail));
     }
   } catch (e) { console.warn("⚠️  Không đọc được bảng Mail lỗi (12.8):", e.message); }

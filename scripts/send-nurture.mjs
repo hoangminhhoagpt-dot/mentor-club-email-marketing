@@ -10,9 +10,9 @@
  * Chạy: node scripts/send-nurture.mjs
  */
 import {
-  loadConfig, requireKeys, listAllRecords, updateRecord, F, normEmail, nowMs, sleep,
+  loadConfig, requireKeys, listAllRecords, updateRecord, F, normEmail, nowMs, sleep, nextDelay,
 } from "./lib.mjs";
-import { makeTransport, sendOne } from "./email.mjs";
+import { makeTransport, sendOne, isAntispamReject } from "./email.mjs";
 import { buildSuppression, getText } from "./suppression.mjs";
 
 const CFG = loadConfig();
@@ -63,7 +63,9 @@ const asMs = (v) => {
 
   const transport = makeTransport(CFG);
   let sent = 0, failed = 0, skipped = 0, done = 0;
+  let streak = 0, blockedByFilter = 0;                    // phanh: đếm lần từ chối LIÊN TIẾP
   const limit = CFG.send.perRunLimit;
+  const stopAfter = CFG.send.stopAfterFails;
 
   for (const r of subs) {
     if (sent + failed >= limit) { console.log(`Đã chạm giới hạn ${limit} email/lần. Dừng, phần còn lại chạy lần sau.`); break; }
@@ -109,12 +111,24 @@ const asMs = (v) => {
         await updateRecord(CFG, CFG.tables.nurtureList, r.record_id, patch);
         sent++; console.log(`  ✔ Ngày ${targetStep} → ${email}`);
       }
+      streak = 0;
     } else {
-      failed++; console.log(`  ✘ LỖI ${email}: ${res.error}`);
+      failed++; streak++;
+      if (isAntispamReject(res.error)) blockedByFilter++;
+      console.log(`  ✘ LỖI ${email}: ${res.error}`);
+      // "Bước gần nhất" KHÔNG tăng khi gửi hỏng → lần chạy sau tự gửi lại đúng bước này.
+      if (streak >= stopAfter) {
+        console.log(`\n🛑 DỪNG: ${streak} lần bị từ chối liên tiếp. Không bắn tiếp danh sách.`);
+        break;
+      }
     }
-    if (CFG.send.delayMs) await sleep(CFG.send.delayMs);
+    if (CFG.send.delayMs) await sleep(nextDelay(CFG));
   }
 
   transport.close?.();
   console.log(`\n✅ Nuôi dưỡng: gửi ${sent} · lỗi ${failed} · bỏ qua ${skipped} · hoàn thành ${done}`);
+  if (blockedByFilter) {
+    console.log(`⚠️  ${blockedByFilter} thư bị BỘ LỌC LARK từ chối (mã 912) — KHÔNG phải địa chỉ hỏng.`);
+    console.log(`   Những người này chưa tăng bước, lần chạy sau sẽ tự gửi lại.`);
+  }
 })().catch((e) => { console.error("FATAL", e.message); process.exit(1); });

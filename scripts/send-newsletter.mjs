@@ -13,9 +13,9 @@
  *       RECORD_ID=recXXXX node scripts/send-newsletter.mjs   (gửi 1 dòng)
  */
 import {
-  loadConfig, requireKeys, listAllRecords, updateRecord, F, normEmail, nowMs, sleep,
+  loadConfig, requireKeys, listAllRecords, updateRecord, F, normEmail, nowMs, sleep, nextDelay,
 } from "./lib.mjs";
-import { makeTransport, sendOne } from "./email.mjs";
+import { makeTransport, sendOne, isAntispamReject } from "./email.mjs";
 import { buildSuppression, getText } from "./suppression.mjs";
 
 const CFG = loadConfig();
@@ -76,33 +76,62 @@ const asMs = (v) => {
     const subject = getText(mail.fields, mSub);
     const body = getText(mail.fields, mBody);
     if (!subject) { console.log(`  Bỏ qua dòng ${mail.record_id}: thiếu Tiêu đề.`); continue; }
-    console.log(`\n📨 Gửi bảng tin: "${subject}" → ${recipients.length} người${CFG.send.dryRun ? "  [DRY-RUN — không gửi, không ghi Lark]" : ""}`);
+    // TIẾP TỤC TỪ CHỖ DỞ: "Số đã gửi" đóng vai con trỏ. Trước đây lần chạy nào cũng bắt đầu
+    // lại từ đầu danh sách, mà cuối vòng vẫn đánh dấu "Đã gửi" — nên bản tin lớn hơn perRunLimit
+    // thì người ở nửa sau KHÔNG BAO GIỜ nhận được, còn người ở đầu thì bị gửi trùng.
+    const doneBefore = Number(getText(mail.fields, mCount)) || 0;
+    const pending = recipients.slice(doneBefore);
+    console.log(`\n📨 Gửi bảng tin: "${subject}" → ${pending.length}/${recipients.length} người còn lại${doneBefore ? ` (đã gửi ${doneBefore} lần trước)` : ""}${CFG.send.dryRun ? "  [DRY-RUN — không gửi, không ghi Lark]" : ""}`);
+    if (!pending.length) {
+      if (!CFG.send.dryRun) await updateRecord(CFG, Tm, mail.record_id, { [mStatus]: "Đã gửi", [mSentAt]: nowMs() });
+      console.log("  Mọi người trong danh sách đã nhận. Đánh dấu hoàn tất.");
+      continue;
+    }
     if (!CFG.send.dryRun) await updateRecord(CFG, Tm, mail.record_id, { [mStatus]: "Đang gửi" });
 
-    let sent = 0, failed = 0, skipped = 0;
+    let sent = 0, failed = 0, skipped = 0, streak = 0, blockedByFilter = 0, processed = 0;
     const limit = CFG.send.perRunLimit;
-    for (const r of recipients) {
+    const stopAfter = CFG.send.stopAfterFails;
+    for (const r of pending) {
       if (sent + failed >= limit) { console.log(`  Chạm giới hạn ${limit}/lần.`); break; }
+      processed++;
       const res = await sendOne(transport, CFG, {
         to: r.email, name: r.name, subject, html: body,
         campaign: `Bảng tin: ${subject}`.slice(0, 100), step: "",
       });
-      if (res.ok && !res.skipped) { sent++; }
+      if (res.ok && !res.skipped) { sent++; streak = 0; }
       else if (res.skipped) { skipped++; }
-      else { failed++; console.log(`  ✘ ${r.email}: ${res.error}`); }
-      if (CFG.send.delayMs) await sleep(CFG.send.delayMs);
+      else {
+        failed++; streak++;
+        if (isAntispamReject(res.error)) blockedByFilter++;
+        console.log(`  ✘ ${r.email}: ${res.error}`);
+        if (streak >= stopAfter) {
+          console.log(`\n  🛑 DỪNG: ${streak} lần bị từ chối liên tiếp. Không bắn tiếp danh sách.`);
+          break;
+        }
+      }
+      if (CFG.send.delayMs) await sleep(nextDelay(CFG));
+    }
+    if (blockedByFilter) {
+      console.log(`  ⚠️  ${blockedByFilter} thư bị BỘ LỌC LARK từ chối (mã 912) — KHÔNG phải địa chỉ hỏng.`);
     }
 
     // Dry-run KHÔNG được lật trạng thái: đánh dấu "Đã gửi" với 0 email nghĩa là bản tin
     // vĩnh viễn không bao giờ được phát thật (queue chỉ lấy dòng chưa gửi).
+    const totalDone = doneBefore + processed;
+    const hetDanhSach = totalDone >= recipients.length;
     if (!CFG.send.dryRun) {
       await updateRecord(CFG, Tm, mail.record_id, {
-        [mStatus]: "Đã gửi",
-        [mCount]: sent,
+        // Chưa hết danh sách thì trả về "Chờ gửi" để lần chạy sau ĐI TIẾP, không phải làm lại.
+        [mStatus]: hetDanhSach ? "Đã gửi" : "Chờ gửi",
+        [mCount]: totalDone,
         [mSentAt]: nowMs(),
       });
     }
     console.log(`  ✅ Xong "${subject}": gửi ${sent} · lỗi ${failed} · bỏ qua ${skipped}`);
+    if (!hetDanhSach) {
+      console.log(`  ⏸️  Còn ${recipients.length - totalDone} người chưa nhận — lần chạy sau tự đi tiếp từ đó.`);
+    }
   }
 
   transport.close?.();

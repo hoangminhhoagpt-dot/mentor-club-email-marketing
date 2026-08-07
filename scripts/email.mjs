@@ -64,9 +64,35 @@ const escapeHtml = (s) => String(s).replace(/&/g, "&amp;").replace(/</g, "&lt;")
 /** Markdown inline nhẹ: **đậm**, _nghiêng_, [chữ](link). Áp dụng SAU khi đã escape. */
 function inlineMd(s) {
   s = s.replace(/\[([^\]]+)\]\((https?:\/\/[^\s)]+)\)/g, (_, t, u) => `<a href="${u.replace(/"/g, "%22")}">${t}</a>`);
+  // URL DÁN TRẦN cũng thành liên kết. Trước đây không có bước này nên link viết trần ra thư
+  // dưới dạng CHỮ CHẾT: người đọc phải copy dán tay, và click không bao giờ đo được (bảng 12.9
+  // luôn trống). Điều kiện "đứng sau khoảng trắng hoặc (" khiến nó KHÔNG đụng vào URL vừa nằm
+  // trong href="..." hay trong chữ hiển thị của thẻ <a> ở dòng trên.
+  s = s.replace(/(^|[\s(])(https?:\/\/[^\s<)]+)/g, (_, pre, u) => `${pre}<a href="${u.replace(/"/g, "%22")}">${u}</a>`);
   s = s.replace(/\*\*([^*]+)\*\*/g, "<b>$1</b>");
   s = s.replace(/(^|[\s(])_([^_\n]+)_/g, "$1<i>$2</i>");
   return s;
+}
+
+/**
+ * Dựng BẢN CHỮ THUẦN để gửi kèm HTML (multipart/alternative).
+ * Thư chỉ có HTML là dấu hiệu thư máy — mọi thang chấm spam đều trừ điểm. Thư người thật
+ * gần như luôn có cả hai phần.
+ */
+export function toPlainText(body) {
+  const s = String(body || "");
+  if (/<(p|div|h[1-6]|ul|ol|br|table|img|a)\b/i.test(s)) {      // nội dung đã là HTML → bóc thẻ
+    return s.replace(/<br\s*\/?>/gi, "\n")
+      .replace(/<\/(p|div|li|h[1-6]|tr)>/gi, "\n")
+      .replace(/<li\b[^>]*>/gi, "- ")
+      .replace(/<[^>]+>/g, "")
+      .replace(/&nbsp;/g, " ").replace(/&lt;/g, "<").replace(/&gt;/g, ">").replace(/&amp;/g, "&")
+      .replace(/\n{3,}/g, "\n\n").trim();
+  }
+  return s.replace(/\[([^\]]+)\]\((https?:\/\/[^\s)]+)\)/g, "$1: $2")   // link → "chữ: url"
+    .replace(/\*\*([^*]+)\*\*/g, "$1")
+    .replace(/(^|[\s(])_([^_\n]+)_/g, "$1$2")
+    .trim();
 }
 /**
  * Chuyển VĂN BẢN THUẦN → HTML (để người soạn không phải gõ thẻ trong bảng 12.2/12.4):
@@ -126,23 +152,31 @@ export async function sendOne(transport, CFG, { to, name, subject, html, campaig
   let doc = ensureHtmlDoc(rendered);
   doc = injectTracking(doc, { base, token, unsubUrl });
 
+  // Bản chữ thuần đi kèm. Chân thư chỉ thêm khi có link huỷ nhận, để khớp đúng với bản HTML
+  // (injectTracking cũng chỉ chèn chân thư khi có unsubUrl).
+  let text = toPlainText(rendered);
+  if (unsubUrl) text += `\n\n---\nBạn nhận email này vì đã đăng ký nhận thông tin từ chúng tôi.\nHuỷ nhận: ${unsubUrl}`;
+
   const from = `"${CFG.smtp.fromName}" <${CFG.smtp.fromEmail}>`;
-  const headers = {};
-  if (unsubUrl) {
-    headers["List-Unsubscribe"] = `<${unsubUrl}>, <mailto:${CFG.smtp.fromEmail}?subject=unsubscribe>`;
-    headers["List-Unsubscribe-Post"] = "List-Unsubscribe=One-Click";
-  }
+  // List-Unsubscribe LUÔN có. Trước đây chỉ gắn khi bật tracking — mà bản chạy thật không có
+  // tracker nên thư đi ra KHÔNG mang header nào, các nhà mạng mất một tín hiệu tin cậy quan trọng.
+  const unsubMailto = `<mailto:${CFG.smtp.fromEmail}?subject=ngung-nhan>`;
+  const headers = { "List-Unsubscribe": unsubUrl ? `<${unsubUrl}>, ${unsubMailto}` : unsubMailto };
+  if (unsubUrl) headers["List-Unsubscribe-Post"] = "List-Unsubscribe=One-Click";  // One-Click cần URL
 
   if (CFG.send.dryRun) {
     return { ok: true, skipped: true, messageId: "(dry-run)" };
   }
   try {
-    const info = await transport.sendMail({ from, to: email, subject: subj, html: doc, headers });
+    const info = await transport.sendMail({ from, to: email, subject: subj, text, html: doc, headers });
     return { ok: true, messageId: info.messageId };
   } catch (e) {
     return { ok: false, error: e.message || String(e) };
   }
 }
+
+/** Lark từ chối vì bộ lọc rác (mã 912) — KHÔNG phải địa chỉ hỏng. Đừng bao giờ coi là hard bounce. */
+export const isAntispamReject = (msg) => /\b912\b|antispam|suspected to be spam/i.test(String(msg || ""));
 
 /** Gửi lần lượt 1 danh sách người nhận với throttle (nghỉ delayMs giữa 2 email). */
 export async function sendBatch(transport, CFG, recipients, buildMsg, onResult) {

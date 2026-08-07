@@ -4,3 +4,9 @@ config.local.json
 *.log
 .DS_Store
 .wrangler/
+
+# Ban sao luu cua config CO CHUA SECRET — pattern 'config.local.json' KHONG bat duoc
+# duoi .bak, suyt commit len repo public ngay 07/08/2026.
+config.local.json*
+# Dau ra sinh tu dong cua build-dashboard (anh chup so lieu, khong phai ma nguon)
+dashboard/
