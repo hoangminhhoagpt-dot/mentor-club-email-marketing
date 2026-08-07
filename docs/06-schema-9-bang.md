@@ -1,4 +1,4 @@
-# 06 — Schema 9 bảng (12.1 → 12.9)
+# 06 — Schema 11 bảng (12.1 → 12.11)
 
 Đây là bộ cột **mặc định** mà `setup-tables.mjs` sẽ tạo (nếu còn thiếu) và code đọc/ghi.
 Nếu bảng thật của bạn dùng tên cột khác, có 2 cách:
@@ -17,7 +17,7 @@ Mọi cột DateTime ghi bằng **epoch milliseconds**.
 
 ## Ý nghĩa & vai trò từng bảng (đọc trước)
 
-9 bảng chia làm **3 nhóm** theo vai trò trong luồng gửi email.
+11 bảng chia làm **3 nhóm** theo vai trò trong luồng gửi email.
 
 ### 🟢 Nhóm GỬI — 2 cặp "người nhận + nội dung"
 Mỗi chiến dịch = 1 bảng người nhận + 1 bảng nội dung.
@@ -59,7 +59,7 @@ Gửi:   12.1+12.2 (nuôi dưỡng)      12.3+12.4 (bản tin)
 
 ---
 
-## 12.1 Danh sách Email Nuôi Dưỡng — `tbltZ1K0MEVMA0hD`
+## 12.1 Danh sách Email Nuôi Dưỡng — `tblJLDb9fgS9Z9Ih`
 | Cột | Kiểu | Ý nghĩa |
 |---|---|---|
 | Email | Text | địa chỉ người nhận |
@@ -70,7 +70,7 @@ Gửi:   12.1+12.2 (nuôi dưỡng)      12.3+12.4 (bản tin)
 | Lần gửi gần nhất | DateTime | hệ thống tự ghi |
 | Ghi chú | Text | tuỳ ý |
 
-## 12.2 Chiến dịch Email 365 ngày — `tblSpd0cH3yVczMl`
+## 12.2 Chiến dịch Email 365 ngày — `tblDp5oFUkmseDSq`
 | Cột | Kiểu | Ý nghĩa |
 |---|---|---|
 | Ngày | Number | 1..365 — ngày thứ mấy của phễu |
@@ -81,7 +81,7 @@ Gửi:   12.1+12.2 (nuôi dưỡng)      12.3+12.4 (bản tin)
 > Logic gửi: mỗi người nhận nhận **tuần tự** ngày 1, 2, 3… mỗi ngày 1 email (cron chạy 1 lần/ngày),
 > không nhảy cóc kể cả khi cron lỡ ngày.
 
-## 12.3 Danh sách Email bảng tin — `tbls6oZoxfUxZvkO`
+## 12.3 Danh sách Email bảng tin — `tbleA4pNS13BS7me`
 | Cột | Kiểu | Ý nghĩa |
 |---|---|---|
 | Email | Text | người nhận bản tin |
@@ -91,7 +91,7 @@ Gửi:   12.1+12.2 (nuôi dưỡng)      12.3+12.4 (bản tin)
 | Nguồn | Text | form/landing/nhập tay… |
 | Ghi chú | Text | tuỳ ý |
 
-## 12.4 Email bảng tin — `tblykPorYc7WR7Ss`
+## 12.4 Email bảng tin — `tblTn5FWQyDWaGNy`
 | Cột | Kiểu | Ý nghĩa |
 |---|---|---|
 | Tiêu đề | Text | subject |
@@ -101,7 +101,7 @@ Gửi:   12.1+12.2 (nuôi dưỡng)      12.3+12.4 (bản tin)
 | Đã gửi | Number | hệ thống ghi số người đã gửi |
 | Ngày gửi thực | DateTime | hệ thống ghi |
 
-## 12.5 Báo cáo đọc Email — `tblvxxe82dGYQXQv`  *(Worker /o ghi)*
+## 12.5 Báo cáo đọc Email — `tblQw8wYbFzmGx8T`  *(Worker /o ghi)*
 | Cột | Kiểu | Ý nghĩa |
 |---|---|---|
 | Email | Text | ai mở |
@@ -112,7 +112,7 @@ Gửi:   12.1+12.2 (nuôi dưỡng)      12.3+12.4 (bản tin)
 | Số lần mở | Number | tăng dần mỗi lần mở |
 | Thiết bị | Text | user-agent |
 
-## 12.6 Huỷ nhận email — `tbldkFroNQJXjZRV`  *(Worker /u ghi + suppression đọc)*
+## 12.6 Huỷ nhận email — `tblBARpRx4JuVZ7n`  *(Worker /u ghi + suppression đọc)*
 | Cột | Kiểu | Ý nghĩa |
 |---|---|---|
 | Email | Text | người huỷ |
@@ -122,7 +122,7 @@ Gửi:   12.1+12.2 (nuôi dưỡng)      12.3+12.4 (bản tin)
 
 > Mọi email trong bảng này bị **chặn gửi** ở mọi chiến dịch.
 
-## 12.7 Lọc mail ảo — `tblZHQX8FrGp1kPf`  *(filter-fake.mjs ghi)*
+## 12.7 Lọc mail ảo — `tblxAux9X14qimtf`  *(filter-fake.mjs ghi)*
 | Cột | Kiểu | Ý nghĩa |
 |---|---|---|
 | Email | Text | email cần kiểm |
@@ -134,7 +134,7 @@ Gửi:   12.1+12.2 (nuôi dưỡng)      12.3+12.4 (bản tin)
 
 > Email **Không hợp lệ** bị chặn gửi.
 
-## 12.8 Danh sách mail lỗi — `tblNgcFWWyWI7erZ`  *(sync-bounces.mjs ghi)*
+## 12.8 Danh sách mail lỗi — `tblj52EgtbwXpCdy`  *(sync-bounces.mjs ghi)*
 | Cột | Kiểu | Ý nghĩa |
 |---|---|---|
 | Email | Text | địa chỉ bị lỗi |
@@ -145,7 +145,7 @@ Gửi:   12.1+12.2 (nuôi dưỡng)      12.3+12.4 (bản tin)
 
 > **Hard bounce** bị chặn gửi vĩnh viễn.
 
-## 12.9 Danh sách email click link — `tblw20eIsnURSIxC`  *(Worker /c ghi)*
+## 12.9 Danh sách email click link — `tbllXZnHa9tAlF2I`  *(Worker /c ghi)*
 | Cột | Kiểu | Ý nghĩa |
 |---|---|---|
 | Email | Text | ai click |
@@ -155,3 +155,36 @@ Gửi:   12.1+12.2 (nuôi dưỡng)      12.3+12.4 (bản tin)
 | Nhấp lần đầu | DateTime | |
 | Nhấp gần nhất | DateTime | |
 | Số lần nhấp | Number | tăng dần |
+
+## 12.10 Báo cáo chiến dịch — `tbly1pZs78hhkJh5`  *(build-report.mjs ghi)*
+Mỗi bản tin / mỗi bước nuôi dưỡng một dòng. Upsert theo **Chiến dịch + Bước** nên chạy lại không đẻ trùng.
+
+| Cột | Kiểu | Ý nghĩa |
+|---|---|---|
+| Chiến dịch | Text | `Bảng tin: <tiêu đề>` hoặc `Nuôi dưỡng 365` |
+| Loại | Select | Bản tin · Nuôi dưỡng |
+| Bước | Text | `Ngày N` với chuỗi nuôi dưỡng, rỗng với bản tin |
+| Đã gửi | Number | bản tin lấy số thật; nuôi dưỡng **suy ra** từ số người có Bước gần nhất ≥ N |
+| Người mở | Number | đếm người, không đếm lượt |
+| Tỉ lệ mở (%) | Number | chỉ tham khảo — máy quét tự tải ảnh |
+| Người bấm | Number | đếm bằng danh sách người; một người bấm 3 link vẫn là 1 |
+| Tỉ lệ bấm (%) | Number | con số đáng tin nhất |
+| Lượt bấm | Number | tổng số lần bấm |
+| Huỷ nhận | Number | theo chiến dịch |
+| Cập nhật lúc | DateTime | |
+
+## 12.11 Tổng quan theo ngày — `tblCphpk0AkbdS5U`  *(build-report.mjs ghi)*
+Mỗi ngày một dòng ảnh chụp, để vẽ đường xu hướng. Upsert theo **Mốc**.
+
+| Cột | Kiểu | Ý nghĩa |
+|---|---|---|
+| Mốc | Text | `yyyy-MM-dd` theo giờ VN |
+| Đang nuôi / Tổng nuôi dưỡng | Number | sức khoẻ chuỗi 365 |
+| Đang nhận bản tin / Tổng bản tin | Number | sức khoẻ danh sách |
+| Đã huỷ nhận | Number | luỹ kế |
+| Mail lỗi | Number | địa chỉ nhận thật sự hỏng |
+| Bị chặn đầu gửi | Number | **lỗi phía mình** (Lark mã 912) — tách riêng để không đổ oan cho khách |
+| Mail ảo | Number | 12.7 chấm Không hợp lệ |
+| Thư đã gửi (luỹ kế) | Number | |
+| Lượt mở · Lượt bấm | Number | |
+| Cập nhật lúc | DateTime | |

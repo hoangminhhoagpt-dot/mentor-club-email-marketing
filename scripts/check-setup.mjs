@@ -1,6 +1,6 @@
 /**
  * check-setup.mjs — kiểm tra nhanh cấu hình trước khi chạy thật.
- * Xác nhận: token Lark OK · resolve wiki→app_token OK · 9 bảng đọc được · SMTP đăng nhập OK.
+ * Xác nhận: token Lark OK · resolve wiki→app_token OK · 11 bảng đọc được · SMTP đăng nhập OK.
  *
  * Chạy: node scripts/check-setup.mjs
  */
@@ -34,7 +34,7 @@ const ok = (b) => (b ? "✔" : "✘");
   try { app = await resolveAppToken(CFG); console.log(`${ok(true)} Resolve Base app_token: ${app}`); }
   catch (e) { console.log(`${ok(false)} Resolve app_token: ${e.message}\n   → Cấp quyền app trên Base + scope wiki:node:read (docs/02-cap-quyen-lark.md).`); process.exit(1); }
 
-  // 3) 9 bảng
+  // 3) 11 bảng
   let missing = 0;
   for (const [key, spec] of Object.entries(SCHEMA)) {
     const tid = CFG.tables[key];

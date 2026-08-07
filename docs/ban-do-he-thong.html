@@ -1,0 +1,453 @@
+<title>Bản đồ hệ Email Marketing — MENTOR CAMP CRM</title>
+
+<style>
+  .doc {
+    --plane:#f7f8f9; --surface:#fff; --ink:#101418; --ink2:#4a5560; --muted:#7d8894;
+    --line:#dde3e8; --ring:rgba(16,20,24,.10);
+    --accent:#2a78d6; --accent-soft:#e8f1fc;
+    --warn:#c9760e; --warn-soft:#fdf3e3; --bad:#c8352f; --bad-soft:#fdeceb; --ok:#0a7d33;
+    color-scheme:light;
+  }
+  @media (prefers-color-scheme: dark) {
+    :root:where(:not([data-theme="light"])) .doc {
+      --plane:#0e1216; --surface:#161c22; --ink:#f2f5f7; --ink2:#b3bec8; --muted:#87929c;
+      --line:#28313a; --ring:rgba(255,255,255,.10);
+      --accent:#5fa3ea; --accent-soft:#16273c;
+      --warn:#e2a33f; --warn-soft:#2c2314; --bad:#e8756e; --bad-soft:#2e1917; --ok:#4bb96c;
+      color-scheme:dark;
+    }
+  }
+  :root[data-theme="dark"] .doc {
+    --plane:#0e1216; --surface:#161c22; --ink:#f2f5f7; --ink2:#b3bec8; --muted:#87929c;
+    --line:#28313a; --ring:rgba(255,255,255,.10);
+    --accent:#5fa3ea; --accent-soft:#16273c;
+    --warn:#e2a33f; --warn-soft:#2c2314; --bad:#e8756e; --bad-soft:#2e1917; --ok:#4bb96c;
+    color-scheme:dark;
+  }
+
+  .doc { background:var(--plane); color:var(--ink); min-height:100vh; padding:36px 20px 72px;
+         font-family:system-ui,-apple-system,"Segoe UI",Roboto,sans-serif; line-height:1.62;
+         font-size:16px; -webkit-font-smoothing:antialiased; }
+  .doc * { box-sizing:border-box; }
+  .wrap { max-width:820px; margin:0 auto; display:flex; flex-direction:column; gap:36px; }
+
+  .lede h1 { font-size:clamp(26px,4.4vw,36px); font-weight:700; letter-spacing:-.025em; margin:0 0 6px; text-wrap:balance; }
+  .lede .eyebrow { font-size:12px; letter-spacing:.12em; text-transform:uppercase; color:var(--accent); font-weight:650; margin:0 0 10px; }
+  .lede p { margin:0; color:var(--ink2); font-size:17px; max-width:62ch; }
+
+  section > h2 { font-size:20px; font-weight:680; letter-spacing:-.015em; margin:0 0 4px; text-wrap:balance; }
+  section > .kicker { margin:0 0 18px; color:var(--ink2); max-width:64ch; }
+  section { border-top:1px solid var(--line); padding-top:28px; }
+  section:first-of-type { border-top:0; padding-top:0; }
+
+  figure { margin:0; background:var(--surface); border:1px solid var(--ring); border-radius:12px; padding:20px 18px 14px; }
+  figure svg { display:block; width:100%; max-width:100%; height:auto; color:var(--ink); }
+  figcaption { margin-top:12px; padding-top:11px; border-top:1px solid var(--line);
+               font-size:13.5px; color:var(--ink2); }
+
+  .three { display:grid; grid-template-columns:repeat(auto-fit,minmax(215px,1fr)); gap:14px; }
+  .claim { background:var(--surface); border:1px solid var(--ring); border-radius:12px; padding:16px 17px; }
+  .claim .n { font-size:12px; font-weight:700; color:var(--accent); letter-spacing:.08em; }
+  .claim b { display:block; font-size:15.5px; margin:5px 0 4px; }
+  .claim p { margin:0; font-size:14px; color:var(--ink2); }
+
+  .day { list-style:none; margin:0; padding:0; display:flex; flex-direction:column; }
+  .day li { display:grid; grid-template-columns:88px 1fr; gap:16px; padding:12px 0; border-top:1px solid var(--line); }
+  .day li:first-child { border-top:0; }
+  .day .t { font-size:13px; font-weight:650; color:var(--accent); font-variant-numeric:tabular-nums; padding-top:1px; }
+  .day .w b { display:block; font-size:15px; }
+  .day .w span { font-size:14px; color:var(--ink2); }
+  .day .who { display:inline-block; font-size:11px; padding:1px 7px; border-radius:999px; margin-left:7px;
+              border:1px solid var(--ring); color:var(--muted); vertical-align:1px; }
+
+  .tbl-wrap { overflow-x:auto; border:1px solid var(--ring); border-radius:12px; background:var(--surface); }
+  table { border-collapse:collapse; width:100%; font-size:14.5px; min-width:520px; }
+  th, td { text-align:left; padding:11px 14px; border-bottom:1px solid var(--line); vertical-align:top; }
+  tr:last-child td { border-bottom:0; }
+  th { font-size:11.5px; text-transform:uppercase; letter-spacing:.07em; color:var(--muted); font-weight:650; }
+  td code { font-size:13px; background:var(--accent-soft); color:var(--accent); padding:1px 6px; border-radius:5px; }
+
+  .bounds { display:grid; grid-template-columns:repeat(auto-fit,minmax(250px,1fr)); gap:14px; }
+  .bound { border:1px solid var(--ring); border-radius:12px; padding:15px 16px; background:var(--surface); }
+  .bound h3 { margin:0 0 8px; font-size:14px; letter-spacing:.04em; text-transform:uppercase; }
+  .bound.no h3 { color:var(--bad); }
+  .bound.yes h3 { color:var(--ok); }
+  .bound ul { margin:0; padding-left:18px; font-size:14.5px; color:var(--ink2); }
+  .bound li { margin-bottom:5px; }
+
+  .flag { display:flex; gap:12px; padding:14px 16px; border-radius:12px; background:var(--bad-soft);
+          border:1px solid var(--ring); border-left:4px solid var(--bad); }
+  .flag.warn { background:var(--warn-soft); border-left-color:var(--warn); }
+  .flag b { display:block; font-size:15px; }
+  .flag p { margin:3px 0 0; font-size:14px; color:var(--ink2); }
+  .stack { display:flex; flex-direction:column; gap:12px; }
+
+  .end { color:var(--muted); font-size:13.5px; border-top:1px solid var(--line); padding-top:20px; }
+  @media (max-width:560px) {
+    .doc { padding:26px 15px 52px; }
+    .day li { grid-template-columns:1fr; gap:2px; }
+  }
+</style>
+
+<div class="doc"><div class="wrap">
+
+  <header class="lede">
+    <p class="eyebrow">Bản đồ vận hành</p>
+    <h1>Hệ Email Marketing chạy ở bốn nơi cùng lúc</h1>
+    <p>Đọc chữ khó hình dung vì không có mảnh nào nằm trên máy anh. Ba hình dưới đây là toàn bộ cơ chế — hiểu ba hình này là thấu hệ thống.</p>
+  </header>
+
+  <section>
+    <h2>Hình 1 — Một vòng khép kín, Lark đứng giữa</h2>
+    <p class="kicker">Lark Base vừa là nơi anh ra lệnh, vừa là nơi mọi kết quả đổ về. Ba mảnh còn lại chỉ là tay chân.</p>
+
+    <figure>
+      <svg viewBox="0 0 860 440" role="img" aria-label="Sơ đồ vòng: Lark Base gọi GitHub Actions, Actions gửi thư qua Lark Mail tới hộp thư khách, khách mở hoặc bấm thì Cloudflare Worker ghi ngược vào Lark Base">
+        <defs>
+          <marker id="ar" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse">
+            <path d="M0 0 L10 5 L0 10 z" fill="currentColor"/>
+          </marker>
+          <marker id="ar2" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse">
+            <path d="M0 0 L10 5 L0 10 z" fill="#2a78d6"/>
+          </marker>
+        </defs>
+
+        <rect x="28" y="152" width="196" height="140" rx="12" fill="none" stroke="#2a78d6" stroke-width="2.5"/>
+        <text x="126" y="196" text-anchor="middle" font-size="15" font-weight="700" fill="#2a78d6">LARK BASE</text>
+        <text x="126" y="219" text-anchor="middle" font-size="12" fill="currentColor">11 bảng dữ liệu</text>
+        <text x="126" y="238" text-anchor="middle" font-size="12" fill="currentColor">nút bấm &amp; lịch chạy</text>
+        <text x="126" y="264" text-anchor="middle" font-size="11.5" fill="currentColor" opacity=".65">anh làm việc ở đây</text>
+
+        <rect x="296" y="36" width="182" height="76" rx="10" fill="none" stroke="currentColor" stroke-width="1.6"/>
+        <text x="387" y="68" text-anchor="middle" font-size="13.5" font-weight="650" fill="currentColor">GitHub Actions</text>
+        <text x="387" y="88" text-anchor="middle" font-size="11.5" fill="currentColor" opacity=".7">chạy script khi được gọi</text>
+
+        <rect x="646" y="150" width="184" height="76" rx="10" fill="none" stroke="currentColor" stroke-width="1.6"/>
+        <text x="738" y="180" text-anchor="middle" font-size="13.5" font-weight="650" fill="currentColor">Lark Mail</text>
+        <text x="738" y="200" text-anchor="middle" font-size="11.5" fill="currentColor" opacity=".7">SMTP gửi · IMAP đọc</text>
+
+        <rect x="646" y="308" width="184" height="72" rx="10" fill="none" stroke="currentColor" stroke-width="1.6" stroke-dasharray="5 4"/>
+        <text x="738" y="338" text-anchor="middle" font-size="13.5" font-weight="650" fill="currentColor">Hộp thư khách</text>
+        <text x="738" y="357" text-anchor="middle" font-size="11.5" fill="currentColor" opacity=".7">Gmail, Outlook…</text>
+
+        <rect x="296" y="320" width="182" height="76" rx="10" fill="none" stroke="currentColor" stroke-width="1.6"/>
+        <text x="387" y="350" text-anchor="middle" font-size="13.5" font-weight="650" fill="currentColor">Cloudflare Worker</text>
+        <text x="387" y="370" text-anchor="middle" font-size="11.5" fill="currentColor" opacity=".7">tai nghe ngóng</text>
+
+        <line x1="212" y1="160" x2="300" y2="106" stroke="#2a78d6" stroke-width="2" marker-end="url(#ar2)" marker-start="url(#ar2)"/>
+        <text x="196" y="120" font-size="11.5" fill="#2a78d6" font-weight="600">gọi chạy</text>
+        <text x="176" y="136" font-size="11.5" fill="#2a78d6">⇄ đọc bảng, ghi kết quả</text>
+
+        <line x1="482" y1="78" x2="644" y2="156" stroke="currentColor" stroke-width="1.6" marker-end="url(#ar)"/>
+        <text x="530" y="102" font-size="11.5" fill="currentColor">gửi thư đi</text>
+
+        <line x1="644" y1="196" x2="486" y2="102" stroke="currentColor" stroke-width="1.4" stroke-dasharray="5 4" marker-end="url(#ar)"/>
+        <text x="516" y="163" font-size="11.5" fill="currentColor" opacity=".8">quét thư dội về</text>
+
+        <line x1="738" y1="232" x2="738" y2="302" stroke="currentColor" stroke-width="1.6" marker-end="url(#ar)"/>
+        <text x="750" y="272" font-size="11.5" fill="currentColor">thư tới</text>
+
+        <line x1="642" y1="348" x2="486" y2="352" stroke="currentColor" stroke-width="1.6" marker-end="url(#ar)"/>
+        <text x="512" y="340" font-size="11.5" fill="currentColor">mở · bấm · huỷ</text>
+
+        <line x1="292" y1="352" x2="212" y2="290" stroke="#2a78d6" stroke-width="2" marker-end="url(#ar2)"/>
+        <text x="164" y="336" font-size="11.5" fill="#2a78d6" font-weight="600">ghi thẳng vào bảng</text>
+
+        <text x="126" y="410" text-anchor="middle" font-size="11.5" fill="currentColor" opacity=".6">12.5 mở · 12.9 bấm · 12.6 huỷ · 12.8 lỗi</text>
+      </svg>
+      <figcaption><b>Vòng chạy thuận chiều:</b> anh bấm ở Lark → GitHub chạy script → thư đi qua Lark Mail → tới hộp khách → khách mở hoặc bấm thì Worker bắt được → số quay về đúng bảng trong Lark. Nét liền là đường đi của thư, nét đứt là đường quay ngược.</figcaption>
+    </figure>
+  </section>
+
+  <section>
+    <h2>Hình 2 — Sau khi thư tới, bốn chuyện có thể xảy ra</h2>
+    <p class="kicker">Mỗi chuyện rơi vào đúng một bảng. Không có chuyện nào bị bỏ rơi, và cũng không có bảng nào ghi lẫn việc của bảng khác.</p>
+
+    <figure>
+      <svg viewBox="0 0 820 300" role="img" aria-label="Từ hộp thư khách rẽ bốn nhánh: mở thư ghi vào bảng 12.5, bấm link ghi vào 12.9, huỷ nhận ghi vào 12.6, địa chỉ hỏng ghi vào 12.8">
+        <rect x="24" y="112" width="150" height="72" rx="10" fill="none" stroke="currentColor" stroke-width="1.8"/>
+        <text x="99" y="142" text-anchor="middle" font-size="13.5" font-weight="650" fill="currentColor">Thư đã tới</text>
+        <text x="99" y="161" text-anchor="middle" font-size="11.5" fill="currentColor" opacity=".7">hộp thư khách</text>
+
+        <line x1="176" y1="132" x2="286" y2="44" stroke="currentColor" stroke-width="1.5" marker-end="url(#ar)"/>
+        <line x1="176" y1="142" x2="286" y2="114" stroke="currentColor" stroke-width="1.5" marker-end="url(#ar)"/>
+        <line x1="176" y1="154" x2="286" y2="184" stroke="currentColor" stroke-width="1.5" marker-end="url(#ar)"/>
+        <line x1="176" y1="164" x2="286" y2="254" stroke="currentColor" stroke-width="1.5" marker-end="url(#ar)"/>
+
+        <rect x="290" y="18" width="238" height="52" rx="9" fill="none" stroke="currentColor" stroke-width="1.4"/>
+        <text x="304" y="40" font-size="12.5" font-weight="620" fill="currentColor">Khách mở thư</text>
+        <text x="304" y="58" font-size="11.5" fill="currentColor" opacity=".7">ảnh ẩn 1 điểm được tải về</text>
+
+        <rect x="290" y="88" width="238" height="52" rx="9" fill="none" stroke="currentColor" stroke-width="1.4"/>
+        <text x="304" y="110" font-size="12.5" font-weight="620" fill="currentColor">Khách bấm link</text>
+        <text x="304" y="128" font-size="11.5" fill="currentColor" opacity=".7">đi vòng qua Worker rồi tới đích</text>
+
+        <rect x="290" y="158" width="238" height="52" rx="9" fill="none" stroke="currentColor" stroke-width="1.4"/>
+        <text x="304" y="180" font-size="12.5" font-weight="620" fill="currentColor">Khách bấm huỷ nhận</text>
+        <text x="304" y="198" font-size="11.5" fill="currentColor" opacity=".7">không cần hỏi ai</text>
+
+        <rect x="290" y="228" width="238" height="52" rx="9" fill="none" stroke="currentColor" stroke-width="1.4" stroke-dasharray="5 4"/>
+        <text x="304" y="250" font-size="12.5" font-weight="620" fill="currentColor">Thư không tới được</text>
+        <text x="304" y="268" font-size="11.5" fill="currentColor" opacity=".7">bị dội ngược về hộp mình</text>
+
+        <line x1="532" y1="44" x2="642" y2="44" stroke="#2a78d6" stroke-width="1.8" marker-end="url(#ar2)"/>
+        <line x1="532" y1="114" x2="642" y2="114" stroke="#2a78d6" stroke-width="1.8" marker-end="url(#ar2)"/>
+        <line x1="532" y1="184" x2="642" y2="184" stroke="#2a78d6" stroke-width="1.8" marker-end="url(#ar2)"/>
+        <line x1="532" y1="254" x2="642" y2="254" stroke="#2a78d6" stroke-width="1.8" marker-end="url(#ar2)"/>
+
+        <rect x="646" y="22" width="150" height="44" rx="8" fill="none" stroke="#2a78d6" stroke-width="1.8"/>
+        <text x="721" y="50" text-anchor="middle" font-size="12.5" font-weight="650" fill="#2a78d6">12.5 Mở</text>
+        <rect x="646" y="92" width="150" height="44" rx="8" fill="none" stroke="#2a78d6" stroke-width="1.8"/>
+        <text x="721" y="120" text-anchor="middle" font-size="12.5" font-weight="650" fill="#2a78d6">12.9 Bấm link</text>
+        <rect x="646" y="162" width="150" height="44" rx="8" fill="none" stroke="#2a78d6" stroke-width="1.8"/>
+        <text x="721" y="190" text-anchor="middle" font-size="12.5" font-weight="650" fill="#2a78d6">12.6 Huỷ nhận</text>
+        <rect x="646" y="232" width="150" height="44" rx="8" fill="none" stroke="#2a78d6" stroke-width="1.8"/>
+        <text x="721" y="260" text-anchor="middle" font-size="12.5" font-weight="650" fill="#2a78d6">12.8 Mail lỗi</text>
+      </svg>
+      <figcaption><b>Ba nhánh trên do Worker bắt tại chỗ</b> (ngay lúc khách thao tác). <b>Nhánh dưới cùng khác</b>: thư dội về nằm im trong hộp thư cho tới khi lệnh quét bounce chạy mới được nhặt vào bảng — nên nó luôn chậm hơn ba nhánh kia.</figcaption>
+    </figure>
+  </section>
+
+  <section>
+    <h2>Hình 3 — Cái van chặn gửi nhầm</h2>
+    <p class="kicker">Đây là phần anh không phải nhớ. Trước mỗi lần gửi, hệ tự dựng một danh sách chặn và không ai trong đó nhận được thư.</p>
+
+    <figure>
+      <svg viewBox="0 0 820 268" role="img" aria-label="Ba bảng 12.6, 12.7, 12.8 hợp thành danh sách chặn, đặt trước cửa gửi, lọc danh sách người nhận trước khi thư đi ra">
+        <rect x="24" y="16" width="176" height="52" rx="9" fill="none" stroke="currentColor" stroke-width="1.5"/>
+        <text x="112" y="40" text-anchor="middle" font-size="12.5" font-weight="620" fill="currentColor">12.6 Đã huỷ nhận</text>
+        <text x="112" y="57" text-anchor="middle" font-size="11" fill="currentColor" opacity=".7">khách tự bấm</text>
+
+        <rect x="24" y="88" width="176" height="52" rx="9" fill="none" stroke="currentColor" stroke-width="1.5"/>
+        <text x="112" y="112" text-anchor="middle" font-size="12.5" font-weight="620" fill="currentColor">12.7 Mail ảo</text>
+        <text x="112" y="129" text-anchor="middle" font-size="11" fill="currentColor" opacity=".7">máy kiểm ra</text>
+
+        <rect x="24" y="160" width="176" height="52" rx="9" fill="none" stroke="currentColor" stroke-width="1.5"/>
+        <text x="112" y="184" text-anchor="middle" font-size="12.5" font-weight="620" fill="currentColor">12.8 Địa chỉ hỏng</text>
+        <text x="112" y="201" text-anchor="middle" font-size="11" fill="currentColor" opacity=".7">thư dội về</text>
+
+        <line x1="204" y1="42" x2="286" y2="104" stroke="currentColor" stroke-width="1.5" marker-end="url(#ar)"/>
+        <line x1="204" y1="114" x2="286" y2="114" stroke="currentColor" stroke-width="1.5" marker-end="url(#ar)"/>
+        <line x1="204" y1="186" x2="286" y2="124" stroke="currentColor" stroke-width="1.5" marker-end="url(#ar)"/>
+
+        <rect x="290" y="80" width="170" height="70" rx="10" fill="none" stroke="#c8352f" stroke-width="2.4"/>
+        <text x="375" y="108" text-anchor="middle" font-size="13.5" font-weight="700" fill="#c8352f">DANH SÁCH CHẶN</text>
+        <text x="375" y="128" text-anchor="middle" font-size="11.5" fill="currentColor">dựng lại trước mỗi lần gửi</text>
+
+        <rect x="290" y="196" width="170" height="52" rx="9" fill="none" stroke="currentColor" stroke-width="1.5"/>
+        <text x="375" y="220" text-anchor="middle" font-size="12.5" font-weight="620" fill="currentColor">Danh sách người nhận</text>
+        <text x="375" y="237" text-anchor="middle" font-size="11" fill="currentColor" opacity=".7">12.1 hoặc 12.3</text>
+
+        <line x1="464" y1="115" x2="556" y2="115" stroke="#c8352f" stroke-width="2" marker-end="url(#ar)"/>
+        <line x1="464" y1="222" x2="556" y2="140" stroke="currentColor" stroke-width="1.5" marker-end="url(#ar)"/>
+
+        <rect x="560" y="88" width="112" height="72" rx="10" fill="none" stroke="currentColor" stroke-width="1.8"/>
+        <text x="616" y="120" text-anchor="middle" font-size="12.5" font-weight="650" fill="currentColor">Cửa gửi</text>
+        <text x="616" y="138" text-anchor="middle" font-size="11" fill="currentColor" opacity=".7">lọc từng người</text>
+
+        <line x1="676" y1="124" x2="752" y2="124" stroke="currentColor" stroke-width="1.8" marker-end="url(#ar)"/>
+        <text x="714" y="112" text-anchor="middle" font-size="11.5" fill="currentColor">thư đi</text>
+
+        <circle cx="782" cy="124" r="22" fill="none" stroke="#0a7d33" stroke-width="2"/>
+        <path d="M772 124 l7 8 l14 -16" fill="none" stroke="#0a7d33" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"/>
+      </svg>
+      <figcaption><b>Không ai bị gửi lại sau khi đã huỷ.</b> Ba nguồn gộp thành một danh sách chặn, dựng mới ở mỗi lần chạy — kể cả người vừa huỷ nhận năm phút trước. Đây là lý do anh không cần tự lọc tay bao giờ.</figcaption>
+    </figure>
+  </section>
+
+  <section>
+    <h2>Hình 4 — Bản tin 12.4 đi qua bốn trạng thái</h2>
+    <p class="kicker">Anh không "bấm gửi cho ai". Anh chỉ đổi trạng thái một dòng, còn danh sách người nhận thì hệ tự lấy từ 12.3.</p>
+
+    <figure>
+      <svg viewBox="0 0 820 320" role="img" aria-label="Một dòng bản tin đi qua bốn trạng thái Nháp, Chờ gửi, Đang gửi, Đã gửi; người nhận lấy từ bảng 12.3 sau khi lọc qua danh sách chặn">
+        <rect x="16" y="30" width="148" height="56" rx="9" fill="none" stroke="currentColor" stroke-width="1.5"/>
+        <text x="90" y="54" text-anchor="middle" font-size="13" font-weight="650" fill="currentColor">Nháp</text>
+        <text x="90" y="72" text-anchor="middle" font-size="11" fill="currentColor" opacity=".7">anh đang soạn</text>
+
+        <rect x="222" y="30" width="148" height="56" rx="9" fill="none" stroke="#2a78d6" stroke-width="2.2"/>
+        <text x="296" y="54" text-anchor="middle" font-size="13" font-weight="650" fill="#2a78d6">Chờ gửi</text>
+        <text x="296" y="72" text-anchor="middle" font-size="11" fill="currentColor" opacity=".7">sẵn sàng phát</text>
+
+        <rect x="428" y="30" width="148" height="56" rx="9" fill="none" stroke="currentColor" stroke-width="1.5"/>
+        <text x="502" y="54" text-anchor="middle" font-size="13" font-weight="650" fill="currentColor">Đang gửi</text>
+        <text x="502" y="72" text-anchor="middle" font-size="11" fill="currentColor" opacity=".7">script đang chạy</text>
+
+        <rect x="634" y="30" width="170" height="56" rx="9" fill="none" stroke="currentColor" stroke-width="1.5"/>
+        <text x="719" y="54" text-anchor="middle" font-size="13" font-weight="650" fill="currentColor">Đã gửi</text>
+        <text x="719" y="72" text-anchor="middle" font-size="11" fill="currentColor" opacity=".7">ghi số người nhận</text>
+
+        <line x1="168" y1="58" x2="216" y2="58" stroke="currentColor" stroke-width="1.6" marker-end="url(#ar)"/>
+        <text x="192" y="24" text-anchor="middle" font-size="11" fill="currentColor">anh đổi</text>
+        <line x1="374" y1="58" x2="422" y2="58" stroke="currentColor" stroke-width="1.6" marker-end="url(#ar)"/>
+        <text x="398" y="24" text-anchor="middle" font-size="11" fill="currentColor">script chạy</text>
+        <line x1="580" y1="58" x2="628" y2="58" stroke="currentColor" stroke-width="1.6" marker-end="url(#ar)"/>
+        <text x="604" y="24" text-anchor="middle" font-size="11" fill="currentColor">gửi hết</text>
+
+        <path d="M502 90 L502 128 L296 128 L296 92" fill="none" stroke="#c9760e" stroke-width="1.8" stroke-dasharray="6 4" marker-end="url(#ar)"/>
+        <text x="399" y="146" text-anchor="middle" font-size="11.5" fill="#c9760e">còn người chưa nhận → quay lại chờ, lần chạy sau gửi tiếp</text>
+
+        <rect x="16" y="212" width="170" height="60" rx="9" fill="none" stroke="currentColor" stroke-width="1.5"/>
+        <text x="101" y="238" text-anchor="middle" font-size="12.5" font-weight="620" fill="currentColor">12.3 Danh sách</text>
+        <text x="101" y="256" text-anchor="middle" font-size="11" fill="currentColor" opacity=".7">lọc "Đang nhận"</text>
+
+        <line x1="190" y1="242" x2="238" y2="242" stroke="currentColor" stroke-width="1.6" marker-end="url(#ar)"/>
+
+        <rect x="242" y="212" width="150" height="60" rx="9" fill="none" stroke="#c8352f" stroke-width="1.8"/>
+        <text x="317" y="238" text-anchor="middle" font-size="12.5" font-weight="620" fill="#c8352f">Danh sách chặn</text>
+        <text x="317" y="256" text-anchor="middle" font-size="11" fill="currentColor" opacity=".7">trừ đi người đã mất</text>
+
+        <line x1="396" y1="242" x2="444" y2="242" stroke="currentColor" stroke-width="1.6" marker-end="url(#ar)"/>
+
+        <rect x="448" y="212" width="170" height="60" rx="9" fill="none" stroke="currentColor" stroke-width="1.5"/>
+        <text x="533" y="238" text-anchor="middle" font-size="12.5" font-weight="620" fill="currentColor">Người nhận thật</text>
+        <text x="533" y="256" text-anchor="middle" font-size="11" fill="currentColor" opacity=".7">danh sách cuối cùng</text>
+
+        <path d="M533 208 L533 172 L502 172 L502 92" fill="none" stroke="#2a78d6" stroke-width="1.8" marker-end="url(#ar2)"/>
+        <text x="560" y="168" font-size="11.5" fill="#2a78d6">nạp vào lượt gửi</text>
+      </svg>
+      <figcaption><b>Nét cam là chỗ hay bị hiểu nhầm.</b> Một lần chạy chỉ gửi tối đa 400 thư. Nếu danh sách dài hơn, dòng bản tin <i>không</i> nhảy sang "Đã gửi" — nó ở lại "Chờ gửi" và lần chạy sau tiếp tục từ đúng người còn dang dở, nhờ cột "Đã gửi" đóng vai con trỏ.</figcaption>
+    </figure>
+
+    <div class="tbl-wrap" style="margin-top:16px">
+      <table>
+        <thead><tr><th>Cột trong 12.4</th><th>Ai điền</th><th>Dùng để làm gì</th></tr></thead>
+        <tbody>
+          <tr><td><b>Tiêu đề</b></td><td>Anh</td><td>Tiêu đề thư khách nhìn thấy. Gõ <code>{{name}}</code> thì mỗi người thấy tên mình.</td></tr>
+          <tr><td><b>Nội dung</b></td><td>Anh</td><td>Gõ như nhắn tin: xuống dòng, gạch đầu dòng, <code>**đậm**</code>, dán link. Hệ tự chuyển thành thư đẹp.</td></tr>
+          <tr><td><b>Trạng thái</b></td><td>Anh mở đầu, máy nối tiếp</td><td>Anh đặt <b>Chờ gửi</b> là ra lệnh phát. Ba trạng thái còn lại máy tự đổi.</td></tr>
+          <tr><td><b>Lịch gửi</b></td><td>Anh (tuỳ chọn)</td><td>Để trống thì gửi ngay lượt chạy kế tiếp. Điền giờ thì trước giờ đó script bỏ qua dòng này.</td></tr>
+          <tr><td><b>Đã gửi</b></td><td>Máy</td><td>Số người đã nhận. Cũng chính là con trỏ để lần sau gửi tiếp từ đó — <b>đừng sửa tay</b>.</td></tr>
+          <tr><td><b>Ngày gửi thực</b></td><td>Máy</td><td>Thời điểm phát xong, để đối chiếu với lượt mở và lượt bấm.</td></tr>
+        </tbody>
+      </table>
+    </div>
+  </section>
+
+  <section>
+    <h2>Hình 5 — "Lark tự gọi" là gọi đến đâu</h2>
+    <p class="kicker">Lark không chạy script. Lark chỉ gõ cửa GitHub, rồi GitHub mới dựng máy và chạy script.</p>
+
+    <figure>
+      <svg viewBox="0 0 820 250" role="img" aria-label="Chuỗi gọi: Lark Automation gửi HTTP tới GitHub API, GitHub khởi động Actions, Actions chạy script Node, script đọc ghi Lark Base và gửi thư qua SMTP">
+        <rect x="12" y="76" width="164" height="66" rx="10" fill="none" stroke="#2a78d6" stroke-width="2.2"/>
+        <text x="94" y="102" text-anchor="middle" font-size="12.5" font-weight="680" fill="#2a78d6">Lark Automation</text>
+        <text x="94" y="120" text-anchor="middle" font-size="11" fill="currentColor" opacity=".75">nút bấm · hẹn giờ</text>
+
+        <rect x="222" y="76" width="176" height="66" rx="10" fill="none" stroke="currentColor" stroke-width="1.6"/>
+        <text x="310" y="99" text-anchor="middle" font-size="12.5" font-weight="650" fill="currentColor">GitHub nhận lệnh</text>
+        <text x="310" y="117" text-anchor="middle" font-size="10.5" fill="currentColor" opacity=".75">api.github.com /dispatches</text>
+        <text x="310" y="133" text-anchor="middle" font-size="10.5" fill="currentColor" opacity=".75">trả 204 = "đã nhận"</text>
+
+        <rect x="444" y="76" width="164" height="66" rx="10" fill="none" stroke="currentColor" stroke-width="1.6"/>
+        <text x="526" y="102" text-anchor="middle" font-size="12.5" font-weight="650" fill="currentColor">GitHub Actions</text>
+        <text x="526" y="120" text-anchor="middle" font-size="11" fill="currentColor" opacity=".75">dựng máy ảo, cài Node</text>
+
+        <rect x="654" y="76" width="154" height="66" rx="10" fill="none" stroke="currentColor" stroke-width="1.6"/>
+        <text x="731" y="102" text-anchor="middle" font-size="12.5" font-weight="650" fill="currentColor">Script chạy</text>
+        <text x="731" y="120" text-anchor="middle" font-size="11" fill="currentColor" opacity=".75">gửi thư · ghi bảng</text>
+
+        <line x1="180" y1="109" x2="216" y2="109" stroke="#2a78d6" stroke-width="2" marker-end="url(#ar2)"/>
+        <line x1="402" y1="109" x2="438" y2="109" stroke="currentColor" stroke-width="1.6" marker-end="url(#ar)"/>
+        <line x1="612" y1="109" x2="648" y2="109" stroke="currentColor" stroke-width="1.6" marker-end="url(#ar)"/>
+
+        <text x="94" y="46" text-anchor="middle" font-size="11" fill="currentColor" opacity=".8">bước 1</text>
+        <text x="310" y="46" text-anchor="middle" font-size="11" fill="currentColor" opacity=".8">bước 2</text>
+        <text x="526" y="46" text-anchor="middle" font-size="11" fill="currentColor" opacity=".8">bước 3 · mất ~30 giây</text>
+        <text x="731" y="46" text-anchor="middle" font-size="11" fill="currentColor" opacity=".8">bước 4</text>
+
+        <path d="M731 146 L731 186 L120 186" fill="none" stroke="#2a78d6" stroke-width="1.8" marker-end="url(#ar2)"/>
+        <text x="430" y="204" text-anchor="middle" font-size="11.5" fill="#2a78d6">kết quả ghi ngược về đúng bảng trong Lark Base</text>
+      </svg>
+      <figcaption><b>204 không có nghĩa là thư đã gửi.</b> Nó chỉ nghĩa là GitHub đã nhận lời nhắn. Việc gửi diễn ra sau đó khoảng nửa phút, và muốn biết kết quả thì xem tab Actions hoặc xem chính bảng Lark đã đổi chưa.</figcaption>
+    </figure>
+
+    <div class="stack" style="margin-top:16px">
+      <div class="flag warn">
+        <div><b>Base MENTOR CAMP CRM chưa nối vào bước 2</b>
+        <p>Kho lệnh trên GitHub hiện vẫn trỏ về base Mẫu cũ. Nghĩa là bấm nút trên base này thì lệnh chạy vào base khác — vẫn báo thành công nhưng không gửi cho ai. Nên hiện tại hệ đang chạy tay, chưa gắn nút.</p></div>
+      </div>
+    </div>
+  </section>
+
+  <section>
+    <h2>Ba câu là hiểu cả hệ</h2>
+    <div class="three">
+      <div class="claim"><span class="n">01</span><b>Hệ không tự chạy</b><p>Không có gì chạy ngầm. Nó chỉ động đậy khi được gọi — anh bấm nút, hoặc anh hẹn giờ trên Lark. Quyền bật tắt nằm hoàn toàn ở Lark.</p></div>
+      <div class="claim"><span class="n">02</span><b>Bảng là sự thật</b><p>Không có cơ sở dữ liệu giấu ở đâu khác. Cái gì có trên bảng là có thật, cái gì không có trên bảng là chưa xảy ra.</p></div>
+      <div class="claim"><span class="n">03</span><b>Anh nhập 4, máy ghi 7</b><p>Anh chỉ gõ vào 12.1–12.4. Bảy bảng còn lại máy ghi. Gõ tay vào bảy bảng đó là làm sai số liệu của chính mình.</p></div>
+    </div>
+  </section>
+
+  <section>
+    <h2>Một ngày trong đời hệ thống</h2>
+    <p class="kicker">Đây là hình dung dễ nhất: hệ chạy theo nhịp trong ngày, mỗi nhịp một việc.</p>
+    <ul class="day">
+      <li><span class="t">08:00</span><span class="w"><b>Gửi thư nuôi dưỡng<span class="who">Lark tự gọi</span></b><span>Lark bấm sang GitHub. Script đọc 12.1 xem ai đến lượt, lấy nội dung đúng ngày trong 12.2, gửi từng người một, nghỉ vài giây giữa hai thư. Gửi xong ghi lại bước và giờ gửi vào 12.1.</span></span></li>
+      <li><span class="t">Cả ngày</span><span class="w"><b>Nghe ngóng phản ứng<span class="who">tự động</span></b><span>Khách mở thư, bấm link, hoặc huỷ nhận — Worker bắt được từng cái và ghi thẳng vào 12.5, 12.9, 12.6. Không cần ai bấm gì.</span></span></li>
+      <li><span class="t">Khi anh muốn</span><span class="w"><b>Gửi một bản tin<span class="who">anh bấm</span></b><span>Anh soạn nội dung vào 12.4, đặt trạng thái Chờ gửi, rồi bấm. Gửi xong bảng tự ghi số người đã nhận.</span></span></li>
+      <li><span class="t">20:00</span><span class="w"><b>Quét thư dội về<span class="who">Lark tự gọi</span></b><span>Script đăng nhập hộp thư, tìm thư báo lỗi mấy ngày gần nhất, bóc ra địa chỉ hỏng và ghi vào 12.8. Từ lúc này các địa chỉ đó bị chặn.</span></span></li>
+      <li><span class="t">20:15</span><span class="w"><b>Dựng báo cáo<span class="who">Lark tự gọi</span></b><span>Gộp toàn bộ số liệu trong ngày vào 12.10 và ghi một mốc mới vào 12.11 — đây là thứ nuôi biểu đồ trên dashboard của anh.</span></span></li>
+    </ul>
+  </section>
+
+  <section>
+    <h2>Khi nghi ngờ, nhìn vào đâu</h2>
+    <p class="kicker">Hệ hỏng thì hiếm khi báo lỗi đỏ. Nó thường im lặng làm sai. Bảng này là cách bắt nó.</p>
+    <div class="tbl-wrap">
+      <table>
+        <thead><tr><th>Anh thấy</th><th>Nghĩa là</th><th>Nhìn vào</th></tr></thead>
+        <tbody>
+          <tr><td>Chạy xong báo <code>bỏ qua 0</code></td><td>Script không thấy một người nhận nào — gần như chắc là trỏ nhầm base hoặc bảng rỗng</td><td>Cấu hình bảng, không phải hộp thư</td></tr>
+          <tr><td>Báo thành công mà không ai nhận thư</td><td>Cũng là trỏ nhầm chỗ. Thành công nghĩa là "script chạy xong", không phải "thư đã tới"</td><td>Con số trong log, rồi 12.1 / 12.4</td></tr>
+          <tr><td>12.8 đầy lên nhanh</td><td>Địa chỉ hỏng hoặc bị chặn đầu gửi. Hai chuyện khác nhau hoàn toàn</td><td>Cột Loại lỗi trong 12.8</td></tr>
+          <tr><td>Tỉ lệ mở cao mà không ai bấm</td><td>Bình thường. Số mở luôn phồng vì máy tự tải ảnh thay người</td><td>Tin cột Bấm trong 12.9</td></tr>
+          <tr><td>Người trong 12.1 ngừng nhận thư</td><td>Họ đã bị đánh dấu Hoàn thành hoặc nằm trong danh sách chặn</td><td>Cột Trạng thái ở 12.1, rồi 12.6 / 12.8</td></tr>
+        </tbody>
+      </table>
+    </div>
+  </section>
+
+  <section>
+    <h2>Ranh giới — để khỏi kỳ vọng nhầm</h2>
+    <div class="bounds">
+      <div class="bound yes">
+        <h3>Hệ làm được</h3>
+        <ul>
+          <li>Gửi đúng người, đúng ngày, đúng thứ tự</li>
+          <li>Tự loại người đã huỷ, địa chỉ hỏng, mail ảo</li>
+          <li>Ghi lại ai mở, ai bấm link nào</li>
+          <li>Tự dừng khi bị từ chối liên tiếp</li>
+          <li>Chạy khô để thử mà không gửi thật</li>
+        </ul>
+      </div>
+      <div class="bound no">
+        <h3>Hệ không làm</h3>
+        <ul>
+          <li>Không viết nội dung thay anh</li>
+          <li>Không tự quyết định gửi cho ai</li>
+          <li>Không bảo đảm thư vào Hộp thư chính thay vì Quảng cáo</li>
+          <li>Không biết khách có đọc thật hay chỉ máy tải ảnh</li>
+          <li>Không chạy khi không ai gọi</li>
+        </ul>
+      </div>
+    </div>
+  </section>
+
+  <section>
+    <h2>Hiện trạng — hai chỗ chưa thông</h2>
+    <div class="stack">
+      <div class="flag">
+        <div><b>Chưa bật chữ ký DKIM cho tên miền gửi</b>
+        <p>Đây là lý do 8 địa chỉ Gmail bị chặn ngay từ đầu gửi — lỗi ở phía mình, không phải địa chỉ khách sai. Chưa bật thì gửi ra Gmail còn hỏng tiếp.</p></div>
+      </div>
+      <div class="flag warn">
+        <div><b>Chưa dựng máy chủ nghe ngóng cho base này</b>
+        <p>Nghĩa là toàn bộ nhánh bên phải của Hình 2 chưa hoạt động: ba bảng 12.5, 12.9, 12.6 sẽ đứng im ở 0 dù thư có được đọc. Thư vẫn gửi bình thường — chỉ là chưa đo được.</p></div>
+      </div>
+    </div>
+  </section>
+
+  <p class="end">Bản đồ này mô tả hệ đang chạy trên base MENTOR CAMP CRM, dựng ngày 06/08/2026. Mọi con số nêu trong phần hiện trạng đều lấy từ lần chạy thật, không phải ví dụ.</p>
+
+</div></div>

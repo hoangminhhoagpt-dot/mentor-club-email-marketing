@@ -1,5 +1,5 @@
 /**
- * setup-tables.mjs — dựng bộ 9 bảng (12.1→12.9) vào MỘT Lark Base bất kỳ.
+ * setup-tables.mjs — dựng bộ 11 bảng (12.1→12.11) vào MỘT Lark Base bất kỳ.
  *
  * Hai việc, đều idempotent:
  *   1) Bảng CHƯA có (so theo tên trong TABLE_META) → TẠO mới kèm đủ cột.
@@ -12,7 +12,7 @@
  */
 import {
   loadConfig, requireKeys, resolveAppToken, larkApi, listFields,
-  SCHEMA, TABLE_META, buildFields, fieldBody,
+  SCHEMA, TABLE_META, buildFields, fieldBody, formulaFields,
 } from "./lib.mjs";
 
 const CFG = loadConfig();
@@ -74,6 +74,14 @@ async function createTable(app, key) {
         const id = await createTable(app, key);
         result[key] = id;
         console.log(`✔ TẠO  ${meta.name}  →  ${id}  (${Object.keys(spec).length} cột)`);
+        // Cột công thức phải thêm SAU: công thức gọi cột khác THEO TÊN, mà lúc tạo bảng các
+        // cột đó chưa tồn tại — thêm cùng lúc thì ô rỗng vĩnh viễn, không báo lỗi gì cả.
+        for (const f of formulaFields(key)) {
+          try {
+            await larkApi(CFG, "POST", `/open-apis/bitable/v1/apps/${app}/tables/${id}/fields`, fieldBody(f));
+            console.log(`   + công thức "${f.name}"`);
+          } catch (e) { console.log(`   ✘ công thức "${f.name}": ${e.message}`); }
+        }
       } catch (e) { console.log(`✘ TẠO  ${meta.name}: ${e.message}`); }
       continue;
     }

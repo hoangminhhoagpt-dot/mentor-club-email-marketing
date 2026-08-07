@@ -1,6 +1,6 @@
 /**
  * mentor-club-email-marketing — thư viện dùng chung.
- * Config loader (JSON + ENV) · Lark Base REST helpers · schema 9 bảng · token tracking.
+ * Config loader (JSON + ENV) · Lark Base REST helpers · schema 11 bảng · token tracking.
  *
  * Mọi giá trị BÍ MẬT (app_secret, mật khẩu SMTP/IMAP) chỉ đọc từ ENV hoặc config.local.json
  * (đã .gitignore). KHÔNG hardcode secret trong file này.
@@ -47,6 +47,8 @@ export function loadConfig(configPath = DEFAULT_CONFIG) {
   T.fakeFilter     = E.TABLE_FAKE        || T.fakeFilter;
   T.errorList      = E.TABLE_ERROR       || T.errorList;
   T.clickList      = E.TABLE_CLICK       || T.clickList;
+  T.reportCampaign = E.TABLE_REPORT      || T.reportCampaign;
+  T.reportDaily    = E.TABLE_DAILY       || T.reportDaily;
 
   CFG.smtp = CFG.smtp || {};
   const S = CFG.smtp;
@@ -70,7 +72,13 @@ export function loadConfig(configPath = DEFAULT_CONFIG) {
 
   CFG.send = CFG.send || {};
   CFG.send.perRunLimit = Number(E.SEND_PER_RUN_LIMIT || CFG.send.perRunLimit || 200);
-  CFG.send.delayMs     = Number(E.SEND_DELAY_MS      || CFG.send.delayMs     || 1500);
+  CFG.send.delayMs     = Number(E.SEND_DELAY_MS      || CFG.send.delayMs     || 4000);
+  // Dao động ngẫu nhiên quanh delayMs. Gửi đều tăm tắp là dấu vân tay của máy — không người
+  // nào gõ mail cách nhau đúng 1,2 giây một lần.
+  CFG.send.delayJitterMs = Number(E.SEND_DELAY_JITTER_MS || CFG.send.delayJitterMs || 2000);
+  // Phanh: bị từ chối liên tiếp bấy nhiêu lần thì DỪNG cả lần chạy. Ngày 28/07 thiếu cái này
+  // nên cả danh sách bị bắn tiếp và lãnh về một bức tường thư dội.
+  CFG.send.stopAfterFails = Number(E.SEND_STOP_AFTER_FAILS || CFG.send.stopAfterFails || 5);
   CFG.send.dryRun      = (E.DRY_RUN != null ? E.DRY_RUN === "true" : !!CFG.send.dryRun);
 
   CFG.fields = CFG.fields || {};
@@ -90,11 +98,22 @@ export function requireKeys(CFG, keys) {
 }
 
 export const sleep = (ms) => new Promise((r) => setTimeout(r, ms));
+
+/**
+ * Khoảng nghỉ giữa 2 email, có dao động ngẫu nhiên.
+ * Hạn mức Lark là 200 thư/100 giây; delayMs 4000 cho ~25 thư/100 giây = 12% hạn mức.
+ */
+export function nextDelay(CFG) {
+  const base = CFG?.send?.delayMs || 0;
+  if (!base) return 0;
+  const j = CFG?.send?.delayJitterMs || 0;
+  return Math.max(500, base + Math.round((Math.random() * 2 - 1) * j));
+}
 export const nowMs = () => Date.now();
 export const normEmail = (s) => String(s || "").trim().toLowerCase();
 
 // ---------------------------------------------------------------------------
-// SCHEMA — nguồn sự thật cho 9 bảng (12.1 → 12.9).
+// SCHEMA — nguồn sự thật cho 11 bảng (12.1 → 12.11).
 // key   = tên logic dùng trong code
 // name  = tên CỘT mặc định trên Lark (config.fields[table][key] có thể ghi đè)
 // type  = mã kiểu trường Lark (dùng bởi setup-tables.mjs để tạo cột còn thiếu)
@@ -109,12 +128,16 @@ export const SCHEMA = {
     lastStep:   { name: "Bước gần nhất",      type: 2 },
     lastSentAt: { name: "Lần gửi gần nhất",   type: 5 },
     note:       { name: "Ghi chú",            type: 1 },
+    // Cột CHỈ ĐỂ NHÌN: "Bước gần nhất" là số (máy cần số để so sánh), nhưng nhìn số 1 trơ trọi
+    // thì không ai đoán được nó là gì. Cột công thức này dịch sang tiếng người.
+    stepLabel:  { name: "Đang ở bước",        type: 20, formula: 'IF([Bước gần nhất]>0,CONCATENATE("Ngày ",[Bước gần nhất]),"Chưa gửi")' },
   },
   campaign365: {          // 12.2 Chiến dịch Email 365 ngày
     day:     { name: "Ngày",      type: 2 },
     subject: { name: "Tiêu đề",   type: 1 },
     body:    { name: "Nội dung",  type: 1 },
     active:  { name: "Kích hoạt", type: 3, opts: ["Bật", "Tắt"] },
+    dayLabel:{ name: "Bước",      type: 20, formula: 'CONCATENATE("Ngày ",[Ngày])' },
   },
   newsletterList: {       // 12.3 Danh sách Email bảng tin
     email:        { name: "Email",         type: 1 },
@@ -171,6 +194,34 @@ export const SCHEMA = {
     lastClickAt:  { name: "Nhấp gần nhất", type: 5 },
     clickCount:   { name: "Số lần nhấp",   type: 2 },
   },
+  reportCampaign: {       // 12.10 Báo cáo chiến dịch (máy ghi — đừng gõ tay)
+    campaign:  { name: "Chiến dịch",      type: 1 },
+    kind:      { name: "Loại",            type: 3, opts: ["Bản tin", "Nuôi dưỡng"] },
+    step:      { name: "Bước",            type: 1 },
+    sent:      { name: "Đã gửi",          type: 2 },
+    opened:    { name: "Người mở",        type: 2 },
+    openRate:  { name: "Tỉ lệ mở (%)",    type: 2 },
+    clicked:   { name: "Người bấm",       type: 2 },
+    clickRate: { name: "Tỉ lệ bấm (%)",   type: 2 },
+    clicks:    { name: "Lượt bấm",        type: 2 },
+    unsub:     { name: "Huỷ nhận",        type: 2 },
+    updatedAt: { name: "Cập nhật lúc",    type: 5 },
+  },
+  reportDaily: {          // 12.11 Tổng quan theo ngày (mỗi ngày 1 dòng → vẽ được đường xu hướng)
+    day:          { name: "Mốc",                type: 1 },
+    nurtureActive:{ name: "Đang nuôi",          type: 2 },
+    nurtureTotal: { name: "Tổng nuôi dưỡng",    type: 2 },
+    nlActive:     { name: "Đang nhận bản tin",  type: 2 },
+    nlTotal:      { name: "Tổng bản tin",       type: 2 },
+    unsubTotal:   { name: "Đã huỷ nhận",        type: 2 },
+    errorTotal:   { name: "Mail lỗi",           type: 2 },
+    blockedTotal: { name: "Bị chặn đầu gửi",    type: 2 },
+    fakeInvalid:  { name: "Mail ảo",            type: 2 },
+    sentTotal:    { name: "Thư đã gửi (luỹ kế)",type: 2 },
+    openTotal:    { name: "Lượt mở",            type: 2 },
+    clickTotal:   { name: "Lượt bấm",           type: 2 },
+    updatedAt:    { name: "Cập nhật lúc",       type: 5 },
+  },
 };
 
 // ---------------------------------------------------------------------------
@@ -191,15 +242,27 @@ export const TABLE_META = {
   fakeFilter:     { name: "12.7 Lọc mail ảo",                view: "Kết quả",    primary: "email" },
   errorList:      { name: "12.8 Danh sách mail lỗi",         view: "Mail lỗi",   primary: "email" },
   clickList:      { name: "12.9 Danh sách email click link", view: "Lượt nhấp",  primary: "email" },
+  reportCampaign: { name: "12.10 Báo cáo chiến dịch",        view: "Chiến dịch", primary: "campaign" },
+  reportDaily:    { name: "12.11 Tổng quan theo ngày",       view: "Theo ngày",  primary: "day" },
 };
 
-/** Dựng mảng field cho API tạo bảng: cột chính đứng đầu, kèm property theo kiểu. */
+/**
+ * Dựng mảng field cho API tạo bảng: cột chính đứng đầu, kèm property theo kiểu.
+ * BỎ QUA cột công thức (type 20) — công thức tham chiếu cột khác THEO TÊN, mà lúc tạo bảng
+ * các cột đó chưa tồn tại nên công thức sẽ rỗng vĩnh viễn. setup-tables.mjs thêm chúng ở
+ * lượt sau, khi bảng đã đủ cột nguồn.
+ */
 export function buildFields(tableKey) {
   const spec = SCHEMA[tableKey];
   const meta = TABLE_META[tableKey];
   if (!spec || !meta) throw new Error(`Không có bảng "${tableKey}" trong SCHEMA/TABLE_META`);
   const order = [meta.primary, ...Object.keys(spec).filter((k) => k !== meta.primary)];
-  return order.map((k) => fieldBody(spec[k]));
+  return order.map((k) => spec[k]).filter((s) => s.type !== 20).map(fieldBody);
+}
+
+/** Các cột công thức của một bảng — phải thêm SAU khi bảng đã có đủ cột nguồn. */
+export function formulaFields(tableKey) {
+  return Object.values(SCHEMA[tableKey] || {}).filter((s) => s.type === 20);
 }
 
 /** Một trường → body API (type 3/4 cần options, type 5 cần date_formatter). */
@@ -207,6 +270,10 @@ export function fieldBody(spec) {
   const body = { field_name: spec.name, type: spec.type };
   if (spec.type === 3 || spec.type === 4) body.property = { options: (spec.opts || []).map((name) => ({ name })) };
   if (spec.type === 5) body.property = { date_formatter: "yyyy/MM/dd HH:mm" };
+  // Công thức: Lark CHỈ hiểu tham chiếu theo TÊN CỘT trong ngoặc vuông — `[Ngày]`.
+  // Dạng field_id (`fldXXXX`, `[fldXXXX]`, `CurrentValue.[fldXXXX]`) vẫn được API nhận với
+  // code=0 nhưng cho ra ô RỖNG. Đã thử cả 5 biến thể ngày 06/08/2026, chỉ tên cột chạy.
+  if (spec.type === 20) body.property = { formula_expression: spec.formula };
   return body;
 }
 
