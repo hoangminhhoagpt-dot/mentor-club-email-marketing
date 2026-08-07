@@ -5,8 +5,7 @@
 #                 (nên đặt lịch Lark Automation chạy sau lần gửi hằng ngày)
 #   2. Bấm tay  — Actions → build-report → Run workflow.
 #
-# Mặc định trỏ về BASE MẪU CHUẨN "MENTOR CAMP CRM" (TxSrb3q…) — giống 4 workflow kia.
-# Khách có base riêng PHẢI đặt Variables đè lên, nếu không sẽ dựng báo cáo cho base Mentor Club.
+# KHÔNG có giá trị mặc định — mọi thứ đến từ Variables của CHÍNH BẠN.
 name: build-report
 
 on:
@@ -31,17 +30,17 @@ jobs:
       - name: Dựng báo cáo
         env:
           LARK_APP_SECRET: ${{ secrets.LARK_APP_SECRET }}
-          LARK_APP_ID:     ${{ vars.LARK_APP_ID    || 'cli_aa8cccd0b262deed' }}
-          LARK_APP_TOKEN:  ${{ vars.LARK_APP_TOKEN || 'TxSrb3qKeaMqZDslH9Uln3yzgyb' }}
-          TABLE_NURTURE:  ${{ vars.TABLE_NURTURE  || 'tblJLDb9fgS9Z9Ih' }}
-          TABLE_CAMPAIGN: ${{ vars.TABLE_CAMPAIGN || 'tblDp5oFUkmseDSq' }}
-          TABLE_NL_LIST:  ${{ vars.TABLE_NL_LIST  || 'tbleA4pNS13BS7me' }}
-          TABLE_NL_MAIL:  ${{ vars.TABLE_NL_MAIL  || 'tblTn5FWQyDWaGNy' }}
-          TABLE_OPEN:     ${{ vars.TABLE_OPEN     || 'tblQw8wYbFzmGx8T' }}
-          TABLE_UNSUB:    ${{ vars.TABLE_UNSUB    || 'tblBARpRx4JuVZ7n' }}
-          TABLE_FAKE:     ${{ vars.TABLE_FAKE     || 'tblxAux9X14qimtf' }}
-          TABLE_ERROR:    ${{ vars.TABLE_ERROR    || 'tblj52EgtbwXpCdy' }}
-          TABLE_CLICK:    ${{ vars.TABLE_CLICK    || 'tbllXZnHa9tAlF2I' }}
-          TABLE_REPORT:   ${{ vars.TABLE_REPORT   || 'tbly1pZs78hhkJh5' }}
-          TABLE_DAILY:    ${{ vars.TABLE_DAILY    || 'tblCphpk0AkbdS5U' }}
+          LARK_APP_ID:     ${{ vars.LARK_APP_ID }}
+          LARK_APP_TOKEN:  ${{ vars.LARK_APP_TOKEN }}
+          TABLE_NURTURE:  ${{ vars.TABLE_NURTURE }}
+          TABLE_CAMPAIGN: ${{ vars.TABLE_CAMPAIGN }}
+          TABLE_NL_LIST:  ${{ vars.TABLE_NL_LIST }}
+          TABLE_NL_MAIL:  ${{ vars.TABLE_NL_MAIL }}
+          TABLE_OPEN:     ${{ vars.TABLE_OPEN }}
+          TABLE_UNSUB:    ${{ vars.TABLE_UNSUB }}
+          TABLE_FAKE:     ${{ vars.TABLE_FAKE }}
+          TABLE_ERROR:    ${{ vars.TABLE_ERROR }}
+          TABLE_CLICK:    ${{ vars.TABLE_CLICK }}
+          TABLE_REPORT:   ${{ vars.TABLE_REPORT }}
+          TABLE_DAILY:    ${{ vars.TABLE_DAILY }}
         run: node scripts/build-report.mjs

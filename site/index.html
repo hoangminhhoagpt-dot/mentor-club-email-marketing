@@ -416,8 +416,8 @@
           </div>
           <div class="truong rong">
             <label for="f-tracker">Địa chỉ máy chủ đo mở/bấm</label>
-            <input id="f-tracker" data-k="tracker" type="text" spellcheck="false" value="https://mentor-club-tracker.minhhoasqtt.workers.dev" placeholder="để trống nếu chưa cần đo">
-            <small>Chưa có cũng chạy được — chỉ là không đo được lượt mở và lượt bấm link</small>
+            <input id="f-tracker" data-k="tracker" type="text" spellcheck="false" placeholder="để trống — sẽ dựng riêng cho bạn">
+            <small><b>Cứ để trống.</b> Máy chủ này phải là của riêng bạn — mỗi máy chủ chỉ ghi được vào một Base. Khối lệnh sẽ dựng cho bạn một cái mới.</small>
           </div>
         </div>
 
@@ -511,6 +511,15 @@
       '',
       'ĐỌC itto.yaml Ở GỐC REPO TRƯỚC MỌI THỨ — đó là nguồn sự thật về bảng, secret, biến và điểm bấm.',
       '',
+      'NGUYÊN TẮC BẮT BUỘC — TẤT CẢ PHẢI LÀ CỦA TÔI, KHÔNG DÙNG CHUNG VỚI AI:',
+      '- Kho lệnh: nhân bản về tài khoản GitHub CỦA TÔI. Không chạy trên kho của người khác.',
+      '- Base: dùng đúng Base của tôi ở trên. Không ghi vào Base nào khác.',
+      '- Hộp thư: gửi bằng hộp thư của tôi. Không mượn hộp thư của người khác.',
+      '- Máy chủ đo mở/bấm: DỰNG MỚI trên tài khoản Cloudflare của tôi. TUYỆT ĐỐI không dùng lại',
+      '  địa chỉ máy chủ của người khác — một máy chủ chỉ ghi được vào MỘT Base, dùng chung là',
+      '  số liệu khách của tôi chảy hết sang Base của họ.',
+      '- Nếu thiếu giá trị nào thì DỪNG LẠI HỎI TÔI, tuyệt đối không tự điền giá trị mẫu.',
+      '',
       'INPUT CỦA TÔI:',
       '- LARK_APP_ID      = ' + g('appId'),
       '- LARK_APP_SECRET  = ' + g('appSecret'),
@@ -539,7 +548,8 @@
       '   ⚠️ Variables ĐÈ LÊN giá trị mặc định trong file workflow. Thiếu chúng là Actions chạy vào base',
       '   của người khác, báo success mà gửi 0 thư, không lỗi nào hiện ra.',
       '',
-      '5. Nếu tôi có Cloudflare: sửa worker/wrangler.toml trỏ đúng LARK_APP_TOKEN + TABLE_OPEN(12.5) +',
+      '5. Máy chủ đo mở/bấm — DỰNG MỚI trên Cloudflare CỦA TÔI (đừng dùng lại của ai):',
+      '   sửa worker/wrangler.toml trỏ đúng LARK_APP_TOKEN + TABLE_OPEN(12.5) +',
       '   TABLE_CLICK(12.9) + TABLE_UNSUB(12.6) của tôi, rồi deploy và nạp secret LARK_APP_SECRET.',
       '   Nạp secret PHẢI dùng "wrangler secret bulk <file.json>" — đưa qua ống dẫn của PowerShell sẽ',
       '   làm hỏng giá trị, Worker chạy nhưng Lark trả "app secret invalid", tracking chết câm.',
