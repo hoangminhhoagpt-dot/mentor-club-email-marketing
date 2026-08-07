@@ -81,6 +81,11 @@ export function loadConfig(configPath = DEFAULT_CONFIG) {
   CFG.send.stopAfterFails = Number(E.SEND_STOP_AFTER_FAILS || CFG.send.stopAfterFails || 5);
   CFG.send.dryRun      = (E.DRY_RUN != null ? E.DRY_RUN === "true" : !!CFG.send.dryRun);
 
+  // Độ dài chuỗi nuôi dưỡng — thứ quyết định khi nào một người được đóng "Hoàn thành".
+  // KHÔNG được suy từ số ngày đã soạn trong 12.2: soạn tới đâu đóng sổ tới đó là mất người.
+  CFG.nurture = CFG.nurture || {};
+  CFG.nurture.totalDays = Number(E.NURTURE_TOTAL_DAYS || CFG.nurture.totalDays || 365);
+
   CFG.fields = CFG.fields || {};
   return CFG;
 }

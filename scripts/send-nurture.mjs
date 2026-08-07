@@ -49,6 +49,13 @@ const asMs = (v) => {
   if (!byDay.size) { console.log("Bảng 12.2 chưa có nội dung ngày nào (đang bật). Dừng."); return; }
   const sortedDays = [...byDay.keys()].sort((a, b) => a - b);      // cho phép lịch THƯA (1,3,5,8…)
 
+  // ĐỘ DÀI CHƯƠNG TRÌNH — KHÔNG phải "ngày lớn nhất đang có nội dung".
+  // Trước đây đóng "Hoàn thành" khi tới maxDay, mà maxDay chỉ là nội dung ĐÃ SOẠN.
+  // Dựng hệ xong soạn được 1 ngày rồi chạy ⇒ cả danh sách bị đóng sổ sau đúng 1 thư;
+  // về sau đổ đủ 365 ngày thì KHÔNG AI nhận nữa (chỉ gửi cho người "Đang nuôi").
+  const totalDays = CFG.nurture.totalDays;
+  const hetNoiDung = maxDay < totalDays;                            // còn thiếu nội dung so với chương trình
+
   // ---- suppression ----
   const blocked = await buildSuppression(CFG);
 
@@ -62,7 +69,7 @@ const asMs = (v) => {
   const nName = F(CFG, "nurtureList", "name");
 
   const transport = makeTransport(CFG);
-  let sent = 0, failed = 0, skipped = 0, done = 0;
+  let sent = 0, failed = 0, skipped = 0, done = 0, doiNoiDung = 0;
   let streak = 0, blockedByFilter = 0;                    // phanh: đếm lần từ chối LIÊN TIẾP
   const limit = CFG.send.perRunLimit;
   const stopAfter = CFG.send.stopAfterFails;
@@ -85,10 +92,16 @@ const asMs = (v) => {
     // Nhờ vậy chuỗi có thể THƯA (1,3,5,8…) mà vẫn gửi tuần tự, mỗi lần chạy đẩy 1 bước.
     const targetStep = sortedDays.find((d) => d > lastStep && d <= dayIndex);
     if (targetStep == null) {                                            // đã đuổi kịp lịch, hoặc hết chuỗi
-      if (lastStep >= maxDay && lastStep > 0) {
+      // Chỉ đóng sổ khi ĐI HẾT CHƯƠNG TRÌNH (totalDays), không phải khi hết nội dung đã soạn.
+      if (lastStep >= totalDays) {
         await updateRecord(CFG, CFG.tables.nurtureList, r.record_id, { [nStatus]: "Hoàn thành" });
         done++;
-      } else skipped++;
+      } else {
+        skipped++;
+        // Đã nhận hết nội dung hiện có nhưng chương trình chưa xong → GIỮ "Đang nuôi",
+        // nằm chờ tới khi có thêm nội dung. Đếm lại để nhắc người soạn.
+        if (lastStep >= maxDay && lastStep > 0) doiNoiDung++;
+      }
       continue;
     }
     const content = byDay.get(targetStep);
@@ -107,7 +120,7 @@ const asMs = (v) => {
       if (res.skipped) { skipped++; console.log(`  (dry-run) Ngày ${targetStep} → ${email}  [không ghi Lark]`); }
       else {
         const patch = { [nStep]: targetStep, [nSent]: nowMs() };
-        if (targetStep >= maxDay) patch[nStatus] = "Hoàn thành";
+        if (targetStep >= totalDays) patch[nStatus] = "Hoàn thành";     // hết CHƯƠNG TRÌNH mới đóng sổ
         await updateRecord(CFG, CFG.tables.nurtureList, r.record_id, patch);
         sent++; console.log(`  ✔ Ngày ${targetStep} → ${email}`);
       }
@@ -127,6 +140,13 @@ const asMs = (v) => {
 
   transport.close?.();
   console.log(`\n✅ Nuôi dưỡng: gửi ${sent} · lỗi ${failed} · bỏ qua ${skipped} · hoàn thành ${done}`);
+  if (doiNoiDung) {
+    console.log(`\n📝 ${doiNoiDung} người đã nhận HẾT nội dung hiện có (mới soạn tới Ngày ${maxDay}/${totalDays}).`);
+    console.log(`   Họ vẫn ở trạng thái "Đang nuôi" và sẽ nhận tiếp ngay khi bảng 12.2 có thêm ngày.`);
+  }
+  if (hetNoiDung && sent > 0) {
+    console.log(`   (Chương trình đặt ${totalDays} ngày — sửa "nurture.totalDays" trong config nếu chuỗi của bạn ngắn hơn.)`);
+  }
   if (blockedByFilter) {
     console.log(`⚠️  ${blockedByFilter} thư bị BỘ LỌC LARK từ chối (mã 912) — KHÔNG phải địa chỉ hỏng.`);
     console.log(`   Những người này chưa tăng bước, lần chạy sau sẽ tự gửi lại.`);

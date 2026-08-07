@@ -156,6 +156,10 @@ event_type: `send-nurture` · `send-newsletter` · `filter-fake` · `sync-bounce
   kiểu hỏng khó phát hiện nhất của cả bộ.
 - **Lark Mail có giới hạn gửi/ngày.** Script đã throttle + tôn trọng suppression. Quy mô rất lớn thì chuyển
   sang ESP (Brevo/SendGrid) sau — chỉ đổi `scripts/email.mjs`.
+- **Chuỗi nuôi dưỡng chỉ đóng "Hoàn thành" khi đi hết `nurture.totalDays` (mặc định 365)**, không phải khi
+  hết nội dung đã soạn trong 12.2. Ai nhận hết nội dung hiện có thì vẫn nằm ở "Đang nuôi" và tự nhận tiếp
+  khi bạn soạn thêm ngày mới. Chuỗi ngắn hơn thì sửa `nurture.totalDays` cho đúng.
+  Lỡ bị đóng sớm bởi bản cũ: `node scripts/mo-lai-nuoi-duong.mjs` (xem trước) rồi thêm `--that` để mở lại.
 - **Cột chính (primary) của Lark không nhận Select/URL/Checkbox/Attachment** — phải là Text. Code truy cột
   **theo tên** nên đổi thứ tự vô hại; đổi *tên* cột thì khai lại ở `config.local.json → fields`.
 

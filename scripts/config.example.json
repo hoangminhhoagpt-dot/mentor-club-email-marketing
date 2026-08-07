@@ -43,6 +43,11 @@
     "baseUrl": "https://mentor-club-tracker.<subdomain>.workers.dev"
   },
 
+  "nurture": {
+    "_help": "Chuoi nuoi duong dai bao nhieu NGAY. Nguoi chi bi dong 'Hoan thanh' khi di het chuoi nay, KHONG phai khi het noi dung da soan trong 12.2. Chuoi ngan hon thi sua so nay.",
+    "totalDays": 365
+  },
+
   "send": {
     "perRunLimit": 200,
     "delayMs": 4000,
