@@ -25,10 +25,10 @@ INPUT CỦA TÔI (đã chuẩn bị sẵn):
 - LARK_APP_ID      = cli_aa8cccd0b262deed
 - LARK_APP_SECRET  = xxxxxxxxxxxxxxxx
 - LARK_BASE_ID     = https://studiosuccess.sg.larksuite.com/base/TxSrb3qKeaMqZDslH9Uln3yzgyb   (dán cả link cũng được)
-- SMTP_USER        = hoaguru2@hoangminhhoa.net        (hộp thư Lark Mail — dùng để gửi + quét bounce qua IMAP)
+- SMTP_USER        = hoaguru@mentorcamp.io.vn        (hộp thư Lark Mail — dùng để gửi + quét bounce qua IMAP)
 - SMTP_PASS        = xxxxxxxxxxxxxxxx                 (IMAP/SMTP password của Lark Mail, KHÔNG phải mật khẩu đăng nhập)
 - SMTP_HOST        = smtp.larksuite.com:465   |   IMAP_HOST = imap.larksuite.com:993
-- SMTP_FROM        = Mentor Club <hoaguru2@hoangminhhoa.net>
+- SMTP_FROM        = Mentor Club <hoaguru@mentorcamp.io.vn>
 - TRACKER_BASE_URL = https://mentor-club-tracker.minhhoasqtt.workers.dev   (Worker đo mở/click — bỏ trống nếu chưa cần đo)
 - GITHUB_PAT       = ghp_xxxxxxxx                     (scope repo)
 

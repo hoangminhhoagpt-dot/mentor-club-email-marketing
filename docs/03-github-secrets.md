@@ -21,8 +21,8 @@ git push -u origin main
 ## Bước 3 — Variables (không bí mật) — cùng trang → tab **Variables**
 | Tên | Giá trị | Ghi chú |
 |---|---|---|
-| `SMTP_USER` | `hoaguru2@hoangminhhoa.net` | địa chỉ gửi (đã có default sẵn) |
-| `SMTP_FROM_EMAIL` | `hoaguru2@hoangminhhoa.net` | trùng SMTP_USER (đã có default sẵn) |
+| `SMTP_USER` | `hoaguru@mentorcamp.io.vn` | địa chỉ gửi (đã có default sẵn) |
+| `SMTP_FROM_EMAIL` | `hoaguru@mentorcamp.io.vn` | trùng SMTP_USER (đã có default sẵn) |
 | `SMTP_FROM_NAME` | `Mentor Club` | tên hiển thị |
 | `TRACKER_BASE_URL` | `https://mentor-club-tracker.<sub>.workers.dev` | URL Worker (bước 04) |
 | `LARK_APP_TOKEN` | app_token của Base | lấy từ `check-setup.mjs` |

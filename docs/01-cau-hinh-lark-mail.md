@@ -24,12 +24,12 @@ Hệ dùng mặc định **465 SSL** (`secure: true`). Nếu muốn STARTTLS th�
 ```json
 "smtp": {
   "host": "smtp.larksuite.com", "port": 465, "secure": true,
-  "user": "hoaguru2@hoangminhhoa.net",
+  "user": "hoaguru@mentorcamp.io.vn",
   "pass": "<IMAP/SMTP password>",
-  "fromName": "Mentor Club",
-  "fromEmail": "hoaguru2@hoangminhhoa.net"
+  "fromName": "Hoàng Minh Hoá Và Cộng Sự",
+  "fromEmail": "hoaguru@mentorcamp.io.vn"
 },
-"imap": { "host": "imap.larksuite.com", "port": 993, "user": "hoaguru2@hoangminhhoa.net", "pass": "<IMAP/SMTP password>" }
+"imap": { "host": "imap.larksuite.com", "port": 993, "user": "hoaguru@mentorcamp.io.vn", "pass": "<IMAP/SMTP password>" }
 ```
 > `fromEmail` **phải** là chính địa chỉ hộp thư đã xác thực, nếu không Lark từ chối gửi.
 
@@ -39,11 +39,30 @@ node scripts/check-setup.mjs
 ```
 Dòng `✔ SMTP đăng nhập (...)` là đạt. (Đã test thực tế: login SMTP + IMAP tới Lark Mail thành công.)
 
+## Hạn mức CHÍNH THỨC (Lark Pro — đọc trong Admin → Mail → hộp thư → IMAP/SMTP service)
+
+| Loại | Con số |
+|---|---|
+| Tần suất gửi qua SMTP | **200 thư / 100 giây** |
+| Tổng mỗi ngày, mỗi người gửi | **6.000 thư / ngày** |
+
+Nhịp mặc định (`send.delayMs` 4.000ms + dao động 2.000ms ≈ 5 giây/thư) tương đương
+**20 thư/100 giây = 10% hạn mức tần suất** — rất an toàn, nhưng cũng có nghĩa 6.000 thư mất
+khoảng **8 giờ máy chạy**. Cần nhanh hơn thì hạ `delayMs` còn 1.500ms (≈ 33% hạn mức).
+
+> ⚠️ **6.000/ngày là hạn mức của CẢ HỘP THƯ, không riêng phần marketing.** Nếu hộp thư này còn
+> gửi thư giao dịch (xác nhận đăng ký, hoá đơn, trả lời khách) thì marketing **ăn tranh hạn mức
+> của những thư quan trọng đó** — đụng trần là thư xác nhận của khách cũng không đi được.
+> Gửi khối lượng lớn thì tách hộp thư riêng, hoặc chuyển sang ESP.
+
 ## Giới hạn & deliverability
-- Lark Mail có giới hạn số thư gửi/ngày theo gói và chính sách chống spam; gửi marketing khối
-  lượng lớn nên chia nhỏ. Hệ đã throttle (`send.delayMs`, mặc định 1,2s) + giới hạn
-  `send.perRunLimit` mỗi lần chạy, và tôn trọng huỷ nhận/bounce/mail ảo.
-- Để vào inbox tốt: bảo đảm tên miền `hoangminhhoa.net` đã cấu hình **SPF/DKIM/DMARC** đúng
-  trong DNS (Lark Mail cung cấp bản ghi khi thêm tên miền).
+- Hệ đã tự hãm: `send.delayMs` + dao động ngẫu nhiên, `send.perRunLimit` mỗi lượt chạy,
+  phanh dừng khi bị từ chối liên tiếp, và luôn tôn trọng huỷ nhận/bounce/mail ảo.
+- Để vào inbox tốt: tên miền gửi phải có **SPF/DKIM/DMARC** đúng trong DNS (Lark cấp bản ghi
+  khi thêm tên miền). Lưu ý: **Lark dùng selector DKIM riêng theo tổ chức** — tra DNS bằng các
+  tên selector phổ biến sẽ không thấy gì, đừng vội kết luận là chưa bật. Kiểm bằng cách gửi thử
+  rồi xem thư vào Hộp chính hay Thư rác.
+- **Hộp thư mới phải khởi động ấm.** Tên miền chưa có lịch sử gửi mà bắn vài nghìn thư ngày đầu
+  là vào thư rác hàng loạt. Tăng dần khoảng 3 tuần: 200 → 500 → 1.000 → 2.000 → 5.000.
 - Muốn quy mô rất lớn về sau: có thể chuyển sang ESP (Brevo/SendGrid) — chỉ cần đổi `email.mjs`,
   phần còn lại giữ nguyên.

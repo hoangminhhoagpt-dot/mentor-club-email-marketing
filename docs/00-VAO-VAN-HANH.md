@@ -6,7 +6,7 @@ logic tracking Worker ✅. **Còn 6 phần dưới đây** để chạy hoàn to
 Giá trị dùng lại (đã biết):
 - Repo: `hoangminhhoagpt-dot/mentor-club-email-marketing`
 - Base app_token: `TxSrb3qKeaMqZDslH9Uln3yzgyb` (đã điền sẵn vào Worker)
-- Hộp thư gửi: `hoaguru2@hoangminhhoa.net` (đã là default trong workflow)
+- Hộp thư gửi: `hoaguru@mentorcamp.io.vn` (đã là default trong workflow)
 
 ---
 

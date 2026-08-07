@@ -32,6 +32,6 @@ jobs:
           LARK_APP_TOKEN: ${{ vars.LARK_APP_TOKEN || 'TxSrb3qKeaMqZDslH9Uln3yzgyb' }}
           TABLE_ERROR: ${{ github.event.client_payload.table_error || vars.TABLE_ERROR || 'tblj52EgtbwXpCdy' }}
           IMAP_HOST: ${{ vars.IMAP_HOST || 'imap.larksuite.com' }}
-          IMAP_USER: ${{ vars.IMAP_USER || vars.SMTP_USER || 'hoaguru2@hoangminhhoa.net' }}
+          IMAP_USER: ${{ vars.IMAP_USER || vars.SMTP_USER || 'hoaguru@mentorcamp.io.vn' }}
           DAYS: ${{ github.event.client_payload.days || inputs.days || '3' }}
         run: node scripts/sync-bounces.mjs

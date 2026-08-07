@@ -26,16 +26,16 @@
     "host": "smtp.larksuite.com",
     "port": 465,
     "secure": true,
-    "user": "hoaguru2@hoangminhhoa.net",
+    "user": "hoaguru@mentorcamp.io.vn",
     "pass": "<IMAP/SMTP password cua Lark Mail>",
-    "fromName": "Mentor Club",
-    "fromEmail": "hoaguru2@hoangminhhoa.net"
+    "fromName": "Hoàng Minh Hoá Và Cộng Sự",
+    "fromEmail": "hoaguru@mentorcamp.io.vn"
   },
 
   "imap": {
     "host": "imap.larksuite.com",
     "port": 993,
-    "user": "hoaguru2@hoangminhhoa.net",
+    "user": "hoaguru@mentorcamp.io.vn",
     "pass": "<IMAP/SMTP password cua Lark Mail>"
   },
 

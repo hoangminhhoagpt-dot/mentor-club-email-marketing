@@ -41,9 +41,9 @@ jobs:
           TABLE_ERROR:    ${{ vars.TABLE_ERROR || 'tblj52EgtbwXpCdy' }}
           TABLE_FAKE:     ${{ vars.TABLE_FAKE  || 'tblxAux9X14qimtf' }}
           SMTP_HOST:       ${{ vars.SMTP_HOST || 'smtp.larksuite.com' }}
-          SMTP_USER:       ${{ vars.SMTP_USER || 'hoaguru2@hoangminhhoa.net' }}
-          SMTP_FROM_EMAIL: ${{ vars.SMTP_FROM_EMAIL || vars.SMTP_USER || 'hoaguru2@hoangminhhoa.net' }}
-          SMTP_FROM_NAME:  ${{ vars.SMTP_FROM_NAME || 'Mentor Club' }}
+          SMTP_USER:       ${{ vars.SMTP_USER || 'hoaguru@mentorcamp.io.vn' }}
+          SMTP_FROM_EMAIL: ${{ vars.SMTP_FROM_EMAIL || vars.SMTP_USER || 'hoaguru@mentorcamp.io.vn' }}
+          SMTP_FROM_NAME:  ${{ vars.SMTP_FROM_NAME || 'Hoàng Minh Hoá Và Cộng Sự' }}
           TRACKER_BASE_URL: ${{ vars.TRACKER_BASE_URL }}
           SEND_PER_RUN_LIMIT: ${{ vars.SEND_PER_RUN_LIMIT || '400' }}
           SEND_DELAY_MS:      ${{ vars.SEND_DELAY_MS || '4000' }}
