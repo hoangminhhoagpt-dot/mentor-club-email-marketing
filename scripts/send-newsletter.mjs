@@ -13,9 +13,9 @@
  *       RECORD_ID=recXXXX node scripts/send-newsletter.mjs   (gửi 1 dòng)
  */
 import {
-  loadConfig, requireKeys, listAllRecords, updateRecord, F, normEmail, nowMs, sleep, nextDelay,
+  loadConfig, requireKeys, listAllRecords, updateRecord, F, normEmail, nowMs, sleep, larkToken, nextDelay,
 } from "./lib.mjs";
-import { makeTransport, sendOne, isAntispamReject } from "./email.mjs";
+import { makeTransport, sendOne, isAntispamReject, taiDinhKem } from "./email.mjs";
 import { buildSuppression, getText } from "./suppression.mjs";
 
 const CFG = loadConfig();
@@ -39,6 +39,8 @@ const asMs = (v) => {
   const mSched = F(CFG, "newsletterMail", "scheduledAt");
   const mCount = F(CFG, "newsletterMail", "sentCount");
   const mSentAt = F(CFG, "newsletterMail", "sentAt");
+  const mLink = F(CFG, "newsletterMail", "link");
+  const mFile = F(CFG, "newsletterMail", "file");
 
   // ---- chọn các email cần gửi ----
   const mails = await listAllRecords(CFG, Tm);
@@ -83,11 +85,23 @@ const asMs = (v) => {
     const pending = recipients.slice(doneBefore);
     console.log(`\n📨 Gửi bảng tin: "${subject}" → ${pending.length}/${recipients.length} người còn lại${doneBefore ? ` (đã gửi ${doneBefore} lần trước)` : ""}${CFG.send.dryRun ? "  [DRY-RUN — không gửi, không ghi Lark]" : ""}`);
     if (!pending.length) {
-      if (!CFG.send.dryRun) await updateRecord(CFG, Tm, mail.record_id, { [mStatus]: "Đã gửi", [mSentAt]: nowMs() });
+      if (!CFG.send.dryRun) await updateRecord(CFG, Tm, mail.record_id, { [mStatus]: "Thành công", [mSentAt]: nowMs() });
       console.log("  Mọi người trong danh sách đã nhận. Đánh dấu hoàn tất.");
       continue;
     }
+    // ĐỔI TRẠNG THÁI NGAY khi bắt đầu, trước cả thư đầu tiên: người bấm nút phải thấy
+    // bảng phản hồi trong vài giây, không thì họ tưởng nút hỏng và bấm lại lần nữa.
     if (!CFG.send.dryRun) await updateRecord(CFG, Tm, mail.record_id, { [mStatus]: "Đang gửi" });
+
+    // Link và tệp đính kèm của chính dòng bản tin này
+    // Ô URL của Lark là {link, text}. Phải lấy .link — getText() trả .text tức phần CHỮ HIỂN THỊ,
+    // đem chữ đó nhét vào href thì ra liên kết hỏng.
+    const oLink = mail.fields?.[mLink];
+    const link = (oLink && typeof oLink === "object" && oLink.link) ? oLink.link
+               : (typeof oLink === "string" ? oLink : "");
+    const dinhKem = await taiDinhKem(CFG, mail.fields?.[mFile], await larkToken(CFG));
+    if (link) console.log(`  ↪ kèm link: ${link}`);
+    if (dinhKem.length) console.log(`  📎 đính ${dinhKem.length} tệp: ${dinhKem.map((f) => f.filename).join(", ")}`);
 
     let sent = 0, failed = 0, skipped = 0, streak = 0, blockedByFilter = 0, processed = 0;
     const limit = CFG.send.perRunLimit;
@@ -96,7 +110,7 @@ const asMs = (v) => {
       if (sent + failed >= limit) { console.log(`  Chạm giới hạn ${limit}/lần.`); break; }
       processed++;
       const res = await sendOne(transport, CFG, {
-        to: r.email, name: r.name, subject, html: body,
+        to: r.email, name: r.name, subject, html: body, link, files: dinhKem,
         campaign: `Bảng tin: ${subject}`.slice(0, 100), step: "",
       });
       if (res.ok && !res.skipped) { sent++; streak = 0; }
@@ -123,7 +137,7 @@ const asMs = (v) => {
     if (!CFG.send.dryRun) {
       await updateRecord(CFG, Tm, mail.record_id, {
         // Chưa hết danh sách thì trả về "Chờ gửi" để lần chạy sau ĐI TIẾP, không phải làm lại.
-        [mStatus]: hetDanhSach ? "Đã gửi" : "Chờ gửi",
+        [mStatus]: hetDanhSach ? (failed && !sent ? "Thất bại" : "Thành công") : "Chờ gửi",
         [mCount]: totalDone,
         [mSentAt]: nowMs(),
       });

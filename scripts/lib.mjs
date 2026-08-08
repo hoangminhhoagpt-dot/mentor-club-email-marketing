@@ -160,10 +160,14 @@ export const SCHEMA = {
   newsletterMail: {       // 12.4 Email bảng tin
     subject:     { name: "Tiêu đề",       type: 1 },
     body:        { name: "Nội dung",      type: 1 },
-    status:      { name: "Trạng thái",    type: 3, opts: ["Nháp", "Chờ gửi", "Đang gửi", "Đã gửi"] },
+    // Vòng đời một bản tin: Nháp → (người đổi) Chờ gửi → (script đặt ngay khi bắt đầu) Đang gửi
+    // → Thành công. Còn dở dang thì quay lại "Chờ gửi" để lần chạy sau đi tiếp.
+    status:      { name: "Trạng thái",    type: 3, opts: ["Nháp", "Chờ gửi", "Đang gửi", "Thành công", "Thất bại"] },
     scheduledAt: { name: "Lịch gửi",      type: 5 },
     sentCount:   { name: "Đã gửi",        type: 2 },
     sentAt:      { name: "Ngày gửi thực", type: 5 },
+    link:        { name: "Link",          type: 15 },   // chèn thành nút "Xem chi tiết" cuối thư
+    file:        { name: "File",          type: 17 },   // tải về rồi đính kèm vào thư
   },
   openReport: {           // 12.5 Báo cáo đọc Email
     email:       { name: "Email",       type: 1 },

@@ -140,14 +140,23 @@ export function ensureHtmlDoc(body) {
  * Chuẩn bị + gửi 1 email tới 1 người nhận.
  * @returns {ok, messageId?, error?, skipped?}
  */
-export async function sendOne(transport, CFG, { to, name, subject, html, campaign, step }) {
+export async function sendOne(transport, CFG, { to, name, subject, html, campaign, step, link, files }) {
   const email = normEmail(to);
   const token = encodeToken({ e: email, c: campaign, s: step });
   const base = CFG.tracker.baseUrl;
   const unsubUrl = base ? `${base}/u?t=${token}` : undefined;
 
-  const vars = { name: name || "bạn", email, unsubscribe_url: unsubUrl || "" };   // fallback tên = "bạn"
-  const rendered = renderTemplate(html, vars);
+  // Cùng một giá trị khai nhiều tên gọi: bản mẫu của Mentor dùng {customer_name},
+  // nội dung viết trước đó dùng {{name}}. Đỡ cả hai để không phải sửa lại thư cũ.
+  const ten = name || "bạn";
+  const vars = {
+    name: ten, customer_name: ten, ten_khach: ten,
+    email, customer_email: email,
+    unsubscribe_url: unsubUrl || "",
+  };
+  let than = String(html || "");
+  if (link) than += `\n\n[Xem chi tiết](${link})`;            // cột Link của bảng → nút xem thêm cuối thư
+  const rendered = renderTemplate(than, vars);
   const subj = renderTemplate(subject, vars);                                     // cá nhân hóa cả tiêu đề
   let doc = ensureHtmlDoc(rendered);
   doc = injectTracking(doc, { base, token, unsubUrl });
@@ -167,12 +176,39 @@ export async function sendOne(transport, CFG, { to, name, subject, html, campaig
   if (CFG.send.dryRun) {
     return { ok: true, skipped: true, messageId: "(dry-run)" };
   }
+  const thu = { from, to: email, subject: subj, text, html: doc, headers };
+  if (files && files.length) thu.attachments = files;          // cột File của bảng → tệp đính kèm
+
   try {
-    const info = await transport.sendMail({ from, to: email, subject: subj, text, html: doc, headers });
+    const info = await transport.sendMail(thu);
     return { ok: true, messageId: info.messageId };
   } catch (e) {
     return { ok: false, error: e.message || String(e) };
   }
+}
+
+/**
+ * Tải tệp đính kèm từ một ô attachment của Lark về dạng nodemailer gửi được.
+ * Lark trả link tải tạm dùng được không cần đăng nhập — nhưng chỉ sống ít phút,
+ * nên phải tải ngay tại đây chứ đừng đưa link đó vào thư.
+ */
+export async function taiDinhKem(CFG, oFile, larkToken) {
+  const ds = Array.isArray(oFile) ? oFile : [];
+  if (!ds.length) return [];
+  const ra = [];
+  for (const f of ds) {
+    if (!f?.url && !f?.file_token) continue;
+    try {
+      const r = await fetch(f.url || `${CFG.larkDomain}/open-apis/drive/v1/medias/${f.file_token}/download`, {
+        headers: { Authorization: `Bearer ${larkToken}` },
+      });
+      if (!r.ok) { console.log(`  ⚠️  không tải được tệp "${f.name}" (HTTP ${r.status}) — bỏ qua`); continue; }
+      ra.push({ filename: f.name || "tep-dinh-kem", content: Buffer.from(await r.arrayBuffer()) });
+    } catch (e) {
+      console.log(`  ⚠️  lỗi tải tệp "${f.name}": ${e.message} — bỏ qua`);
+    }
+  }
+  return ra;
 }
 
 /** Lark từ chối vì bộ lọc rác (mã 912) — KHÔNG phải địa chỉ hỏng. Đừng bao giờ coi là hard bounce. */
