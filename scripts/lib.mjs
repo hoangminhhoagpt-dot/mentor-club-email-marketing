@@ -133,6 +133,9 @@ export const SCHEMA = {
   nurtureList: {          // 12.1 Danh sách Email Nuôi Dưỡng
     email:      { name: "Email",              type: 1 },
     name:       { name: "Tên",                type: 1 },
+    maKhach:    { name: "Mã Khách Hàng",      type: 1 },
+    nguon:      { name: "Nguồn khách hàng",   type: 4, opts: ["Website", "Facebook", "Zalo", "Sự kiện", "Giới thiệu", "Nhập tay", "Khác"] },
+    mailHong:   { name: "Email hỏng",         type: 7 },
     startDate:  { name: "Ngày bắt đầu",       type: 5 },
     status:     { name: "Trạng thái",         type: 3, opts: ["Đang nuôi", "Tạm dừng", "Hoàn thành", "Đã huỷ"] },
     lastStep:   { name: "Bước gần nhất",      type: 2 },
