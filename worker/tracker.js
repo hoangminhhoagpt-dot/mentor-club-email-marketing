@@ -117,6 +117,35 @@ async function recordOpen(env, tok, ua) {
       [F.first]: now, [F.last]: now, [F.count]: 1, [F.ua]: (ua || "").slice(0, 200),
     });
   }
+  // Ghi thêm về CHÍNH DÒNG NGƯỜI NHẬN ở 12.1 — thứ nuôi toàn bộ hệ chấm điểm.
+  // Không có bước này thì mọi công thức (OpenRate, LoyaltyScore, CallToSell) mãi bằng 0
+  // dù 12.5 vẫn đầy dữ liệu, vì chúng đọc cột của 12.1 chứ không đọc 12.5.
+  await danhDauDaMo(env, tok, now);
+}
+
+/**
+ * Đánh dấu người này đã mở lá thư ngày thứ mấy, và mở lúc nào.
+ *   "Tỉ lệ mở mail"     — cột nhiều lựa chọn, cộng dồn "Day N"
+ *   "Thời gian mở mail" — lần mở gần nhất, dùng để tính độ nguội
+ * Chỉ áp cho chuỗi nuôi dưỡng (bước dạng "Ngày N"); bản tin không có ngày nên bỏ qua.
+ */
+async function danhDauDaMo(env, tok, now) {
+  if (!env.TABLE_NURTURE) return;                       // chưa khai bảng 12.1 thì thôi
+  const m = /(\d+)/.exec(String(tok.s || ""));
+  if (!m) return;                                       // bản tin — không thuộc chuỗi ngày
+  const nhan = `Day ${m[1]}`;
+
+  const dong = await findOne(env, env.TABLE_NURTURE, [cond("Email", tok.e)]);
+  if (!dong) return;                                    // người này không nằm trong chuỗi nuôi dưỡng
+
+  const cu = dong.fields?.["Tỉ lệ mở mail"];
+  const ds = Array.isArray(cu) ? cu.slice() : (cu ? [cu] : []);
+  if (!ds.includes(nhan)) ds.push(nhan);                // cộng dồn, đừng gán đè mất lịch sử
+
+  await updateRec(env, env.TABLE_NURTURE, dong.record_id, {
+    "Tỉ lệ mở mail": ds,
+    "Thời gian mở mail": now,
+  });
 }
 async function recordClick(env, tok, url) {
   const F = FIELDS.click, now = Date.now();

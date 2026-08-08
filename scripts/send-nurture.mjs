@@ -69,6 +69,7 @@ const ngayVN = (ms) => new Date(ms + 7 * 3600000).toISOString().slice(0, 10);
   const nStep = F(CFG, "nurtureList", "lastStep");
   const nSent = F(CFG, "nurtureList", "lastSentAt");
   const nName = F(CFG, "nurtureList", "name");
+  const nDaGui = "Lá thư gửi thành công";   // cột nhiều lựa chọn Day 1..365
 
   const transport = makeTransport(CFG);
   let sent = 0, failed = 0, skipped = 0, done = 0, doiNoiDung = 0, daGuiHomNay = 0;
@@ -132,7 +133,13 @@ const ngayVN = (ms) => new Date(ms + 7 * 3600000).toISOString().slice(0, 10);
       // email bị mất câm lặng. Chạy thử phải là chạy thử.
       if (res.skipped) { skipped++; console.log(`  (dry-run) Ngày ${targetStep} → ${email}  [không ghi Lark]`); }
       else {
-        const patch = { [nStep]: targetStep, [nSent]: nowMs() };
+        // Đánh dấu "Day N" vào cột nhiều lựa chọn — đây là thứ nuôi công thức chấm điểm:
+        // "Số email đã gửi" đếm ngày, còn cột này cho biết CỤ THỂ lá thư nào đã đi.
+        // Phải cộng thêm vào danh sách cũ, gán đè là mất sạch lịch sử những lá trước.
+        const daGui = Array.isArray(r.fields?.[nDaGui]) ? r.fields[nDaGui].slice() : [];
+        const nhan = `Day ${targetStep}`;
+        if (!daGui.includes(nhan)) daGui.push(nhan);
+        const patch = { [nStep]: targetStep, [nSent]: nowMs(), [nDaGui]: daGui };
         if (targetStep >= totalDays) patch[nStatus] = "Hoàn thành";     // hết CHƯƠNG TRÌNH mới đóng sổ
         await updateRecord(CFG, CFG.tables.nurtureList, r.record_id, patch);
         sent++; console.log(`  ✔ Ngày ${targetStep} → ${email}`);

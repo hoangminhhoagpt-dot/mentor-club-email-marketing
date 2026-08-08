@@ -22,6 +22,7 @@ LARK_APP_TOKEN = "TxSrb3qKeaMqZDslH9Uln3yzgyb"   # ★ MẪU CHUẨN — base "M
 TABLE_OPEN    = "tblQw8wYbFzmGx8T"   # 12.5 Báo cáo đọc Email
 TABLE_CLICK   = "tbllXZnHa9tAlF2I"   # 12.9 Danh sách email click link
 TABLE_UNSUB   = "tblBARpRx4JuVZ7n"   # 12.6 Huỷ nhận email
+TABLE_NURTURE = "tblJLDb9fgS9Z9Ih"   # 12.1 — đánh dấu ai đã mở lá thư ngày nào
 
 # Các base ĐỜI TRƯỚC (không dùng nữa, giữ lại để tra khi cần đối chiếu lịch sử):
 #   base Mẫu tổng hợp  ZM8qbz78JaR16Es560sly6Bkgvg → open tblwaBvetoG2crzj · click tblIneZtFI7B6zyV · unsub tbloUKugBtKn7bQD
