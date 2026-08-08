@@ -8,6 +8,7 @@
     "setup-tables": "node scripts/setup-tables.mjs",
     "check-itto": "node check-itto.mjs",
     "check": "node check-itto.mjs && node scripts/check-setup.mjs",
+    "kiem-thu": "node scripts/kiem-thu-he-thong.mjs",
     "filter-fake": "node scripts/filter-fake.mjs",
     "send-nurture": "node scripts/send-nurture.mjs",
     "send-newsletter": "node scripts/send-newsletter.mjs",
