@@ -88,8 +88,34 @@ async function doiCho(mo, lan = 12, nghi = 2500) {
   console.log(`   Địa chỉ dùng để thử: ${EMAIL}\n`);
 
   try {
+    // ── 0. Code chạy thật có phải code mình đang sửa không ───────────────────
+    // Actions chạy code trên GitHub, KHÔNG phải file trong máy. Từng có bản vá nằm
+    // trong thư mục làm việc mà không nằm trong commit nào ⇒ chạy thử ở máy thì xanh,
+    // còn thư thật do Actions gửi vẫn dùng code cũ. Phải đối chiếu trước mọi thứ khác.
+    console.log("⓪ Code trong máy và code trên GitHub");
+    try {
+      const { execFileSync } = await import("node:child_process");
+      const g = (args) => execFileSync("git", args, { cwd: process.cwd(), encoding: "utf8" }).trim();
+      const ban = g(["status", "--porcelain"]).split("\n").filter((l) => /\.(mjs|js|json|yml)$/.test(l));
+      cham("không còn thay đổi chưa commit", ban.length === 0,
+        ban.length ? ban.map((l) => l.trim()).join(" · ") : "");
+      try { execFileSync("git", ["fetch", "-q", "origin"], { cwd: process.cwd() }); } catch {}
+      const cuc = g(["rev-parse", "HEAD"]), xa = g(["rev-parse", "origin/main"]);
+      cham("commit trong máy trùng commit trên GitHub", cuc === xa,
+        cuc === xa ? cuc.slice(0, 7) : `máy ${cuc.slice(0, 7)} ≠ GitHub ${xa.slice(0, 7)}`);
+    } catch (e) { cham("đối chiếu được với GitHub", false, e.message.split("\n")[0]); }
+
+    // ── 0b. Thay biến trong thư ─────────────────────────────────────────────
+    const { renderTemplate } = await import("./email.mjs");
+    const v = { name: "Anh Hoá", customer_name: "Anh Hoá" };
+    cham("thay được {{name}} (kiểu cũ)", renderTemplate("{{name}} thân mến", v) === "Anh Hoá thân mến");
+    cham("thay được {customer_name} (kiểu Lark)",
+      renderTemplate("{customer_name} thân mến", v) === "Anh Hoá thân mến");
+    cham("không đụng CSS trong thư HTML",
+      renderTemplate("a{color:red}", v) === "a{color:red}");
+
     // ── 1. Dựng một người nhận giả trong 12.1 ───────────────────────────────
-    console.log("① Dựng dữ liệu thử");
+    console.log("\n① Dựng dữ liệu thử");
     const hn = new Date(); hn.setHours(0, 0, 0, 0);
     const nguoi = await createRecord(CFG, T.nurtureList, {
       [F(CFG, "nurtureList", "email")]: EMAIL,
