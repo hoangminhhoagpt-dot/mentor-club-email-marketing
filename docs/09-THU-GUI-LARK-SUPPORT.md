@@ -5,7 +5,7 @@ Gửi qua: Lark Admin Console → Help & Support → Submit a ticket (hoặc `su
 
 ---
 
-## Bản tiếng Anh (dùng bản này)
+## Bản tiếng Anh (dự phòng, nếu ticket được chuyển cho đội quốc tế)
 
 **Subject:** All outbound mail from our public mailbox rejected with 912 antispam — request review and remediation
 
@@ -71,7 +71,7 @@ Hoàng Minh Hoá
 
 ---
 
-## Bản tiếng Việt (nếu làm việc với đội Việt Nam)
+## Bản tiếng Việt — DÙNG BẢN NÀY
 
 **Tiêu đề:** Toàn bộ thư gửi ra ngoài từ hộp thư công khai bị chặn mã 912 — đề nghị kiểm tra và gỡ
 
