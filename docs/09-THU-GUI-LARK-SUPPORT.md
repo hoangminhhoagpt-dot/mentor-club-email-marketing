@@ -132,3 +132,53 @@ Tổ chức: **StudioSuccess** · Tên miền: **mentorcamp.io.vn** · Hộp th�
 
 Trân trọng,
 Hoàng Minh Hoá
+
+---
+
+## Bản nhắn tin (chat với hỗ trợ) — gần gũi, chia thành 3 tin
+
+Nhắn từng tin một, chờ họ đọc rồi gửi tin tiếp. Đừng dán cả ba cùng lúc.
+
+### Tin 1 — nói vấn đề
+
+> Chào bạn, mình cần hỗ trợ gấp một việc về mail.
+>
+> Hộp thư công khai của bên mình là hoaguru@mentorcamp.io.vn. Từ tối 7/8 tới giờ, mọi thư
+> gửi ra ngoài đều bị trả lại, báo lỗi: "912 This mail is rejected by antispam system".
+>
+> Thư gửi nội bộ trong công ty thì vẫn bình thường, chỉ thư ra ngoài là bị chặn hết.
+
+### Tin 2 — đưa bằng chứng đã tự kiểm tra
+
+> Bên mình đã tự kiểm tra để loại trừ nguyên nhân do nội dung thư, kết quả như sau:
+>
+> · Gửi 2 thư giống hệt nhau, một thư có gắn ảnh theo dõi và link, một thư không có gì
+>   → cả hai đều bị chặn
+> · Thư xác nhận đăng ký cho khách (thư giao dịch, không hề quảng cáo) → cũng bị chặn
+> · Đợt chỉ gửi 2–3 người → vẫn bị chặn
+> · Thử gửi một thư chỉ có 4 chữ không dấu tới một dịch vụ kiểm tra kỹ thuật → cũng bị chặn
+>
+> Cấu hình tên miền bên mình đầy đủ: SPF, DKIM đã bật trong Lark Admin, DMARC để mức
+> quarantine, MX trỏ về Lark.
+>
+> Vài Message-ID để bạn tra giúp (đều gửi từ hoaguru@mentorcamp.io.vn):
+> · 1c989eb8-1e96-8976-ca10-147cc3e286fc@mentorcamp.io.vn (8/8 lúc 09:00)
+> · 5c43061a-8208-400c-aff5-39bf416a98cc_GEN_BY_LMS@mentorcamp.io.vn (8/8 lúc 10:54)
+> · 50de7103-5d07-80d3-a5b2-b9fd7912a6e3@mentorcamp.io.vn (8/8 lúc 14:40)
+
+### Tin 3 — nói thiệt hại và đề nghị
+
+> Việc này đang ảnh hưởng thật tới công việc: hộp thư đó còn dùng để gửi thư xác nhận
+> đăng ký cho một sự kiện có thu phí ngày 20–22/08. Khách đăng ký xong không nhận được
+> thư xác nhận nào cả.
+>
+> Bạn hỗ trợ giúp mình mấy việc này nhé:
+>
+> 1. Cho mình biết lý do cụ thể hộp thư bị hệ thống chặn là gì
+> 2. Kiểm tra và gỡ giúp bên mình
+> 3. Cho mình biết hạn mức gửi chính thức của hộp thư công khai theo gói đang dùng
+>    (mỗi giờ, mỗi ngày là bao nhiêu) để bên mình làm cho đúng
+> 4. Nếu hộp thư công khai vốn không dùng để gửi số lượng lớn thì bạn nói thẳng giúp,
+>    bên mình sẽ chuyển phần đó sang dịch vụ khác, chỉ giữ thư giao dịch trên Lark
+>
+> Cảm ơn bạn nhiều.
