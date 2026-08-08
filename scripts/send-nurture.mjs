@@ -13,7 +13,7 @@ import {
   loadConfig, requireKeys, listAllRecords, updateRecord, F, normEmail, nowMs, sleep, nextDelay,
 } from "./lib.mjs";
 import { makeTransport, sendOne, isAntispamReject } from "./email.mjs";
-import { buildSuppression, getText } from "./suppression.mjs";
+import { buildSuppression, getText, kiemChanDauGui, baoChanDauGui } from "./suppression.mjs";
 
 const CFG = loadConfig();
 const DAY_MS = 86400000;
@@ -59,6 +59,10 @@ const ngayVN = (ms) => new Date(ms + 7 * 3600000).toISOString().slice(0, 10);
   const hetNoiDung = maxDay < totalDays;                            // còn thiếu nội dung so với chương trình
 
   // ---- suppression ----
+  // Ngó bảng 12.8 xem đầu gửi có đang bị Lark chặn không. Phải hỏi TRƯỚC khi bắn, vì
+  // mã 912 chỉ lộ ra qua thư dội vài phút sau, không lộ ra lúc gửi.
+  if (baoChanDauGui(await kiemChanDauGui(CFG), process.argv.includes("--bo-qua-phanh"))) return;
+
   const blocked = await buildSuppression(CFG);
 
   // ---- 12.1: người nhận ----

@@ -16,7 +16,7 @@ import {
   loadConfig, requireKeys, listAllRecords, updateRecord, F, normEmail, nowMs, sleep, larkToken, nextDelay,
 } from "./lib.mjs";
 import { makeTransport, sendOne, isAntispamReject, taiDinhKem } from "./email.mjs";
-import { buildSuppression, getText } from "./suppression.mjs";
+import { buildSuppression, getText, kiemChanDauGui, baoChanDauGui } from "./suppression.mjs";
 
 const CFG = loadConfig();
 const RECORD_ID = process.env.RECORD_ID || "";
@@ -54,6 +54,10 @@ const asMs = (v) => {
   if (!queue.length) { console.log(RECORD_ID ? `Không thấy dòng ${RECORD_ID} hoặc không hợp lệ.` : "Không có email bảng tin nào ở trạng thái 'Chờ gửi' (đến lịch)."); return; }
 
   // ---- người nhận 12.3 (Đang nhận) trừ suppression ----
+  // Ngó bảng 12.8 xem đầu gửi có đang bị Lark chặn không. Phải hỏi TRƯỚC khi bắn, vì
+  // mã 912 chỉ lộ ra qua thư dội vài phút sau, không lộ ra lúc gửi.
+  if (baoChanDauGui(await kiemChanDauGui(CFG), process.argv.includes("--bo-qua-phanh"))) return;
+
   const blocked = await buildSuppression(CFG);
   const subs = await listAllRecords(CFG, CFG.tables.newsletterList);
   const lEmail = F(CFG, "newsletterList", "email");

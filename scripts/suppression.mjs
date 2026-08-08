@@ -52,4 +52,52 @@ export async function buildSuppression(CFG) {
   return set;
 }
 
+/**
+ * Đầu gửi có đang bị Lark chặn không (mã 912).
+ *
+ * VÌ SAO CẦN: 912 KHÔNG xảy ra lúc gửi. Lark nhận thư và trả 250 OK bình thường, vài phút
+ * sau mới dội thư về. Nên phanh "đếm lần từ chối liên tiếp" trong lúc gửi không bao giờ nổ
+ * — hệ vẫn in "gửi 2 · lỗi 0" trong khi cả 2 thư đã bị chặn. Cách duy nhất biết được là
+ * NGÓ NGƯỢC bảng 12.8 (đã hứng thư dội qua IMAP) trước khi bắn đợt mới.
+ *
+ * Bị chặn mà cứ bắn tiếp thì chỉ làm uy tín hộp gửi tệ thêm.
+ */
+export async function kiemChanDauGui(CFG) {
+  const cfg = CFG.send?.chanDauGui || {};
+  const soGio = cfg.soGio ?? 24;
+  const nguong = cfg.nguong ?? 5;
+  if (cfg.tat) return { chan: false, dem: 0, soGio, nguong };
+  try {
+    const recs = await listAllRecords(CFG, CFG.tables.errorList);
+    const fType = F(CFG, "errorList", "errorType");
+    const fWhen = F(CFG, "errorList", "occurredAt");
+    const moc = Date.now() - soGio * 3600000;
+    let dem = 0;
+    for (const r of recs) {
+      const type = getText(r.fields, fType) || r.fields?.[fType] || "";
+      if (!/bị chặn đầu gửi|912|antispam/i.test(String(type))) continue;
+      const luc = Number(r.fields?.[fWhen] || 0);
+      if (luc && luc < moc) continue;
+      dem++;
+    }
+    return { chan: dem >= nguong, dem, soGio, nguong };
+  } catch (e) {
+    console.warn("⚠️  Không kiểm được tình trạng chặn đầu gửi:", e.message);
+    return { chan: false, dem: 0, soGio, nguong };
+  }
+}
+
+/** In cảnh báo + cho biết có nên dừng không. */
+export function baoChanDauGui(kq, boQua) {
+  if (!kq.dem) return false;
+  console.log(`\n🚫 ${kq.dem} thư bị Lark chặn đầu gửi (mã 912) trong ${kq.soGio} giờ qua.`);
+  if (!kq.chan) { console.log("   Chưa tới ngưỡng dừng, vẫn gửi tiếp — nhưng nên để mắt."); return false; }
+  if (boQua) { console.log("   (Bỏ qua phanh theo yêu cầu — vẫn gửi.)"); return false; }
+  console.log(`   Vượt ngưỡng ${kq.nguong} ⇒ DỪNG, không bắn thêm.`);
+  console.log("   912 là Lark chặn ở ĐẦU GỬI, không phải địa chỉ khách hỏng — gửi thêm chỉ");
+  console.log("   làm uy tín hộp thư tệ đi. Xử lý gốc trước (xem docs/08-CHAN-DAU-GUI.md),");
+  console.log('   hoặc chạy lại với cờ --bo-qua-phanh nếu biết mình đang làm gì.');
+  return true;
+}
+
 export { getText };
