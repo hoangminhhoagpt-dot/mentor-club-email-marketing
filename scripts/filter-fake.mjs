@@ -58,8 +58,11 @@ const KHONG_GOM = process.argv.includes("--khong-gom");
   for (const r of existing) {
     const email = normEmail(getText(r.fields, fEmail));
     if (!email) continue;
-    const hasResult = !!getText(r.fields, fResult);
-    if (hasResult && !ALL) continue;
+    // "Nghi ngờ" KHÔNG phải kết luận — đó là lúc DNS trục trặc nên chưa dám phán, và chính
+    // lời nhắn ghi "chạy lại sau". Coi nó như đã xong thì địa chỉ đó mắc kẹt vĩnh viễn ở
+    // trạng thái lấp lửng, lần chạy nào cũng bỏ qua.
+    const ketQua = getText(r.fields, fResult);
+    if (ketQua && !ALL && !/nghi ngờ/i.test(ketQua)) continue;
 
     const v = await validateEmail(email);
     await updateRecord(CFG, T, r.record_id, {
