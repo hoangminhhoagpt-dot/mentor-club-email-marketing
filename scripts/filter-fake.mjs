@@ -2,9 +2,13 @@
  * filter-fake.mjs — bảng 12.7 "Lọc mail ảo".
  * Quét các dòng CHƯA có "Kết quả" (hoặc --all để kiểm lại toàn bộ), kiểm tra từng email,
  * ghi Kết quả / Lý do / Có MX / Dùng 1 lần / Thời gian kiểm tra ngược lại bảng.
- * Có thể nạp thêm email mới qua ENV EMAILS="a@x.com,b@y.com" (mỗi email tạo 1 dòng).
+ * TỰ GOM danh sách cần kiểm từ 12.1 (nuôi dưỡng) + 12.3 (bản tin) — địa chỉ nào chưa có
+ * trong 12.7 thì thêm dòng mới. Trước đây script chỉ kiểm những dòng ĐÃ nằm sẵn trong 12.7,
+ * mà bảng đó thì không ai đổ vào ⇒ bấm nút bao nhiêu lần cũng chỉ ra "kiểm 0" và vẫn báo
+ * thành công. Muốn giữ nếp cũ thì thêm cờ --khong-gom.
+ * Có thể nạp thêm email lẻ qua ENV EMAILS="a@x.com,b@y.com".
  *
- * Chạy: node scripts/filter-fake.mjs [--all]
+ * Chạy: node scripts/filter-fake.mjs [--all] [--khong-gom]
  */
 import { loadConfig, requireKeys, listAllRecords, createRecord, updateRecord, F, normEmail, nowMs, sleep } from "./lib.mjs";
 import { validateEmail } from "./validate.mjs";
@@ -12,6 +16,7 @@ import { getText } from "./suppression.mjs";
 
 const CFG = loadConfig();
 const ALL = process.argv.includes("--all");
+const KHONG_GOM = process.argv.includes("--khong-gom");
 
 (async () => {
   requireKeys(CFG, ["larkAppId", "larkAppSecret", "tables.fakeFilter"]);
@@ -23,10 +28,24 @@ const ALL = process.argv.includes("--all");
   const fDisp = F(CFG, "fakeFilter", "disposable");
   const fChecked = F(CFG, "fakeFilter", "checkedAt");
 
-  // Nạp email mới từ ENV (tuỳ chọn)
-  const seed = (process.env.EMAILS || "").split(/[\s,;]+/).map(normEmail).filter(Boolean);
   const existing = await listAllRecords(CFG, T);
   const existingEmails = new Set(existing.map((r) => normEmail(getText(r.fields, fEmail))));
+
+  // Gom địa chỉ cần kiểm: ENV EMAILS + toàn bộ người trong 12.1 và 12.3.
+  const seed = (process.env.EMAILS || "").split(/[\s,;]+/).map(normEmail).filter(Boolean);
+  if (!KHONG_GOM) {
+    for (const [bang, khoa] of [["nurtureList", "email"], ["newsletterList", "email"]]) {
+      const tid = CFG.tables?.[bang];
+      if (!tid) continue;
+      for (const r of await listAllRecords(CFG, tid)) {
+        const e = normEmail(getText(r.fields, F(CFG, bang, khoa)));
+        if (e && e.includes("@")) seed.push(e);
+      }
+    }
+    const them = seed.filter((e) => !existingEmails.has(e)).length;
+    if (them) console.log(`   gom ${them} địa chỉ mới từ 12.1 + 12.3 vào 12.7`);
+  }
+
   for (const e of seed) {
     if (!existingEmails.has(e)) {
       const rec = await createRecord(CFG, T, { [fEmail]: e });
