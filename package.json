@@ -17,6 +17,7 @@
   },
   "dependencies": {
     "imapflow": "^1.0.171",
+    "libsodium-wrappers": "^0.8.4",
     "mailparser": "^3.7.2",
     "nodemailer": "^6.9.16",
     "yaml": "^2.9.0"
