@@ -10,3 +10,5 @@ config.local.json
 config.local.json*
 # Dau ra sinh tu dong cua build-dashboard (anh chup so lieu, khong phai ma nguon)
 dashboard/
+# script chẩn đoán tạm, không thuộc hệ
+_*.mjs
