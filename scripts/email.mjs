@@ -20,10 +20,22 @@ export function makeTransport(CFG) {
   });
 }
 
-/** Thay {{name}}, {{email}}, {{unsubscribe_url}}... trong template. */
+/**
+ * Thay biến trong template. ĐỠ CẢ HAI KIỂU NGOẶC:
+ *   {{name}}          — kiểu cũ, dùng trong nội dung soạn trước đây
+ *   {customer_name}   — kiểu mẫu thư Mentor, gõ thẳng trong Lark
+ * Trước đây chỉ nhận ngoặc kép, nên thư soạn bằng ngoặc đơn đi ra NGUYÊN CHỮ
+ * "{customer_name} thân mến" tới hộp thư khách.
+ */
 export function renderTemplate(tpl, vars = {}) {
-  return String(tpl || "").replace(/\{\{\s*([a-zA-Z0-9_]+)\s*\}\}/g, (_, k) =>
-    (vars[k] != null ? String(vars[k]) : ""));
+  return String(tpl || "")
+    // Ngoặc kép: khoá lạ thì xoá (giữ đúng hành vi cũ, thư cũ không đổi kết quả).
+    .replace(/\{\{\s*([a-zA-Z0-9_]+)\s*\}\}/g, (_, k) =>
+      (vars[k] != null ? String(vars[k]) : ""))
+    // Ngoặc đơn: CHỈ thay khi biết khoá, khoá lạ giữ nguyên. Cố ý làm vậy để không
+    // đụng vào CSS trong thư HTML (kiểu "a{color:red}") và không âm thầm nuốt chữ.
+    .replace(/\{\s*([a-zA-Z0-9_]+)\s*\}/g, (nguyenVan, k) =>
+      (vars[k] != null ? String(vars[k]) : nguyenVan));
 }
 
 const b64url = (s) => Buffer.from(String(s), "utf8").toString("base64url");
