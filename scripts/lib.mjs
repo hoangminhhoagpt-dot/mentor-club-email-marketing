@@ -141,21 +141,22 @@ export const SCHEMA = {
     lastStep:   { name: "Bước gần nhất",      type: 2 },
     lastSentAt: { name: "Lần gửi gần nhất",   type: 5 },
     note:       { name: "Ghi chú",            type: 1 },
-    // Cột CHỈ ĐỂ NHÌN: "Bước gần nhất" là số (máy cần số để so sánh), nhưng nhìn số 1 trơ trọi
-    // thì không ai đoán được nó là gì. Cột công thức này dịch sang tiếng người.
-    stepLabel:  { name: "Đang ở bước",        type: 20, formula: 'IF([Bước gần nhất]>0,CONCATENATE("Ngày ",[Bước gần nhất]),"Chưa gửi")' },
+    // Cột CHỈ ĐỂ NHÌN: khách đang ở ngày thứ mấy của chương trình, tính từ ngày bắt đầu.
+    // Nhãn "Day N" là NGÔN NGỮ CHUNG của cả bộ bảng — 12.1 nối 12.2 bằng đúng chuỗi này,
+    // và Worker cũng ghi "Day N" vào cột "Tỉ lệ mở mail". Đổi chữ ở một nơi là đứt cả dây.
+    stepLabel:  { name: "Chuỗi Email",        type: 20, formula: '"Day "&DATEDIF([Ngày bắt đầu],TODAY(),"D")' },
   },
   campaign365: {          // 12.2 Chiến dịch Email 365 ngày
     day:     { name: "Ngày",      type: 2 },
     subject: { name: "Tiêu đề",   type: 1 },
     body:    { name: "Nội dung",  type: 1 },
     active:  { name: "Kích hoạt", type: 3, opts: ["Bật", "Tắt"] },
-    dayLabel:{ name: "Bước",      type: 20, formula: 'CONCATENATE("Ngày ",[Ngày])' },
+    dayLabel:{ name: "Chuỗi Email", type: 20, formula: 'CONCATENATE("Day ",[Ngày])' },
   },
   newsletterList: {       // 12.3 Danh sách Email bảng tin
     email:        { name: "Email",         type: 1 },
     name:         { name: "Tên",           type: 1 },
-    subscribedAt: { name: "Ngày đăng ký",  type: 5 },
+    subscribedAt: { name: "Ngày bắt đầu",  type: 5 },
     status:       { name: "Trạng thái",    type: 3, opts: ["Đang nhận", "Đã huỷ"] },
     source:       { name: "Nguồn",         type: 1 },
     note:         { name: "Ghi chú",       type: 1 },
@@ -169,7 +170,7 @@ export const SCHEMA = {
     scheduledAt: { name: "Lịch gửi",      type: 5 },
     sentCount:   { name: "Đã gửi",        type: 2 },
     sentAt:      { name: "Ngày gửi thực", type: 5 },
-    link:        { name: "Link",          type: 15 },   // chèn thành nút "Xem chi tiết" cuối thư
+    link:        { name: "LINK",          type: 15 },   // chèn thành nút "Xem chi tiết" cuối thư
     file:        { name: "File",          type: 17 },   // tải về rồi đính kèm vào thư
   },
   openReport: {           // 12.5 Báo cáo đọc Email
@@ -201,6 +202,12 @@ export const SCHEMA = {
     detail:     { name: "Chi tiết",    type: 1 },
     campaign:   { name: "Chiến dịch",  type: 1 },
     occurredAt: { name: "Thời gian",   type: 5 },
+    // "Chi tiết" là nguyên văn máy chủ trả về — dài và lẫn mã. Bốn cột dưới bóc riêng từng
+    // mẩu để nhìn là hiểu: thư nào, gửi từ hộp nào, hỏng vì lẽ gì.
+    messageId:  { name: "Message ID",    type: 1 },
+    mailSubject:{ name: "Tiêu đề mail",  type: 1 },
+    senderBox:  { name: "Email gửi",     type: 3, opts: ["Hoàng Minh Hoá Và Cộng Sự", "Mentor Camp", "Miss Áo Dài", "Khác"] },
+    reason:     { name: "Lý do",         type: 1 },
   },
   clickList: {            // 12.9 Danh sách email click link
     email:        { name: "Email",         type: 1 },
