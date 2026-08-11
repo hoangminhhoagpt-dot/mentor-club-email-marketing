@@ -3,6 +3,18 @@
 Gửi qua: Lark Admin Console → Help & Support → Submit a ticket (hoặc `support@larksuite.com`).
 Đính kèm: một ảnh chụp thư dội có dòng `912 This mail is rejected by antispam system`.
 
+
+> Bổ sung ngày 11/8: Google đã gửi báo cáo DMARC cho tên miền mentorcamp.io.vn (Report-ID
+> 13703331663955382438, khoảng 9–10/8). Kết quả: **toàn bộ thư tới Google đều DKIM pass và
+> SPF pass, disposition = none** — nghĩa là Google KHÔNG chặn, không cho vào spam, không có
+> thư nào trượt xác thực. Selector DKIM của Lark là `lark2608050312`.
+>
+> Điểm đáng chú ý: cả ngày chỉ có **5 thư** tới được Google, trong khi bên mình gửi nhiều
+> hơn thế. Số còn lại bị chặn ngay tại Lark, chưa từng rời khỏi hệ thống.
+>
+> ⇒ Bằng chứng từ phía người nhận khẳng định: cấu hình tên miền hoàn hảo, phía nhận không
+> hề từ chối. Toàn bộ vấn đề nằm ở bộ lọc của Lark.
+
 ---
 
 ## Bản tiếng Anh (dự phòng, nếu ticket được chuyển cho đội quốc tế)
