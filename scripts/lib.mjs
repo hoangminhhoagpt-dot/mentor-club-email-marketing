@@ -372,7 +372,9 @@ export async function listAllRecords(CFG, tableId, { filter, viewId } = {}) {
   const app = await resolveAppToken(CFG);
   const out = []; let pageToken = null;
   do {
-    const qs = new URLSearchParams({ page_size: "500" });
+    // Lark siết page_size của endpoint này xuống 100 (quá thì trả 1254002 và cả lượt gửi
+    // chết ngay từ bước đọc bảng). Vẫn lấy đủ mọi dòng nhờ vòng lặp page_token bên dưới.
+    const qs = new URLSearchParams({ page_size: "100" });
     if (pageToken) qs.set("page_token", pageToken);
     if (filter) qs.set("filter", filter);
     if (viewId) qs.set("view_id", viewId);

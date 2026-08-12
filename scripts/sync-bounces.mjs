@@ -105,8 +105,15 @@ function parseBounce(src) {
   const deliveredTo = (s.match(/^Delivered-To:\s*(.+)$/im) || [])[1]?.trim() || "";
   const diaChiGui = (inReplyTo.match(/@([^\s>]+)/) || [])[1] || deliveredTo;
 
+  // Thời điểm thư BỊ DỘI, lấy từ header Date của chính thư dội.
+  // Trước đây ghi nowMs() — tức thời điểm ĐỒNG BỘ, không phải thời điểm bị chặn. Mà bộ đồng bộ
+  // chạy lại mỗi sáng và ghi đè cả trăm dòng cũ ⇒ mọi thư dội từ đời nào cũng trông như "vừa
+  // xảy ra", làm phanh chống chặn nổ vĩnh viễn dù thực tế đã lâu không có thư nào bị chặn.
+  const luc = Date.parse((s.match(/^Date:\s*(.+)$/im) || [])[1] || "");
+
   return {
     email, type, detail: detail || "Bounce (Lark)", messageId, subject,
+    luc: Number.isFinite(luc) ? luc : null,
     // Vài Message-ID mang tên máy chủ nội bộ (…@n105-035-086) chứ không phải tên miền thật.
     // Lúc đó hộp thư nhận thư dội chính là hộp đã gửi đi.
     sender: hopThuGui(diaChiGui) === "Khác" ? hopThuGui(deliveredTo) : hopThuGui(diaChiGui),
@@ -159,7 +166,8 @@ function parseBounce(src) {
 
   let created = 0, updated = 0;
   for (const b of uniq.values()) {
-    const fields = { [eEmail]: b.email, [eType]: b.type, [eDetail]: b.detail, [eWhen]: nowMs(), [eReason]: b.reason };
+    const fields = { [eEmail]: b.email, [eType]: b.type, [eDetail]: b.detail, [eReason]: b.reason,
+      [eWhen]: b.luc ?? nowMs() };
     if (b.messageId) fields[eMsgId] = b.messageId;
     if (b.subject) fields[eSubj] = b.subject;
     if (b.sender) fields[eBox] = b.sender;
