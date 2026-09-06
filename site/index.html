@@ -5,6 +5,20 @@
 <meta name="viewport" content="width=device-width,initial-scale=1">
 <title>Hệ thống Email Marketing — Mentor Camp</title>
 <meta name="description" content="Cách hệ thống email marketing của Mentor Camp vận hành, và cách triển khai bằng một khối lệnh.">
+<meta name="author" content="Hoàng Minh Hóa">
+<link rel="canonical" href="https://trienkhaiemail.hoangminhhoa.com/">
+<link rel="icon" href="data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20viewBox%3D%220%200%20100%20100%22%3E%3Ctext%20y%3D%220.9em%22%20font-size%3D%2290%22%3E%E2%9C%89%EF%B8%8F%3C%2Ftext%3E%3C%2Fsvg%3E">
+<meta name="color-scheme" content="light">
+<meta name="theme-color" content="#F6F6F4">
+<meta property="og:type" content="website">
+<meta property="og:locale" content="vi_VN">
+<meta property="og:site_name" content="Hoàng Minh Hóa">
+<meta property="og:url" content="https://trienkhaiemail.hoangminhhoa.com/">
+<meta property="og:title" content="Hệ thống Email Marketing trên Lark Base — Phiếu lệnh triển khai">
+<meta property="og:description" content="Điền 8 ô, khối lệnh tự ghép, dán vào Claude Code — dựng hệ email marketing 11 bảng trên Lark Base: nuôi dưỡng 365 ngày, bản tin, đo mở/bấm, lọc mail ảo, quét thư dội.">
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:title" content="Hệ thống Email Marketing trên Lark Base — Phiếu lệnh triển khai">
+<meta name="twitter:description" content="Điền 8 ô, khối lệnh tự ghép, dán vào Claude Code — dựng hệ email marketing 11 bảng trên Lark Base: nuôi dưỡng 365 ngày, bản tin, đo mở/bấm, lọc mail ảo, quét thư dội.">
 <style>
   *,*::before,*::after { box-sizing:border-box; }
   :root {
@@ -361,19 +375,17 @@
   <div class="panel" id="p2" role="tabpanel" aria-labelledby="tab-2" hidden>
 
     <section>
-      <p class="nhan">Bốn bước</p>
-      <h2>Từ tay không tới hệ chạy được</h2>
-      <p class="dan">Ba việc tay ở bước 1 chỉ làm một lần. Phần còn lại một khối lệnh lo hết.</p>
-      <div class="buoc">
-        <div class="b"><span class="stt">1</span><b>Chuẩn bị</b><span>Tạo app Lark, cấp quyền sửa cho app trên Base, lấy mật khẩu IMAP/SMTP của hộp thư.</span></div>
-        <div class="b"><span class="stt">2</span><b>Điền form</b><span>Điền ngay bên dưới. Khối lệnh tự cập nhật theo từng chữ bạn gõ.</span></div>
-        <div class="b"><span class="stt">3</span><b>Dán vào Claude Code</b><span>Mở Claude Code ở một thư mục trống, dán khối lệnh, gửi một lần.</span></div>
-        <div class="b"><span class="stt">4</span><b>Nhận kết quả</b><span>Máy trả về link kho lệnh, 11 mã bảng, và xác nhận đã chạy thử không gửi thật.</span></div>
-      </div>
+      <p class="nhan">Bắt buộc làm trước</p>
+      <h2>Bỏ bước này thì hôm nay chạy ngon, mai thư vào thư rác hết</h2>
+      <p class="dan">Hai việc phải xong trước khi chạy bất cứ lệnh nào. Cả hai đều thuộc loại hỏng im lặng — log vẫn báo thành công.</p>
+      <ul class="bay">
+        <li><b>Bật chữ ký DKIM cho tên miền gửi</b><span>Vào <b>Lark Admin → Mail → Security and Anti-spam → DKIM Authentication</b>, chọn tên miền, bật lên và dán bản ghi vào DNS. Chưa bật thì Gmail chặn thẳng ở cổng — thư không tới ai mà lệnh vẫn báo gửi thành công. Đừng tra DNS để kiểm: Lark dùng mã riêng theo tổ chức nên tra không thấy gì cả. Cách kiểm đúng là gửi thử một lá rồi xem nó vào Hộp thư chính hay Thư rác.</span></li>
+        <li><b>Lấy đúng mật khẩu IMAP/SMTP, không phải mật khẩu đăng nhập</b><span>Mở hộp thư trên <b>mail.larksuite.com → Settings → IMAP/SMTP</b>, bật dịch vụ rồi tạo mật khẩu ứng dụng. Lark trả về một chuỗi 16 ký tự — đó mới là thứ cần điền. Dùng mật khẩu đăng nhập Lark thì đăng nhập máy chủ thư sẽ bị từ chối.</span></li>
+      </ul>
     </section>
 
     <section>
-      <p class="nhan">Bước 2</p>
+      <p class="nhan">Điền 8 ô của bạn</p>
       <h2>Điền một lần, đủ mọi giá trị</h2>
       <p class="dan">Ô nào chưa có cứ để trống — khối lệnh sẽ tự ghi chú để máy hỏi bạn sau.</p>
 
@@ -406,7 +418,7 @@
           </div>
           <div class="truong">
             <label for="f-ten">Tên hiển thị người gửi</label>
-            <input id="f-ten" data-k="fromName" type="text" spellcheck="false" placeholder="Mentor Camp">
+            <input id="f-ten" data-k="fromName" type="text" spellcheck="false" placeholder="Tên thương hiệu của bạn">
             <small>Tên khách nhìn thấy trong hộp thư</small>
           </div>
           <div class="truong">
@@ -436,22 +448,63 @@
     </section>
 
     <section>
-      <p class="nhan">Bước 3</p>
-      <h2>Khối lệnh — sao chép rồi dán vào Claude Code</h2>
-      <p class="dan">Phần tô vàng là chỗ bạn chưa điền. Cứ dán, máy sẽ hỏi tiếp.</p>
+      <p class="nhan">Khối lệnh</p>
+      <h2>Sao chép rồi dán vào Claude Code</h2>
+      <p class="dan">Mở Claude Code ở một thư mục trống, dán vào, gửi một lần. Phần tô vàng là chỗ bạn chưa điền — cứ dán, máy sẽ hỏi tiếp.</p>
       <div class="khoi"><pre id="khoi"></pre></div>
     </section>
 
     <section>
-      <p class="nhan">Bước 4</p>
-      <h2>Nhìn vào đâu để biết đã chạy đúng</h2>
+      <p class="nhan">Máy sẽ dựng gì</p>
+      <h2>Mười một bảng và năm nút bấm</h2>
+      <p class="dan">Bộ này làm hai việc: gửi thư ra, và thu số liệu về. Mỗi việc là một link HTTP để gắn vào nút bấm trong Lark.</p>
+      <div class="tbl-wrap">
+        <table>
+          <thead><tr><th>Bảng</th><th>Chứa gì</th><th>Lệnh chạy</th></tr></thead>
+          <tbody>
+            <tr><td><b>12.1</b> · <b>12.2</b></td><td>Người nhận chuỗi nuôi dưỡng, và nội dung từng ngày</td><td><code>send-nurture</code></td></tr>
+            <tr><td><b>12.3</b> · <b>12.4</b></td><td>Người nhận bản tin, và nội dung bản tin</td><td><code>send-newsletter</code></td></tr>
+            <tr><td><b>12.5</b> · <b>12.9</b> · <b>12.6</b></td><td>Lượt mở, lượt bấm link, người huỷ nhận</td><td>máy chủ đo tự ghi</td></tr>
+            <tr><td><b>12.7</b></td><td>Kết quả lọc địa chỉ ảo</td><td><code>filter-fake</code></td></tr>
+            <tr><td><b>12.8</b></td><td>Địa chỉ hỏng nhặt từ thư dội về</td><td><code>sync-bounces</code></td></tr>
+            <tr><td><b>12.10</b> · <b>12.11</b></td><td>Báo cáo từng chiến dịch, và ảnh chụp mỗi ngày</td><td><code>build-report</code></td></tr>
+          </tbody>
+        </table>
+      </div>
+      <p class="dan" style="margin-top:16px;margin-bottom:0">Bốn bảng đầu là nơi bạn gõ. Bảy bảng còn lại máy ghi — đừng gõ tay vào đó, gõ là tự làm sai số liệu của mình.</p>
+    </section>
+
+    <section>
+      <p class="nhan">Ba việc máy không bấm thay được</p>
+      <h2>Ba chỗ hay tắc nhất</h2>
+      <p class="dan">Máy sẽ dừng lại và nhắc bạn, nhưng biết trước thì đỡ mất thời gian.</p>
       <ul class="bay">
-        <li><b>Con số “bỏ qua” lúc chạy thử</b><span>Chạy thử không gửi thật rồi đọc log. <b>“bỏ qua 0”</b> nghĩa là hệ không thấy người nhận nào — sai Base hoặc bảng rỗng. <b>“bỏ qua” khác 0</b> mới là đọc đúng. Đừng nghi hộp thư trước khi xem con số này.</span></li>
-        <li><b>Báo thành công không có nghĩa là thư đã tới</b><span>Mã trả về 204 chỉ nghĩa là GitHub đã nhận lệnh. Thư đi sau đó khoảng nửa phút.</span></li>
-        <li><b>Chưa bật chữ ký tên miền thì thư vào thư rác</b><span>Mà log vẫn báo gửi thành công. Đây là kiểu hỏng khó phát hiện nhất của cả bộ — bật SPF, DKIM, DMARC trước khi gửi thật.</span></li>
-        <li><b>Tên miền mới phải khởi động ấm</b><span>Đừng bắn vài nghìn thư ngày đầu. Tăng dần khoảng ba tuần: 200 → 500 → 1.000 → 2.000.</span></li>
+        <li><b>Bật Actions trên bản nhân bản</b><span>Vào tab <b>Actions</b> của kho vừa nhân bản, bấm nút xanh <i>“I understand my workflows, go ahead and enable them”</i>. GitHub cố tình tắt sẵn khi nhân bản. Bỏ bước này thì mọi lệnh HTTP đều trả 204 — trông y như thành công — nhưng thực tế không chạy gì cả.</span></li>
+        <li><b>Cho app Lark vào Base với quyền sửa</b><span>Mở Base → nút <b>•••</b> góc trên phải → thêm ứng dụng vừa tạo → chọn <b>Can edit</b>. Thiếu quyền sửa thì lệnh đọc được bảng nhưng ghi trả lỗi 91403, hoặc tệ hơn là chạy im mà không ghi được gì.</span></li>
+        <li><b>Gắn nút bấm và đặt lịch trong Lark</b><span>Máy dựng sẵn 5 điểm bấm, nhưng nối chúng vào Automation của Lark thì phải làm trên giao diện Lark. Đặt <code>send-nurture</code> <b>một lần mỗi ngày</b> — đặt dày hơn là gửi dồn cho người nhận.</span></li>
       </ul>
     </section>
+
+    <section>
+      <p class="nhan">Gửi thử</p>
+      <h2>Lá thư đầu tiên</h2>
+      <p class="dan">Sau khi máy báo xong, mở Base và làm đúng ba việc này.</p>
+      <div class="tbl-wrap">
+        <table>
+          <thead><tr><th>Ở đâu</th><th>Làm gì</th></tr></thead>
+          <tbody>
+            <tr><td><b>12.2</b></td><td>Thêm một dòng: <b>Ngày</b> = 1, <b>Tiêu đề</b> và <b>Nội dung</b> tuỳ bạn, <b>Kích hoạt</b> = Bật. Gõ như nhắn tin, không cần thẻ HTML — xuống dòng, gạch đầu dòng, <code>**đậm**</code> đều hiểu. Gõ <code>{{name}}</code> thì mỗi người thấy tên mình.</td></tr>
+            <tr><td><b>12.1</b></td><td>Thêm chính địa chỉ của bạn: <b>Ngày bắt đầu</b> = hôm nay, <b>Trạng thái</b> = Đang nuôi.</td></tr>
+            <tr><td><b>Actions</b></td><td>Chạy <code>send-nurture</code> với <b>dry_run = true</b> trước. Đọc log: thấy dòng <i>“(dry-run) Ngày 1 → email của bạn”</i> là đúng. Rồi chạy lại không có dry_run để gửi thật.</td></tr>
+          </tbody>
+        </table>
+      </div>
+      <ul class="bay" style="margin-top:18px">
+        <li><b>Nhìn con số “bỏ qua” trước khi nghi ngờ hộp thư</b><span><b>“bỏ qua 0”</b> nghĩa là hệ không thấy một người nhận nào — sai Base hoặc bảng rỗng. <b>“bỏ qua” khác 0</b> mới là đọc đúng bảng. Rất nhiều lần tưởng hỏng máy chủ thư, hoá ra chỉ là trỏ nhầm chỗ.</span></li>
+        <li><b>Tên miền mới phải khởi động ấm</b><span>Đừng bắn vài nghìn thư ngày đầu. Tăng dần khoảng ba tuần: 200 → 500 → 1.000 → 2.000. Bắn ồ ạt ngay là vào thư rác hàng loạt, và uy tín tên miền rất khó gỡ lại.</span></li>
+      </ul>
+    </section>
+
   </div>
 
   <footer>

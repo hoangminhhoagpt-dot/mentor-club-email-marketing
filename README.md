@@ -46,7 +46,7 @@ Lark Automation (nút bấm / đặt lịch)
 
 **Chạy THEO YÊU CẦU** — không tiến trình nền, **không cron GitHub**. Lịch hằng ngày đặt bằng Lark Automation.
 
-## Bốn điểm bấm (event_type)
+## Năm điểm bấm (event_type)
 
 | event_type | Script | Việc |
 |---|---|---|
@@ -54,6 +54,7 @@ Lark Automation (nút bấm / đặt lịch)
 | `send-newsletter` | `scripts/send-newsletter.mjs` | Gửi bản tin 12.4 → 12.3 theo `record_id` (nút bấm) |
 | `filter-fake` | `scripts/filter-fake.mjs` | Lọc mail ảo (cú pháp + MX + disposable) → 12.7 |
 | `sync-bounces` | `scripts/sync-bounces.mjs` | Quét IMAP tìm mail trả về → 12.8 |
+| `build-report` | `scripts/build-report.mjs` | Đọc 12.1→12.9, dựng báo cáo chiến dịch → 12.10 và ảnh chụp theo ngày → 12.11 (không gửi mail) |
 
 ## Hợp đồng ITTO
 
